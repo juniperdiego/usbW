@@ -12,6 +12,9 @@
 USB_State usb_state[12];
 
 void add_callback(int num,  const char *serial){
+#if 0
+    printf("add callback %d %s.\n", num, serial);
+#else
     Data_Sql data_sql;
 	usb_state[num].num = num;
 	char *device_mod = adb_getprop_cmd("ro.build.product", serial); //to do ????????????
@@ -126,13 +129,18 @@ void add_callback(int num,  const char *serial){
 	}
     sql_lib.sqlclose();
     data_sql.sqlclose();
+#endif
 }
 
 void remove_callback( int num){
+#if 0
+    printf("remove callback %d.\n", num);
+#else
 	if( usb_state[num].install_state == 1)
 		usb_state[num].install_state = 3;
 	else
 		usb_state[num].install_state = 0;
+#endif
 }
 
 /*

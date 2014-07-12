@@ -7,8 +7,7 @@
 CONFIG += qt debug
 
 QT       += core gui \
-	network \
-	script
+	network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -96,7 +95,9 @@ RESOURCES += \
     usbwidget.qrc
 
 LIBS += -lsqlite3 \
-        -lqjson \
-            /usr/local/lib/libusb_enum.a
+#            /usr/local/lib/libusb_enum.a
+            /home/lijing/work/usb/usb/libusb_enum.a
+
+#LIBS += -lqjson
 
 

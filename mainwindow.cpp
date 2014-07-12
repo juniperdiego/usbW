@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    setWindowFlags(Qt::FramelessWindowHint);
+
     ui->setupUi(this);
 
     //network Information
@@ -26,8 +28,12 @@ MainWindow::MainWindow(QWidget *parent) :
     NetInterfaceList = QNetworkInterface::allInterfaces();
     foreach(QNetworkInterface net, NetInterfaceList)
     {
-      //  qDebug()<<net;
-        strDevID = net.hardwareAddress();
+        //qDebug()<<net;
+        if (net.name() == "eth0")
+        {
+            strDevID = net.hardwareAddress();
+            break;
+        }
     }
     netConf = new QNetworkConfigurationManager;
     connect(netConf,SIGNAL(onlineStateChanged(bool)),this,SLOT(onlineStateChange(bool)));
@@ -80,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
    File_UpLoad = new FileUpload;
    this->connect(File_UpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
     QTimer::singleShot(10*60*1000,File_UpLoad,SLOT(start()));
+
     call();
 }
 

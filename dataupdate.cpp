@@ -1,6 +1,8 @@
 #include "parser.h"
 #include "dataupdate.h"
 
+//#define HAVE_QJSON
+
 DataUpdate::DataUpdate(QObject *parent) :
     QObject(parent)
 {
@@ -76,6 +78,7 @@ void DataUpdate::GetPkgLibVer()
 
 void DataUpdate::DevFinish()
 {
+#ifdef HAVE_QJSON
     string org_cid;
     m_devDB.get(CHAN_ID, org_cid);
     QByteArray dev_rsp_byte = m_netReply->readAll();
@@ -113,11 +116,12 @@ void DataUpdate::DevFinish()
             emit devFinish();
         }
     }
+#endif
 }
 
 void DataUpdate::ApkFinish()
 {
-#if 1
+#ifdef HAVE_QJSON
     QByteArray apk_rsp_byte = m_netReply->readAll();
     QString apk_rsp_str = QString(apk_rsp_byte);
     //QString apk_rsp_str = "{\"apkList\":[{\"apkId\":12,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.mapbar.android.accompany\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":3,\"md5value\":\"d94e494566cb9d0b12c0d70aaec4543f\",\"packagePath\":\"air.com.wuba.bangbang\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":5,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.mapbar.android.accompany\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":7,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.qihoo360pp.paycentre\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":8,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.qihoo360.antilostwatch\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0}],\"status\":2,\"version\":\"1390999000\"}";
@@ -170,7 +174,7 @@ void DataUpdate::ApkFinish()
         if(  Apk_Update_finish == Apk_Update_finish){
               m_bApkState = true;
               //sqlopt->dev_update("apkversion", apkVersion.toStdString());
-              m_devDB.set(DEV_VER, apkVersion.toStdString());
+              m_devDB.set(APK_VER, apkVersion.toStdString());
               GetPkgLibVer();
          }else{
               m_bApkState= false;
@@ -188,7 +192,7 @@ void DataUpdate::quit()
 
 void DataUpdate::PkgFinish()
 {
-#if 1
+#ifdef HAVE_QJSON
     QByteArray pkg_rsp_byte = m_netReply->readAll();
     QString pkg_rsp_str = QString(pkg_rsp_byte);
 //   QString pkg_rsp_str = "{\"commonPkg\":{\"apkList\":[{\"apkId\":7,\"counter\":0,\"icon\":0,\"run\":1,\"sort\":0},{\"apkId\":8,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":1},{\"apkId\":5,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":2},{\"apkId\":12,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":3},{\"apkId\":3,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":4}],\"batchCode\":\"TY2\",\"modelList\":[],\"name\":\"common_pkg#TY2\",\"packageId\":14,\"type\":0},\"pkgList\":[],\"pkgVersion\":\"1404229444159\",\"status\":2}";
@@ -380,6 +384,8 @@ void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
     QString file_name;
     file_name = TMP_PATH + m_apkIdStr;
     QFile fd(file_name);
+
+    mkdir(file_name);
 
     if(fd.open(QIODevice::WriteOnly)){
         fd.write(Reply_apk->readAll());               //////////budge////////
