@@ -1,0 +1,14 @@
+all :
+	arm-none-linux-gnueabi-gcc -c usb_enum.c -g -Wall
+	arm-none-linux-gnueabi-gcc -c adb_utils.c -g -Wall
+	ar rcs libusb_enum.a usb_enum.o adb_utils.o
+sample:
+	arm-none-linux-gnueabi-gcc sample.c -L. -lusb_enum -o sample -g -Wall -lpthread -static
+pc-all:
+	gcc -c usb_enum.c -g -Wall
+	gcc -c adb_utils.c -g -Wall
+	ar rcs libusb_enum.a usb_enum.o adb_utils.o
+pc-sample:
+	gcc sample.c -L. -lusb_enum -o sample -g -Wall -lpthread -static
+clean:
+	rm -rf *.o *.a sample
