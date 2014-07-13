@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include "global.h"
-#include <QVector>
 #include "data_sql.h"
 
 namespace Ui {

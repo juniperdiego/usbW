@@ -1,6 +1,6 @@
 #include "devwdg.h"
 #include "ui_devwdg.h"
-#include <qpalette.h>
+#include <QPalette>
 
 DevWdg::DevWdg(QWidget *parent) :
     QWidget(parent),

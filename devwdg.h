@@ -2,7 +2,6 @@
 #define DEVWDG_H
 
 #include <QWidget>
-#include <QDebug>
 #include <QTimer>
 #include "global.h"
 
