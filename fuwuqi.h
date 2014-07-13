@@ -3,14 +3,14 @@
 #define Unicom "192.168.0.1"
 #define NET  " 192.168.100.1"
 
-#include <QWidget>
+#include <QDialog>
 #include <QString>
 
 namespace Ui {
 class fuwuqi;
 }
 
-class fuwuqi : public QWidget
+class fuwuqi : public QDialog
 {
     Q_OBJECT
 

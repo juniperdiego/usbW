@@ -1,13 +1,15 @@
 #include "baobiao.h"
 #include "ui_baobiao.h"
 #include <QTableWidgetItem>
-#include "../diego/mblStatDB.h"
-#include "../diego/usbStatDB.h"
+#include "db/mblStatDB.h"
+#include "db/usbStatDB.h"
 
 baobiao::baobiao(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::baobiao)
 {
+    setWindowFlags(Qt::FramelessWindowHint);
+
     ui->setupUi(this);
     ui->tabWidget->setTabText(0,"机型");
     ui->tabWidget->setTabText(1,"usb口");
@@ -25,13 +27,17 @@ baobiao::baobiao(QWidget *parent) :
 
 
     //set the date display policy
+#if 0
     ui->FromdateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
     ui->FromdateEdit->setCalendarPopup(true);
     ui->FromdateEdit->setDisplayFormat("yyyy-MM-dd");
+#endif
     ui->FromdateEdit->setDate(QDate::currentDate());
+#if 0
     ui->TodateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
     ui->TodateEdit->setCalendarPopup(true);
     ui->TodateEdit->setDisplayFormat("yyyy-MM-dd");
+#endif
     ui->TodateEdit->setDate(QDate::currentDate());
 
     ui->searchBtn->setAutoFillBackground(true);

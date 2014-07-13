@@ -1,7 +1,7 @@
 #ifndef WENJIAN_H
 #define WENJIAN_H
 
-#include <QWidget>
+#include <QDialog>
 #include "data_sql.h"
 
 
@@ -9,7 +9,7 @@ namespace Ui {
 class wenjian;
 }
 
-class wenjian : public QWidget
+class wenjian : public QDialog
 {
     Q_OBJECT
 

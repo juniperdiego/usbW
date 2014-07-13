@@ -7,16 +7,17 @@
 #include <QMessageBox>
 
 fuwuqi::fuwuqi(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::fuwuqi)
 {
+    setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     this->setWindowTitle(tr("服务器"));
     ui->severcomboBox->addItem(tr("电信"));
     ui->severcomboBox->addItem(tr("联通"));
     connect(ui->severcomboBox,SIGNAL(activated(QString)),this,SLOT(OnChangeContent(QString)));
     this->setWindowTitle(tr("服务器"));
-    this->setFixedSize(800,480);
+    //this->setFixedSize(800,480);
 }
 
 fuwuqi::~fuwuqi()

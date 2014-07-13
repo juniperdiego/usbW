@@ -1,7 +1,7 @@
 #ifndef SHANGCHUAN_H
 #define SHANGCHUAN_H
 
-#include <QWidget>
+#include <QDialog>
 #include "data_sql.h"
 #include "fileupload.h"
 
@@ -9,7 +9,7 @@ namespace Ui {
 class Shangchuan;
 }
 
-class Shangchuan : public QWidget
+class Shangchuan : public QDialog
 {
     Q_OBJECT
 

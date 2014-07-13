@@ -2,20 +2,25 @@
 #include "ui_shangchuan.h"
 
 Shangchuan::Shangchuan(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::Shangchuan)
 {
+    setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
 
     //set the date display policy
+#if 0
     ui->FromDataEdt->setButtonSymbols(QAbstractSpinBox::NoButtons);
     ui->FromDataEdt->setCalendarPopup(true);
     ui->FromDataEdt->setDisplayFormat("yyyy-MM-dd");
+#endif
     ui->FromDataEdt->setDate(QDate::currentDate());
 
+#if 0
     ui->ToDataEdt->setButtonSymbols(QAbstractSpinBox::NoButtons);
     ui->ToDataEdt->setCalendarPopup(true);
     ui->ToDataEdt->setDisplayFormat("yyyy-MM-dd");
+#endif
     ui->ToDataEdt->setDate(QDate::currentDate());
 
     ui->ResTabWid->setColumnWidth(0,150);

@@ -1,7 +1,7 @@
 #ifndef BAOBIAO_H
 #define BAOBIAO_H
 
-#include <QWidget>
+#include <QDialog>
 #include "global.h"
 #include <QVector>
 #include "data_sql.h"
@@ -10,7 +10,7 @@ namespace Ui {
 class baobiao;
 }
 
-class baobiao : public QWidget
+class baobiao : public QDialog
 {
     Q_OBJECT
 

@@ -114,7 +114,6 @@ void MainWindow::CreateLayout()
      wluo->setText("<u>网络</u>");
      wluo->setDisabled(true);
 
-
      wjian = new ClickedLabel;
      wjian->setText("<u>文件</u>");
      connect(wjian, SIGNAL(clicked()),this, SLOT(OnWenjian()));
