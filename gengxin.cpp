@@ -8,16 +8,12 @@ Gengxin::Gengxin(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Gengxin)
 {
+    setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     this->setWindowTitle(tr("更新"));
     ui->labUp->setText(tr("系统正在登录中...\n请不要插/拔数据线进行安装工作或进行其他操作"));
     MvLoading = new QMovie(":/loading.gif");
     ui->labMv->setMovie(MvLoading);
-    this->setWindowFlags(Qt::WindowCancelButtonHint);
-    this->setWindowFlags(Qt::WindowMinimizeButtonHint);
-    this->setWindowFlags(Qt::WindowMaximizeButtonHint);
-    this->setWindowModality(Qt::ApplicationModal);
-    this->setAttribute(Qt::WA_DeleteOnClose, true);
     this->ui->pushBtnTerm->setVisible(false);
 
     SetBtnInvis();

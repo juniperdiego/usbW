@@ -8,8 +8,8 @@
 #define URL_DEVVER "http://www.tymng.com:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://www.tymng.com:8080/nzyw/api/getApkLibVersion.do"
 #define URL_PKGLIBVER "http://www.tymng.com:8080/nzyw/api/getPkgLibVersion.do"
-#define  TMP_PATH  "/tmp/tmpapk/"
-#define  APK_PATH  "/tmp/kuaijl/data/"
+#define  TMP_PATH  "/tmp/tmpapk"
+#define  APK_PATH  "/mnt/repos/apk"
 #define  SPIRIT_PATH "/tmp/kuaijl/update.zip"
 
 typedef struct APK_INFO{

@@ -95,8 +95,8 @@ RESOURCES += \
     usbwidget.qrc
 
 LIBS += -lsqlite3 \
-#            /usr/local/lib/libusb_enum.a
-            /home/lijing/work/usb/usb/libusb_enum.a
+            ./usb/pc/libusb_enum.a
+#            ./usb/arm/libusb_enum.a
 
 #LIBS += -lqjson
 
