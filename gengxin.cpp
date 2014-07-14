@@ -24,6 +24,11 @@ Gengxin::~Gengxin()
     delete ui;
 }
 
+void Gengxin::closeEvent(QCloseEvent* e)
+{
+    e->ignore();
+}
+
 void Gengxin::SetBtnInvis()
 {
     ui->ConfirmBtn->setVisible(false);

@@ -278,9 +278,7 @@ void MainWindow::OnBaobiao()
 void MainWindow::OnFuwuqi()
 {
     fuwuqi *fq = new fuwuqi;
-    //fuwuqi *f = new fuwuqi("dkalk");
- //   QStromg s = f->gepara();
-    fq->show();
+    fq->exec();
 }
 void MainWindow::OnShangchuan()
 {

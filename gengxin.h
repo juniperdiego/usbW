@@ -1,6 +1,7 @@
 #ifndef GENGXIN_H
 #define GENGXIN_H
 #include <QDialog>
+#include <QCloseEvent>
 #include <QMovie>
 #include "dataupdate.h"
 
@@ -15,6 +16,9 @@ class Gengxin : public QDialog
 public:
     explicit Gengxin(QWidget *parent = 0);
     ~Gengxin();
+
+protected:
+    void closeEvent(QCloseEvent*);
 
 public:
     void SetBtnInvis();
