@@ -1,6 +1,6 @@
 #include "devwdg.h"
 #include "ui_devwdg.h"
-#include <qpalette.h>
+#include <QPalette>
 
 DevWdg::DevWdg(QWidget *parent) :
     QWidget(parent),
@@ -10,7 +10,7 @@ DevWdg::DevWdg(QWidget *parent) :
     nProgBarValue = 0;
     this->setAutoFillBackground(true);
    QPalette Palette;
-   Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/bluebg.png")));
+   Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/bluebg.png")));
    this->setPalette(Palette);
    this->setFixedSize(100,190);
    Palette.setColor(QPalette::WindowText, Qt::white);

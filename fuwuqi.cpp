@@ -1,7 +1,5 @@
 #include "fuwuqi.h"
 #include "ui_fuwuqi.h"
-#include <QImage>
-#include <QPixmap>
 #include "global.h"
 #include <QProcess>
 #include <QMessageBox>
@@ -10,7 +8,7 @@ fuwuqi::fuwuqi(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::fuwuqi)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
+    //setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     this->setWindowTitle(tr("服务器"));
     ui->severcomboBox->addItem(tr("电信"));

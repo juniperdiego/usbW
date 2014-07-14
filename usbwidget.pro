@@ -98,6 +98,6 @@ LIBS += -lsqlite3 \
             ./usb/pc/libusb_enum.a
 #            ./usb/arm/libusb_enum.a
 
-#LIBS += -lqjson
+LIBS += -lqjson
 
 

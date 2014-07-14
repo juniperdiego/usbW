@@ -1,7 +1,7 @@
 #include "parser.h"
 #include "dataupdate.h"
 
-//#define HAVE_QJSON
+#define HAVE_QJSON
 
 DataUpdate::DataUpdate(QObject *parent) :
     QObject(parent)
@@ -69,10 +69,10 @@ void DataUpdate::GetPkgLibVer()
     appArry.append("&pkgVersion=");
     appArry.append(QString::fromStdString(pkgVer));
     m_netReply = m_netManager->post(request, appArry);
-    QEventLoop loop;
+    //QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(PkgFinish()));
-    QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
+    //QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
+    //loop.exec();
    
     qDebug()<<"update pkg ok";
 }

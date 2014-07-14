@@ -9,7 +9,7 @@ wenjian::wenjian(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::wenjian)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
+    //setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     //this->showMaximized();
     this->setWindowTitle(tr("文件"));

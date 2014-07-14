@@ -1,10 +1,6 @@
 #include "fileupload.h"
+#include "global.h"
 #include <QtDebug>
-#define URL_UPLOAD "http://192.168.1.103:8080/nzyw/api/processLog.do"
-#define BLOCKSIZE 100
-#define MAXLINELEN 512
-#define LOGPATH "/home/zb/work/log"
-#define PERIOD (60*60*2)
 
 FileUpload::FileUpload(QObject *parent) :
     QThread(parent)

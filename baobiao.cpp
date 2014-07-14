@@ -1,8 +1,7 @@
 #include "baobiao.h"
 #include "ui_baobiao.h"
+#include "global.h"
 #include <QTableWidgetItem>
-#include "db/mblStatDB.h"
-#include "db/usbStatDB.h"
 
 baobiao::baobiao(QWidget *parent) :
     QDialog(parent),

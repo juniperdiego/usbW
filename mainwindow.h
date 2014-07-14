@@ -91,7 +91,7 @@ private:
     QLabel *cangkuid;
     QLabel *id;
     QLabel *network;
-    QLabel *neicun;
+    //QLabel *neicun;
     QPushButton *shangchuan;
     QLabel *weishangchuan;
     QLabel *wscnum;

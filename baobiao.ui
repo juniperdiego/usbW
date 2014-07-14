@@ -46,7 +46,7 @@
      <item>
       <widget class="QDateEdit" name="FromdateEdit">
        <property name="displayFormat">
-        <string>yyyy/MM/dd</string>
+        <string>yyyy-MM-dd</string>
        </property>
        <property name="calendarPopup">
         <bool>true</bool>
@@ -63,7 +63,7 @@
      <item>
       <widget class="QDateEdit" name="TodateEdit">
        <property name="displayFormat">
-        <string>yyyy/MM/dd</string>
+        <string>yyyy-MM-dd</string>
        </property>
        <property name="calendarPopup">
         <bool>true</bool>
