@@ -4,9 +4,7 @@
 #include <QObject>
 #include <QtNetwork>
 #include <QThread>
-#include "parser.h"
 #include "data_sql.h"
-
 
 class FileUpload : public QThread
 {

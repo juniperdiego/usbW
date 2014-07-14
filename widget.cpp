@@ -20,7 +20,7 @@ Widget::Widget(QWidget *parent) :
 
 
    // QPixmap pixmap("bluebg.jpg");
-    QImage image(":/bluebg.jpg");
+    QImage image(":/images/bluebg.png");
     ui->label_1->setPixmap(QPixmap::fromImage(image));
     ui->label_1->setFixedSize(100,150);
 

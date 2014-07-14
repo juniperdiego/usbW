@@ -138,23 +138,23 @@ void MainWindow::CreateLayout()
 
      //更新图标
      LabUpdateState = new QLabel;
-     MvUpdate = new QMovie(":/updating.gif");
+     MvUpdate = new QMovie(":/images/updating.gif");
      LabUpdateState->setMovie(MvUpdate);
      //connect(this,SIGNAL(setMvState()),MvUpdate,SLOT(ChangeMvState()));
      network = new QLabel;
      if(netConf->isOnline())
      {
-          QImage image1(":/NetConn24.ico");
+          QImage image1(":/images/NetConn24.ico");
           network->setPixmap(QPixmap::fromImage(image1));
      }
      else
      {
-        QImage image1(":/NetDisConn24.ico");
+        QImage image1(":/images/NetDisConn24.ico");
         network->setPixmap(QPixmap::fromImage(image1));
      }
-     neicun = new QLabel;
-     QImage CardImage(":/SdCard24.ico");
-     neicun->setPixmap(QPixmap::fromImage(CardImage));
+     //neicun = new QLabel;
+     //QImage CardImage(":/images/SdCard24.ico");
+     //neicun->setPixmap(QPixmap::fromImage(CardImage));
 
      shangchuan = new QPushButton;
      shangchuan->setText("上传");
@@ -177,7 +177,7 @@ void MainWindow::CreateLayout()
      layout->addWidget(id);
      layout->addSpacerItem(horizonSpacer1);
      layout->addWidget(network);
-     layout->addWidget(neicun);
+     //layout->addWidget(neicun);
      layout->addWidget(shangchuan);
      layout->addWidget(weishangchuan);
      layout->addWidget(wscnum);
