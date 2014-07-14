@@ -85,9 +85,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
    File_UpLoad = new FileUpload;
    this->connect(File_UpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
-    QTimer::singleShot(10*60*1000,File_UpLoad,SLOT(start()));
+   //QTimer::singleShot(10*60*1000,File_UpLoad,SLOT(start()));
+   File_UpLoad->start();
 
-    call();
+   call();
 }
 
 MainWindow::~MainWindow()

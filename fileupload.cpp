@@ -55,14 +55,14 @@ void FileUpload::UpSingleFile(QString strFile)
         QByteArray OneLine = Fd.readLine(MAXLINELEN);
         char * crystr = OneLine.data();
         for( int i=0; i<OneLine.size(); i++){
-            crystr[i] = crystr[i] ^ 0x12;
+            //crystr[i] = crystr[i] ^ 0x12;
         }
         QByteArray byte( crystr);
         OneLine = byte;
 
-        OneLine.insert(0,tr("\""));
-        OneLine.replace(QByteArray(","),QByteArray("|"));
-        OneLine.replace(QByteArray("\n"),QByteArray("\","));
+        //OneLine.insert(0,tr("\""));
+        //OneLine.replace(QByteArray(","),QByteArray("|"));
+        //OneLine.replace(QByteArray("\n"),QByteArray("\","));
         BlockData.append(OneLine);
     }
     BlockData.remove(BlockData.size()-1,1);
@@ -75,12 +75,22 @@ void FileUpload::UpOneBlock(QByteArray BlockData,QString FileID)
 {
     loop = new QEventLoop;
     QObject::connect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+    //QString urlStr = URL_UPLOAD;
+    //urlStr += "?file=data.log&md5Value=12323";
     QNetworkRequest request(QUrl(tr(URL_UPLOAD)));
+    //QNetworkRequest request(QUrl(urlStr));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+#if 0
     QByteArray SendData("id=");
     SendData.append(FileID);
     SendData.append("&data=");
     SendData.append(BlockData);
+#endif
+    //QByteArray SendData("file=");
+    QByteArray SendData;
+    SendData.append(BlockData);
+    //SendData.append("&md5Value=");
+    //SendData.append(FileID);
     qDebug()<<SendData<<"\n";
     NetUp->post(request, SendData);
     loop->exec();
@@ -153,6 +163,7 @@ void FileUpload::run()
     while(1)
     {
         emit SetUpState(true);
+#if 0
         QStringList LogLst = GetAllFiles(LOGPATH);
         QString strLog;
         foreach(strLog, LogLst)
@@ -160,6 +171,8 @@ void FileUpload::run()
             UpSingleFile(strLog);
         }
         sleep(5);   //@zb
+#endif
+        UpSingleFile("data.log");
         emit SetUpState(false);
       //  sleep(3);   //@zb
     }

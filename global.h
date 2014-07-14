@@ -24,6 +24,8 @@
 
 using namespace std;
 
+//@zb
+#define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
 #define FIFO "/tmp/usb_fifo"
 #define MAX_APK_NUM (64/8)

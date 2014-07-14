@@ -1,5 +1,6 @@
 #include "wenjian.h"
 #include "ui_wenjian.h"
+#include "global.h"
 #include <QDate>
 #include <QPalette>
 #include <QProcess>
@@ -17,6 +18,7 @@ wenjian::wenjian(QWidget *parent) :
     ui->comboBox->addItem("1222");
     ui->comboBox->addItem("3333");
     connect(ui->comboBox,SIGNAL(activated(QString)),this,SLOT(OnChangeContent(QString)));
+    ui->comboBox->setVisible(false);
     //GetFreeSpace();
     QProcess* pDf = new QProcess;
     connect(pDf, SIGNAL(finished(int)), this, SLOT(SetFreeSpace(int)));
@@ -77,7 +79,7 @@ QString wenjian::GetFreeSpace()
     QProcess* pDf = new QProcess;
     connect(pDf, SIGNAL(finished(int)), this, SLOT(SetFreeSpace(int)));
     //pDf->start(tr("df"),QStringList()<<"-h");
-    pDf->start("df -h");
+    pDf->start("df -h |grep repos");
 //    if(NULL != pDf)
 //    {
 //        delete pDf;
@@ -89,6 +91,7 @@ void wenjian::SetFreeSpace(int nCode)
     QProcess* pRes =( QProcess*)sender();
     QString strRes = pRes->readAll();
     qDebug()<<strRes;
+#if 0
     QStringList strLstLine = strRes.split("\n");
     qDebug()<<strLstLine;
     QStringList strLstMnt;
@@ -114,8 +117,26 @@ void wenjian::SetFreeSpace(int nCode)
           }
     }
     QString strFreeSpace = QString::number(dFreeSpace, 'f', 4);
-   ui->cardspaceLabel->setText(strFreeSpace);
+    ui->cardspaceLabel->setText(strFreeSpace);
+#endif
+    double dFreeSpace = 0;
+    QStringList strs = strRes.split(" ");
+    if (strs.count() < 6) return;
+
+    QString strNum = strs[3];
+    QString strUnit = strs[3].right(1);
+    if(strUnit == "G"){
+        dFreeSpace += strNum.toDouble();
+    }else{
+        if(strUnit == "M")
+            dFreeSpace += strNum.toDouble()/1024;
+        else
+            dFreeSpace += strNum.toDouble()/(1024*1024);
+    }
+    QString strFreeSpace = QString::number(dFreeSpace, 'f', 4);
+    ui->cardspaceLabel->setText(strFreeSpace);
 }
+
 void wenjian::OnChangeContent(QString str)
 {}
 //@Add Func1
