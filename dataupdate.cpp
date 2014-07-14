@@ -17,6 +17,7 @@ DataUpdate::DataUpdate(QObject *parent) :
 DataUpdate::~DataUpdate()
 {
 }
+
 void DataUpdate::GetDeviceVer()
 {
     string devVer;

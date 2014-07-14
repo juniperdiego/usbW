@@ -75,6 +75,10 @@ private:
     QFile* m_dFile;
 
     devDB m_devDB;
+    devDB m_pkgDB;
+    devDB m_apkDB;
+    devDB m_mblDB;
+
     QString m_apkIdStr;
     QString m_filePath;
     QString m_preMd5;
