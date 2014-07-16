@@ -1,5 +1,9 @@
 #include "parser.h"
+#include "json/json.h"
 #include "dataupdate.h"
+
+using QtJson::JsonObject;
+using QtJson::JsonArray;
 
 #define HAVE_QJSON
 
@@ -127,13 +131,14 @@ void DataUpdate::ApkFinish()
     //QString apk_rsp_str = "{\"apkList\":[{\"apkId\":12,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.mapbar.android.accompany\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":3,\"md5value\":\"d94e494566cb9d0b12c0d70aaec4543f\",\"packagePath\":\"air.com.wuba.bangbang\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":5,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.mapbar.android.accompany\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":7,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.qihoo360pp.paycentre\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":8,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.qihoo360.antilostwatch\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0}],\"status\":2,\"version\":\"1390999000\"}";
     qDebug()<<apk_rsp_str;
     bool ok;
-    QJson::Parser parser;
+    //QJson::Parser parser;
     bool  apk_flag = true;
     if (apk_rsp_str.size()==0){
         apk_flag = false;
         return;
     }
-    QVariantMap apk_rsp_res = parser.parse(apk_rsp_str.toUtf8(), &ok).toMap();
+    //QVariantMap apk_rsp_res = parser.parse(apk_rsp_str.toUtf8(), &ok).toMap();
+    JsonObject apk_rsp_res = QtJson::parse(apk_rsp_str, ok).toMap();
     QString apkVersion=apk_rsp_res["version"].toString();
     qint32  nApkVerState=apk_rsp_res["status"].toInt();
 
@@ -144,10 +149,11 @@ void DataUpdate::ApkFinish()
         apk_flag = false;
         return;
     }else{
-        QVariantList apklist = apk_rsp_res["apkList"].toList();
+        //QVariantList apklist = apk_rsp_res["apkList"].toList();
+        JsonArray apklist = apk_rsp_res["apkList"].toList();
         foreach( QVariant atom, apklist){
-
-            QVariantMap  apk_map = atom.toMap();
+            //QVariantMap  apk_map = atom.toMap();
+            JsonObject apk_map = atom.toMap();
             m_apkIdStr = apk_map["apkId"].toString();
             QString apk_file_name ;
             apk_file_name = TMP_PATH + m_apkIdStr;

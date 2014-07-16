@@ -45,6 +45,7 @@ SOURCES += db/sqlDB.cpp\
             db/mblStatDB.cpp\
             db/logDB.cpp
 
+SOURCES += json/json.cpp
 
 HEADERS  += widget.h \
     gengxin.h \
@@ -78,6 +79,7 @@ HEADERS  += db/sqlDB.h\
             db/logDB.h\
             db/devDB.h
 
+HEADERS  += json/json.h
 
 
 FORMS    += widget.ui \
