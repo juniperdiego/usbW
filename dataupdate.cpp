@@ -1,4 +1,4 @@
-#include "parser.h"
+//#include "parser.h"
 #include "json/json.h"
 #include "dataupdate.h"
 
@@ -90,11 +90,12 @@ void DataUpdate::DevFinish()
     m_netReply->deleteLater();
     qDebug()<<dev_rsp_str;
     bool ok;
-    QJson::Parser parser;
+    //QJson::Parser parser;
     if (dev_rsp_str.size()==0){
         return;
     }
-    QVariantMap dev_rsp_res = parser.parse(dev_rsp_str.toUtf8(), &ok).toMap();
+    //QVariantMap dev_rsp_res = parser.parse(dev_rsp_str.toUtf8(), &ok).toMap();
+    JsonObject dev_rsp_res = QtJson::parse(dev_rsp_str, ok).toMap();
     string cid=dev_rsp_res["cid"].toString().toStdString();
     if ( cid != org_cid){
         m_devDB.set(APK_VER, "0");
@@ -204,13 +205,14 @@ void DataUpdate::PkgFinish()
 //   QString pkg_rsp_str = "{\"commonPkg\":{\"apkList\":[{\"apkId\":7,\"counter\":0,\"icon\":0,\"run\":1,\"sort\":0},{\"apkId\":8,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":1},{\"apkId\":5,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":2},{\"apkId\":12,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":3},{\"apkId\":3,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":4}],\"batchCode\":\"TY2\",\"modelList\":[],\"name\":\"common_pkg#TY2\",\"packageId\":14,\"type\":0},\"pkgList\":[],\"pkgVersion\":\"1404229444159\",\"status\":2}";
     qDebug()<<pkg_rsp_str;
     bool ok;
-    QJson::Parser parser;
+    //QJson::Parser parser;
     bool  pkg_flag = true;
     if (pkg_rsp_str.size()==0){
         pkg_flag = false;
         return;
     }
-    QVariantMap pkg_rsp_res = parser.parse(pkg_rsp_str.toUtf8(), &ok).toMap();
+    //QVariantMap pkg_rsp_res = parser.parse(pkg_rsp_str.toUtf8(), &ok).toMap();
+    JsonObject pkg_rsp_res = QtJson::parse(pkg_rsp_str, ok).toMap();
     QString pkgVersion=pkg_rsp_res["pkgVersion"].toString();
     qint32  status=pkg_rsp_res["status"].toInt();
     if(  status == 0 ){
@@ -223,14 +225,14 @@ void DataUpdate::PkgFinish()
     }else{
         QString md5;
         QString apk_path;
-        QVariantList apkList;
+        //QVariantList apkList;
         char  date[12];
         sqlopt->get_date(date, 12, 0);
         QString date_today = date;
         if( pkg_rsp_res["commonPkg"].isNull() ) {
         }else{
-            QVariantMap commpkg = pkg_rsp_res["commonPkg"].toMap();
-            apkList = commpkg["apkList"].toList();
+            //QVariantMap commpkg = pkg_rsp_res["commonPkg"].toMap();
+            JsonObject commpkg = pkg_rsp_res["commonPkg"].toMap();
             QString common_id = "common";
             QString batchCode = commpkg["batchCode"].toString();
            // QString modeList = "";
@@ -239,11 +241,13 @@ void DataUpdate::PkgFinish()
             sqlopt->mob_update( common_id.toStdString(), packageId.toStdString());
             qint8 type = commpkg["type"].toInt();
       //      QList<APK_INFO> apk_ins_list;
-            QVariantList apkList = commpkg["apkList"].toList();
+            //QVariantList apkList = commpkg["apkList"].toList();
+            JsonArray apkList = commpkg["apkList"].toList();
             int length=apkList.size();
             QString apk_sort;
             foreach (QVariant apkinfo, apkList) {
-                QVariantMap apk_info = apkinfo.toMap();
+                //QVariantMap apk_info = apkinfo.toMap();
+                JsonObject apk_info = apkinfo.toMap();
                 QString apkid = apk_info["apkId"].toString();
                 qint32 counter = apk_info["counter"].toInt();
                 qint32 icon = apk_info["icon"].toInt();
@@ -268,11 +272,17 @@ void DataUpdate::PkgFinish()
             QString atom_packageid;
             QString atom_apksort;
             qint32  atom_type;
-            QVariantList apk_list;
-            QVariantList mob_list;
-            QVariantList PkgList = pkg_rsp_res["pkgList"].toList();
+            //QVariantList apk_list;
+            JsonArray apk_list;
+            //QVariantList mob_list;
+            JsonArray mob_list;
+
+            //QVariantList PkgList = pkg_rsp_res["pkgList"].toList();
+            JsonArray PkgList = pkg_rsp_res["pkgList"].toList();
+
             foreach (QVariant atom_list, PkgList) {
-                QVariantMap Pkg_atom = atom_list.toMap();
+                //QVariantMap Pkg_atom = atom_list.toMap();
+                JsonObject Pkg_atom = atom_list.toMap();
                 atom_batchcode = Pkg_atom["batchCode"].toString();
                 atom_name = Pkg_atom["name"].toString();
                 atom_type = Pkg_atom["type"].toInt();
@@ -280,7 +290,8 @@ void DataUpdate::PkgFinish()
                 apk_list = Pkg_atom["apkList"].toList();
                 QString apksort;
                 foreach( QVariant atom,  apk_list){
-                    QVariantMap apkinfo = atom.toMap();
+                    //QVariantMap apkinfo = atom.toMap();
+                    JsonObject apkinfo = atom.toMap();
                     QString apkid = apkinfo["apkId"].toString();
                     qint32 counter = apkinfo["counter"].toInt();
                     qint32 icon = apkinfo["icon"].toInt();
