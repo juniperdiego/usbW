@@ -143,6 +143,6 @@ void Gengxin::StartUpSoft()
     MvLoading->start();
     m_dataUp = new DataUpdate;
     //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateStartVersion()));
-    //m_dataUp->GetDeviceVer();
+    m_dataUp->GetDeviceVer();
     updateStartVersion();
 }

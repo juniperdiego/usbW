@@ -174,7 +174,7 @@ void DataUpdate::ApkFinish()
             apk_file_name = TMP_PATH + m_apkIdStr;
             setApkFile(m_apkIdStr);
             m_preMd5 = apk_map["md5value"].toString();
-            apkIn.md5 = apk_map["md5value"].toInt();
+            apkIn.md5 = apk_map["md5value"].toString().toStdString();
             //QString packagePath = apk_map["packagePath"].toString();
             apkIn.pkgPath = apk_map["packagePath"].toString().toStdString();
             //sqlopt->apk_update_packagePath(m_apkIdStr.toStdString(), packagePath.toStdString());
@@ -255,14 +255,18 @@ void DataUpdate::PkgFinish()
 
             //QVariantMap commpkg = pkg_rsp_res["commonPkg"].toMap();
             JsonObject commpkg = pkg_rsp_res["commonPkg"].toMap();
-            QString common_id = "common";
-            QString batchCode = commpkg["batchCode"].toString();
+            pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
             pkgIn.pkgName = commpkg["name"].toString().toStdString();
             pkgIn.pkgID = commpkg["packageId"].toString().toStdString();
-            qint8 type = commpkg["type"].toInt();
-            //QVariantList apkList = commpkg["apkList"].toList();
+
             JsonArray apkList = commpkg["apkList"].toList();
             int length=apkList.size();
+            pkgIn.apkSum = length;
+            pkgIn.date = date;
+
+            m_pkgDB.set(pkgIn);
+            qint8 type = commpkg["type"].toInt();
+            //QVariantList apkList = commpkg["apkList"].toList();
             QString apk_sort;
             foreach (QVariant apkinfo, apkList) {
                 QVariantMap apk_info = apkinfo.toMap();
@@ -282,11 +286,6 @@ void DataUpdate::PkgFinish()
                     apkIn.aRun = true;
             }
 
-            //apk_sort.chop(1);
-            //           pkg_update( const string pkg_id, const string pkg_name, const string apk_list, const int apk_sum, const string date, const string batchCode);
-            //sqlopt->pkg_update( packageId.toStdString(), name.toStdString(), apk_sort.toStdString(), batchCode.toStdString(),length, date_today.toStdString());
-            //sqlite3  dev common;
-            //sqlite3  pkg
         }
          if( ! pkg_rsp_res["pkgList"].isNull() ) {
 
@@ -334,19 +333,21 @@ void DataUpdate::PkgFinish()
                         apkIn.aRun = true;
 
                     int sort = apkMap["sort"].toInt();
-                    //sqlopt->apk_update(apkid.toStdString(), atom_name.toStdString(), counter, icon, run);
 
-                    //apksort += apkid;
                     sortVector.push_back(pair<string,int>(apkIn.apkID, sort));
                 }
 
-                string apkListStr ;
                 sort(sortVector.begin(), sortVector.end(), cmp);
-                for(int i= 0; i < sortVector.size(); i++)
+                
+                pkgIn.apkList.clear();
+                for(size_t i= 0; i < sortVector.size(); i++)
                 {
-                    apkListStr += sortVector[i].first;
-                    apkListStr += "|";
+                    pkgIn.apkList.push_back(sortVector[i].first);
                 }
+                pkgIn.apkSum = sortVector.size();
+                pkgIn.date = date;
+
+                m_pkgDB.set(pkgIn);
 
                 //update mblDB
 
@@ -363,7 +364,6 @@ void DataUpdate::PkgFinish()
          }
      }
     m_bPkgState = true;
-    sqlopt->dev_update("pkgversion", pkgVersion.toStdString());
     m_netReply->deleteLater();
 #endif
 }
