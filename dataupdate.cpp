@@ -72,10 +72,10 @@ void DataUpdate::GetPkgLibVer()
     appArry.append("&pkgVersion=");
     appArry.append(QString::fromStdString(pkgVer));
     m_netReply = m_netManager->post(request, appArry);
-    //QEventLoop loop;
+    QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(PkgFinish()));
-    //QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
-    //loop.exec();
+    QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
    
     qDebug()<<"update pkg ok";
 }
@@ -91,7 +91,8 @@ void DataUpdate::DevFinish()
     qDebug()<<dev_rsp_str;
     bool ok;
     //QJson::Parser parser;
-    if (dev_rsp_str.size()==0){
+    if (dev_rsp_str.isEmpty()){
+        m_bDevState = false;
         return;
     }
     //QVariantMap dev_rsp_res = parser.parse(dev_rsp_str.toUtf8(), &ok).toMap();
@@ -110,17 +111,18 @@ void DataUpdate::DevFinish()
         m_bDevState = false;
     }
     else{
+        m_bDevState = true;
         QString path=dev_rsp_res["path"].toString();
         QString dev_md5=dev_rsp_res["md5value"].toString();
-        QString filename= SPIRIT_PATH;
+        QString filename= UPDATE_FILE_NAME;
         Download_File(path, filename);
 
         if (MD5_Check(filename, dev_md5))
         {
-            m_bDevState = true;
-            emit devFinish();
+            Global::s_needRestart = true;
         }
     }
+    //emit devFinish();
 #endif
 }
 
