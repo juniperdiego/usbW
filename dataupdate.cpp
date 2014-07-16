@@ -56,6 +56,7 @@ void DataUpdate::GetApkLibVer()
     appArry.append(QString::fromStdString(Global::g_DevID));
     appArry.append("&apkVersion=");
     appArry.append(QString::fromStdString(apkVer));
+    Apk_Update_finish = 0;
     m_netReply = m_netManager->post(request, appArry);
     QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(ApkFinish()));
@@ -141,7 +142,7 @@ void DataUpdate::ApkFinish()
 #ifdef HAVE_QJSON
     QByteArray apk_rsp_byte = m_netReply->readAll();
     QString apk_rsp_str = QString(apk_rsp_byte);
-    //QString apk_rsp_str = "{\"apkList\":[{\"apkId\":12,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.mapbar.android.accompany\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":3,\"md5value\":\"d94e494566cb9d0b12c0d70aaec4543f\",\"packagePath\":\"air.com.wuba.bangbang\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":5,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.mapbar.android.accompany\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":7,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.qihoo360pp.paycentre\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0},{\"apkId\":8,\"md5value\":\"27645ca17ac1c269e67862fcc0f1d2e3\",\"packagePath\":\"com.qihoo360.antilostwatch\",\"path\":\"http://download.redis.io/releases/redis-2.8.12.tar.gz\",\"type\":0}],\"status\":2,\"version\":\"1390999000\"}";
+    m_netReply->deleteLater();
     qDebug()<<apk_rsp_str;
     bool ok;
     //QJson::Parser parser;
@@ -152,7 +153,7 @@ void DataUpdate::ApkFinish()
     }
     //QVariantMap apk_rsp_res = parser.parse(apk_rsp_str.toUtf8(), &ok).toMap();
     JsonObject apk_rsp_res = QtJson::parse(apk_rsp_str, ok).toMap();
-    QString apkVersion=apk_rsp_res["apkversion"].toString();
+    QString apkVersion=apk_rsp_res["apkVersion"].toString();
     m_devDB.set(APK_VER, apkVersion.toStdString());
     qint32  nApkVerState=apk_rsp_res["status"].toInt();
 
@@ -166,6 +167,7 @@ void DataUpdate::ApkFinish()
         apkInfo apkIn;
         //QVariantList apklist = apk_rsp_res["apkList"].toList();
         JsonArray apklist = apk_rsp_res["apkList"].toList();
+        int apkNum = apklist.size();
         foreach( QVariant atom, apklist){
             //QVariantMap  apk_map = atom.toMap();
             JsonObject apk_map = atom.toMap();
@@ -181,7 +183,7 @@ void DataUpdate::ApkFinish()
 
              QString path = apk_map["path"].toString();
              string ApkPath = path.toStdString();
-             if( ApkPath.size() > 0){
+             if( ApkPath.empty()){
 
                  QNetworkRequest Down_Reqrequest(QUrl(tr(ApkPath.c_str())));
                  m_netReply = m_netManager->get(Down_Reqrequest);
@@ -191,22 +193,17 @@ void DataUpdate::ApkFinish()
                  loop.exec();
              }else{  // path == NULL
                  apk_flag = false;
+                 return;
              }
              m_apkDB.set(apkIn);
-             //QNetwork
         }
-        if(  Apk_Update_finish == Apk_Update_finish){
+        if(apkNum == Apk_Update_finish){
               m_bApkState = true;
-              //sqlopt->dev_update("apkversion", apkVersion.toStdString());
-              //m_devDB.set(APK_VER, apkVersion.toStdString());
-              //bug here? why should i do this ??
-              //not a bug, then call to update PKG
               GetPkgLibVer();
          }else{
               m_bApkState= false;
         }
     }
-    m_netReply->deleteLater();
 #endif
 }
 
@@ -214,6 +211,7 @@ void DataUpdate::quit()
 {
     if (m_netReply)
         m_netReply->abort();
+    m_netReply->deleteLater();
 }
 
 void DataUpdate::PkgFinish()
@@ -221,7 +219,7 @@ void DataUpdate::PkgFinish()
 #ifdef HAVE_QJSON
     QByteArray pkg_rsp_byte = m_netReply->readAll();
     QString pkg_rsp_str = QString(pkg_rsp_byte);
-//   QString pkg_rsp_str = "{\"commonPkg\":{\"apkList\":[{\"apkId\":7,\"counter\":0,\"icon\":0,\"run\":1,\"sort\":0},{\"apkId\":8,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":1},{\"apkId\":5,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":2},{\"apkId\":12,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":3},{\"apkId\":3,\"counter\":0,\"icon\":0,\"run\":0,\"sort\":4}],\"batchCode\":\"TY2\",\"modelList\":[],\"name\":\"common_pkg#TY2\",\"packageId\":14,\"type\":0},\"pkgList\":[],\"pkgVersion\":\"1404229444159\",\"status\":2}";
+    m_netReply->deleteLater();
     qDebug()<<pkg_rsp_str;
     bool ok;
     //QJson::Parser parser;
@@ -237,7 +235,6 @@ void DataUpdate::PkgFinish()
     qint32  status=pkg_rsp_res["status"].toInt();
     if(  status == 0 ){
         pkg_flag = true;
-        //
         return;
     }else if(status == 1 ){
         pkg_flag = false;
@@ -364,7 +361,6 @@ void DataUpdate::PkgFinish()
          }
      }
     m_bPkgState = true;
-    m_netReply->deleteLater();
 #endif
 }
 

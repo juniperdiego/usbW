@@ -1,8 +1,6 @@
 #include"mainwindow.h"
 #include <QApplication>
 #include <QtGui>
-//#include "dataupdate.h"
-#include "threadcontrol.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,13 +11,6 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(codec);  
     QTextCodec::setCodecForCStrings(codec);  
     QTextCodec::setCodecForTr(codec);
-
-#if 0
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
-    //QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
-    QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
-#endif
 
     //test network
     QHostInfo host = QHostInfo::fromName("www.baidu.com");
