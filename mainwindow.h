@@ -41,6 +41,8 @@ public:
     void CreateLayout();
     void CreateStatusbar();
     void CreateToolbar();
+
+    
 //@Fzq
 public:
     Data_Sql* Data_SqlOpt;

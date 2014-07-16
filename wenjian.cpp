@@ -1,5 +1,6 @@
 #include "wenjian.h"
 #include "ui_wenjian.h"
+#include "global.h"
 #include <QDate>
 #include <QPalette>
 #include <QProcess>
@@ -17,6 +18,8 @@ wenjian::wenjian(QWidget *parent) :
     ui->comboBox->addItem("1222");
     ui->comboBox->addItem("3333");
     connect(ui->comboBox,SIGNAL(activated(QString)),this,SLOT(OnChangeContent(QString)));
+    ui->label->setVisible(false);
+    ui->comboBox->setVisible(false);
     //GetFreeSpace();
     QProcess* pDf = new QProcess;
     connect(pDf, SIGNAL(finished(int)), this, SLOT(SetFreeSpace(int)));
@@ -88,7 +91,8 @@ void wenjian::SetFreeSpace(int nCode)
 {
     QProcess* pRes =( QProcess*)sender();
     QString strRes = pRes->readAll();
-    qDebug()<<strRes;
+    //qDebug()<<strRes;
+#if 0
     QStringList strLstLine = strRes.split("\n");
     qDebug()<<strLstLine;
     QStringList strLstMnt;
@@ -114,8 +118,31 @@ void wenjian::SetFreeSpace(int nCode)
           }
     }
     QString strFreeSpace = QString::number(dFreeSpace, 'f', 4);
-   ui->cardspaceLabel->setText(strFreeSpace);
+    ui->cardspaceLabel->setText(strFreeSpace);
+#endif
+    double dFreeSpace = 0;
+    QStringList strLstLine = strRes.split("\n", QString::SkipEmptyParts);
+    for (int i = strLstLine.count()-1; i >= 0; i--)
+    {
+        QStringList strs = strLstLine[i].split(" ", QString::SkipEmptyParts);
+        if (strs.count() < 6) continue;
+        if (!strs[5].contains("/mnt/repos")) continue;
+
+        QString strNum = strs[3];
+        QString strUnit = strs[3].right(1);
+        strNum.remove(strUnit);
+        if(strUnit == "G"){
+            dFreeSpace += strNum.toDouble();
+        }else{
+            if(strUnit == "M")
+                dFreeSpace += strNum.toDouble()/1024;
+            else
+                dFreeSpace += strNum.toDouble()/(1024*1024);
+        }
+    }
+    ui->cardspaceLabel->setText(QString::number(dFreeSpace));
 }
+
 void wenjian::OnChangeContent(QString str)
 {}
 //@Add Func1

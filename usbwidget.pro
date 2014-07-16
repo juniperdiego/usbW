@@ -45,6 +45,7 @@ SOURCES += db/sqlDB.cpp\
             db/mblStatDB.cpp\
             db/logDB.cpp
 
+SOURCES += json/json.cpp
 
 HEADERS  += widget.h \
     gengxin.h \
@@ -78,6 +79,7 @@ HEADERS  += db/sqlDB.h\
             db/logDB.h\
             db/devDB.h
 
+HEADERS  += json/json.h
 
 
 FORMS    += widget.ui \
@@ -98,6 +100,6 @@ LIBS += -lsqlite3 \
             ./usb/pc/libusb_enum.a
 #            ./usb/arm/libusb_enum.a
 
-LIBS += -lqjson
+#LIBS += -lqjson
 
 

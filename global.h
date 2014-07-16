@@ -24,6 +24,8 @@
 
 using namespace std;
 
+//@zb
+#define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
 #define FIFO "/tmp/usb_fifo"
 #define MAX_APK_NUM (64/8)
@@ -34,15 +36,15 @@ using namespace std;
 #define URL_DEVVER "http://www.tymng.com:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://www.tymng.com:8080/nzyw/api/getApkLibVersion.do"
 #define URL_PKGLIBVER "http://www.tymng.com:8080/nzyw/api/getPkgLibVersion.do"
-#define  TMP_PATH  "/tmp/tmpapk"
-#define  APK_PATH  "/mnt/repos/apk"
-#define  SPIRIT_PATH "/tmp/kuaijl/update.zip"
+#define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
+#define APK_PATH  "/mnt/repos/.kuaijl/apks"
+#define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
 
 //update
 #define URL_UPLOAD "http://192.168.1.103:8080/nzyw/api/processLog.do"
 #define BLOCKSIZE 100
 #define MAXLINELEN 512
-#define LOGPATH "/home/zb/work/log"
+#define LOGPATH "/mnt/repos/.kuaijl/log"
 #define PERIOD (60*60*2)
 
 
@@ -62,13 +64,12 @@ typedef struct USB_STATE{
 class Global
 {
 public:
-    Global();
-public:
     static QString g_IP;                     //服务器IP
     static std::string g_DevID;         //Device ID
-    static bool g_NetState;             //网络状态
+    static bool s_netState;             //网络状态
     static int g_UnUpNum;           //未上传文件数量
     static USB_State usb_state[USB_COUNT];
+    static bool s_needRestart;
 };
 
 #endif // GLOBAL_H

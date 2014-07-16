@@ -1,17 +1,20 @@
 #include "gengxin.h"
 #include "ui_gengxin.h"
-#include <QtDebug>
+#include "global.h"
 #include <QMessageBox>
 
 
-Gengxin::Gengxin(QWidget *parent) :
+Gengxin::Gengxin(bool start, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Gengxin)
 {
+    QString msg = tr("系统正在更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
+    if (start) msg = tr("系统版本更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
     //setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     this->setWindowTitle(tr("更新"));
-    ui->labUp->setText(tr("系统正在登录中...\n请不要插/拔数据线进行安装工作或进行其他操作"));
+    
+    ui->labUp->setText(msg);
     MvLoading = new QMovie(":/images/loading.gif");
     ui->labMv->setMovie(MvLoading);
     this->ui->pushBtnTerm->setVisible(false);
@@ -41,7 +44,6 @@ void Gengxin::OnOk()
     ui->CancleBtn->setVisible(false);
     ui->pushBtnTerm->setVisible(true);
     StartUpdate();
-    qDebug()<<"Updating...";
 }
 void Gengxin::OnTerm()
 {
@@ -96,32 +98,51 @@ void Gengxin::StopUpdate()
 
 void Gengxin::updateVersion()
 {
-    //bug here, no update the devVer ???
+    updateStartVersion();
+
+    bool devState = m_dataUp->GetDevState();
+
+    if (devState && Global::s_needRestart)
+    {
+        QString exePath = qApp->applicationFilePath();
+        QString newExe = exePath + ".bak";
+        QFile::remove(exePath);
+        QFile::copy(newExe, exePath);
+        qApp->quit();
+        QProcess::startDetached(exePath, QStringList());
+    }
+}
+
+void Gengxin::updateStartVersion()
+{
     bool devState = m_dataUp->GetDevState();
 
     QString strState;
-    if (devState)
-        strState += "软件版本更新成功!自动重启软件!\n";
-    else
-        strState += "软件版本更新失败!\n";
+    if (devState && Global::s_needRestart)
+        strState = "软件版本更新成功!自动重启软件!\n";
+    else if (!devState)
+        strState = "软件版本更新失败!\n";
 
-    QMessageBox::critical(this, windowTitle(), strState);
-
-    if (devState)
-    {
-        qApp->quit();
-        QProcess::startDetached(qApp->applicationFilePath(), QStringList());
-    }
+    if (!strState.isEmpty())
+        QMessageBox::critical(this, windowTitle(), strState);
 }
 
 void Gengxin::StartUpdate()
 {
     MvLoading->start();
     m_dataUp = new DataUpdate;
-    connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateVersion()));
+    //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateVersion()));
     m_dataUp->GetDeviceVer();
 
     connect(m_dataUp, SIGNAL(CloseUp()), this, SLOT(UpDone()));
     m_dataUp->updateData();
 }
 
+void Gengxin::StartUpSoft()
+{
+    MvLoading->start();
+    m_dataUp = new DataUpdate;
+    //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateStartVersion()));
+    //m_dataUp->GetDeviceVer();
+    updateStartVersion();
+}

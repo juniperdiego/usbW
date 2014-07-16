@@ -14,7 +14,7 @@ class Gengxin : public QDialog
     Q_OBJECT
 
 public:
-    explicit Gengxin(QWidget *parent = 0);
+    explicit Gengxin(bool start = false, QWidget *parent = 0);
     ~Gengxin();
 
 protected:
@@ -23,6 +23,7 @@ protected:
 public:
     void SetBtnInvis();
     void StartUpdate();
+    void StartUpSoft();
     void StopUpdate();
     bool getUpdateState();
 
@@ -31,11 +32,12 @@ private:
     QMovie* MvLoading;
     bool m_updateState;
 
-private slots:
+public slots:
     void OnOk();
     void UpDone();
     void OnCancle();
     void OnTerm();
+    void updateStartVersion();
     void updateVersion();
 
 private:

@@ -21,29 +21,31 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
 #endif
 
-
-
-//    FILE_CTL *record = new FILE_CTL;
-//    record->init();
-//    record->log_deal();
-//        DataUpdate* Up = new DataUpdate;
-//        Up->ApkFinish();
-////        Up->mk_filedir("/tmp/test/test/tmp.apk");
-//    Up->PkgFinish();
-    //    QString file1 = "/home/zb/DATA/1.apk";
-//    qDebug()<< Up->getFileMd5( file1);
-//    QString premd5="3b802deb55136e43aabe26785da8166d";
-//    if ( Up->MD5_Check(file1, premd5)){
-//        qDebug()<< premd5;
-//    }
-//    qDebug()<< Up->getFileMd5("/home/zb/DATA/2.apk");
-//    qDebug()<< Up->getFileMd5("/home/zb/DATA/3.apk");
-
+    //test network
+    QHostInfo host = QHostInfo::fromName("www.baidu.com");
+    if (!host.addresses().isEmpty()) Global::s_netState = true;
 
     MainWindow w;
     w.setWindowTitle("Welcome");
     w.show();
-    w.OnGengxin();
+
+    if (Global::s_netState)
+    {
+        Gengxin gengXin(true);
+        gengXin.show();
+        gengXin.StartUpSoft();
+
+        if (Global::s_needRestart)
+        {
+            QString exePath = qApp->applicationFilePath();
+            QString cmd = "unzip ";
+            cmd += UPDATE_FILE_NAME;
+            QFile::remove(exePath);
+            QProcess::execute(cmd);
+            QProcess::startDetached(exePath, QStringList());
+            return 0;
+        }
+    }
 
     return a.exec();
 }

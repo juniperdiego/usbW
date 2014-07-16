@@ -1,0 +1,20 @@
+{
+    "apkList": [
+        {
+            "apkId": 1,
+            "md5value": "24138fa445dd1002adfc9f8d02e69282",
+            "path": "http://nzyw.com/test/apk1.apk",
+            "type": 0,
+			"packagePath":"com.qq.zzzzActivity"
+        },
+        {
+            "apkId": 2,
+            "md5value": "4a437e09e7181ca5592112bc76836013",
+            "path": "http://nzyw.com/test/apk2.apk",
+            "type": 0,
+			"packagePath":"com.360.xxxxActivity"
+        }
+    ],
+    "apkVersion": "1401722623521",
+    "status": 0
+}

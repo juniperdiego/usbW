@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
+    //setWindowFlags(Qt::FramelessWindowHint);
 
     ui->setupUi(this);
 
@@ -35,9 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
             break;
         }
     }
-    netConf = new QNetworkConfigurationManager;
-    connect(netConf,SIGNAL(onlineStateChanged(bool)),this,SLOT(onlineStateChange(bool)));
     Global::g_DevID = strDevID.toStdString();
+
+    netConf = new QNetworkConfigurationManager;
+    qDebug()<<"netConf = "<<netConf->isOnline();
+    connect(netConf,SIGNAL(onlineStateChanged(bool)),this,SLOT(onlineStateChange(bool)));
 
     CreateLayout();
 
@@ -85,9 +87,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
    File_UpLoad = new FileUpload;
    this->connect(File_UpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
-    QTimer::singleShot(10*60*1000,File_UpLoad,SLOT(start()));
+   //QTimer::singleShot(10*60*1000,File_UpLoad,SLOT(start()));
+   File_UpLoad->start();
 
-    call();
+   call();
 }
 
 MainWindow::~MainWindow()
@@ -255,11 +258,11 @@ void MainWindow::OnGengxin()
 //                                    tr("系统正在登录，请不要插/拔数据线进行安装工作"),
 //                                    QMessageBox::NoButton);
     Gengxin* UpLoadManual = new Gengxin;
-    //UpLoadManual->setWindowModified(Qt::ApplicationModal);
     UpLoadManual->show();
     UpLoadManual->StartUpdate();
 
-    qDebug()<<UpLoadManual->getUpdateState();
+    //qDebug()<<UpLoadManual->getUpdateState();
+
 }
 void MainWindow::OnWenjian()
 {
