@@ -3,23 +3,20 @@
 #include"sqlDB.h"
 
 
-enum autoRun { RUN= 1, NO_RUN}; 
-enum dspIcon { DISPLAY= 7, NO_DSP}; 
-
 class apkInfo {
     public:
-        int         apkID;
-        string      pkgName;
+        string      apkID;
+        string      pkgPath;
         int         counter;
-        dspIcon     dIcon;
-        autoRun     aRun;
+        bool        dIcon;
+        bool        aRun;
         string      md5;
 
     apkInfo()
-            :apkID(INVALID_ID),
+            :
             counter(0),
-            dIcon(NO_DSP), 
-            aRun(NO_RUN) 
+            dIcon(false), 
+            aRun(false) 
     {
     };
 };

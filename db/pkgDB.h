@@ -7,7 +7,7 @@
 class pkgInfo
 {
     public:
-        int             pkgID;  
+        string          pkgID;  
         string          pkgName;
         string          batchCode;
         vector<string>  apkList;
@@ -15,7 +15,7 @@ class pkgInfo
         string          date;
 
    pkgInfo()
-       :pkgID(INVALID_ID),apkSum(0)
+       :apkSum(0)
    {
    };
 

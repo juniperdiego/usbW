@@ -10,8 +10,12 @@
 #include <time.h>
 #include <vector>
 
+void get_date( char date[], int date_length, long int diff);
+
+
 using namespace std;
-const int INVALID_ID = -1;
+const int INVALID_ID = -2;
+const int COMM_PKG_ID= -1;
 
 class sqlDB
 {

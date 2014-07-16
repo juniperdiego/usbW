@@ -129,3 +129,12 @@ string sqlDB::getTableName()
 {
     m_tabName =  tabName;
 }
+
+
+void get_date( char date[], int date_length, long int diff)
+{
+    time_t timep=time(0);
+    timep -= diff;
+    strftime( date, date_length, "%Y%m%d", localtime(&timep));
+}
+

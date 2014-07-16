@@ -96,6 +96,7 @@ void Gengxin::StopUpdate()
 
 void Gengxin::updateVersion()
 {
+    //bug here, no update the devVer ???
     bool devState = m_dataUp->GetDevState();
 
     QString strState;

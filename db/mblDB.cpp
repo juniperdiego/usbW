@@ -14,7 +14,7 @@ mblDB::mblDB()
     {
         char* errMsg;
         // creat the table
-        sprintf(sql, "CREATE TABLE %s ( key integer PRIMARY KEY, pkgID int);", getTableName().c_str());
+        sprintf(sql, "CREATE TABLE %s ( key varchar(128) PRIMARY KEY, pkgID varchar(128) );", getTableName().c_str());
         int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
         if( rc ){   
             fprintf(stderr, "Can't create table %s: %s\n", getTableName().c_str(), errMsg);   
@@ -30,6 +30,8 @@ mblDB::~mblDB()
 
 bool mblDB::set( const mblInfo& mbl)
 {
+    if(mbl.mblID.empty())
+        return false;
     char sql[1024] ="";
     char* errMsg;
 
@@ -37,8 +39,8 @@ bool mblDB::set( const mblInfo& mbl)
             (key, pkgID)\
        values( %d, %d);",
        getTableName().c_str(),
-       mbl.mblID, 
-       mbl.pkgID 
+       mbl.mblID.c_str(), 
+       mbl.pkgID.c_str() 
        );
 
     if(SQLITE_OK == sqlite3_exec(s_db, sql, NULL, NULL, &errMsg))
@@ -53,7 +55,7 @@ bool mblDB::get(mblInfo & mbl)
     sqlite3_stmt *stmt;
     int rc;
 
-    sprintf(sql, "select pkgID from %s where key = '%d';", getTableName().c_str(), mbl.mblID);
+    sprintf(sql, "select pkgID from %s where key = '%s';", getTableName().c_str(), mbl.mblID.c_str());
 #if 0
     {
         int nrow = 0, ncolumn = 0;

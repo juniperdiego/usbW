@@ -5,11 +5,10 @@
 class mblInfo
 {
     public:
-        int             mblID;  
-        int             pkgID;
+        string          mblID;  
+        string          pkgID;
 
    mblInfo()
-       :mblID(INVALID_ID),pkgID(INVALID_ID)
    {
    };
 

@@ -14,7 +14,7 @@ pkgDB::pkgDB()
     {
         char* errMsg;
         // creat the table
-        sprintf(sql, "CREATE TABLE %s ( key integer PRIMARY KEY, pkgName varchar(128), batchCode varchar(32), apkList TEXT,  apkSum int,  date varchar(16));", getTableName().c_str());
+        sprintf(sql, "CREATE TABLE %s ( key varchar(128) PRIMARY KEY, pkgName varchar(128), batchCode varchar(32), apkList TEXT,  apkSum int,  date varchar(16));", getTableName().c_str());
         int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
         if( rc ){   
             fprintf(stderr, "Can't create table %s: %s\n", getTableName().c_str(), errMsg);   
@@ -30,6 +30,9 @@ pkgDB::~pkgDB()
 
 bool pkgDB::set( const pkgInfo& pkg)
 {
+    if(pkg.pkgID.empty())
+        return false;
+
     char sql[1024] ="";
     char* errMsg;
 
@@ -45,9 +48,9 @@ bool pkgDB::set( const pkgInfo& pkg)
 
     sprintf(sql, "insert or replace into %s\
             (key, pkgName, batchCode, apkList, apkSum, date)\
-       values( %d, \"%s\",   \"%s\",  \"%s\",   %d,    \"%s\");",
+       values( %s, \"%s\",   \"%s\",  \"%s\",   %d,    \"%s\");",
        getTableName().c_str(),
-       pkg.pkgID, 
+       pkg.pkgID.c_str(), 
        pkg.pkgName.c_str(),
        pkg.batchCode.c_str(),
        apkListStr.c_str(),
@@ -65,7 +68,7 @@ bool pkgDB::set( const pkgInfo& pkg)
 class pkgInfo
 {
     public:
-        int             pkgID;  
+        string          pkgID;  
         string          pkgName;
         string          batchCode;
         vector<string>  apkList;
@@ -80,7 +83,7 @@ bool pkgDB::get(pkgInfo & pkg)
     sqlite3_stmt *stmt;
     int rc;
 
-    sprintf(sql, "select pkgName, batchCode, apkList, apkSum, date from %s where key = '%d';", getTableName().c_str(), pkg.pkgID);
+    sprintf(sql, "select pkgName, batchCode, apkList, apkSum, date from %s where key = '%s';", getTableName().c_str(), pkg.pkgID.c_str());
 #if 0
     {
         int nrow = 0, ncolumn = 0;
