@@ -8,7 +8,7 @@ Gengxin::Gengxin(bool start, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Gengxin)
 {
-    QString msg = tr("系统正在更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
+    QString msg = tr("系统数据正在更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
     if (start) msg = tr("系统版本更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
     //setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
@@ -65,22 +65,34 @@ bool Gengxin::getUpdateState()
 
 void Gengxin::UpDone()
 {
-    bool pkgState = m_dataUp->GetPkgState();
-    bool apkState = m_dataUp->GetApkState();
+    int pkgState = m_dataUp->GetPkgState();
+    int apkState = m_dataUp->GetApkState();
 
     QString strState;
-    if (pkgState)
-        strState += "安装包数据库更新成功!\n";
-    else
-        strState += "安装包数据库更新失败\n";
-    if (apkState)
-        strState += "安装包更新成功\n";
-    else
-        strState += "安装包更新失败\n";
+
+    switch (apkState)
+    {
+        case 0 : strState += "安装包更新成功!\n"; break;
+        case 1 : strState += "安装包更新失败!\n"; break;
+        case 2 : strState += "安装包无需更新!\n"; break;
+        case 3 : strState += "安装包更新不完全!\n"; break;
+        case 4 : strState += "服务器链接错误!\n"; break;
+        default : break;
+    }
+
+    switch (pkgState)
+    {
+        case 0 : strState += "安装包数据库更新成功!\n"; break;
+        case 1 : strState += "安装包数据库更新失败!\n"; break;
+        case 2 : strState += "安装包数据库无需更新!\n"; break;
+        case 4 : strState += "服务器链接错误!\n"; break;
+        default : break;
+    }
 
     QMessageBox::critical(this, windowTitle(), strState);
 
-    if (pkgState && apkState)
+    if ((apkState == 0 || apkState == 2) && 
+        (pkgState == 0 || pkgState == 2))
     {
         m_updateState = true;
         accept();
@@ -115,12 +127,14 @@ void Gengxin::updateVersion()
 
 void Gengxin::updateStartVersion()
 {
-    bool devState = m_dataUp->GetDevState();
+    int devState = m_dataUp->GetDevState();
 
     QString strState;
-    if (devState && Global::s_needRestart)
+    if (devState == 2 && Global::s_needRestart)
         strState = "软件版本更新成功!自动重启软件!\n";
-    else if (!devState)
+    else if (devState == 0)
+        strState = "软件版本无需更新!\n";
+    else if (devState == 1)
         strState = "软件版本更新失败!\n";
 
     if (!strState.isEmpty())

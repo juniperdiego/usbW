@@ -12,6 +12,12 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(codec);  
     QTextCodec::setCodecForTr(codec);
 
+    //create dir for update
+    QDir appDir;
+    appDir.mkpath(TMP_PATH);
+    appDir.mkpath(APK_PATH);
+    appDir.mkpath(LOG_PATH);
+
     //test network
     QHostInfo host = QHostInfo::fromName("www.baidu.com");
     if (!host.addresses().isEmpty()) Global::s_netState = true;

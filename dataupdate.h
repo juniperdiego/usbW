@@ -2,17 +2,8 @@
 #define DATAUPDATE_H
 
 #include "global.h"
-#include "sqlopt.h"
 
-typedef struct APK_INFO{
-    QString  apkId;
-    qint32    counter;
-    qint32   icon;
-    qint32   run;
-    qint32   sort;
-    QString packagePath;
-    QString md5;
-}ApkInfo;
+//0 成功有更新 1 失败  2成功无更新 3下载不完全 4服务器出错
 
 class DataUpdate : public QObject
 {
@@ -22,20 +13,12 @@ public:
     ~DataUpdate();
     
 public:
-    void GetDeviceVer(); //0 无更新 1 成功  2失败
-    void GetApkLibVer(); //0 无更新 1 成功  2失败 3 不完全
-    void GetPkgLibVer(); //0 无更新 1 成功  2失败
+    void GetDeviceVer(); 
+    void GetApkLibVer(); 
+    void GetPkgLibVer(); 
     void updateData();
 
-    void mkdir(QString  path);
-    void mk_filedir(QString  path);
-    QString getFilePath();
-    void setApkFile(const QString& apkfile);
-    QString getApkFile();
-    void setAPKURL(string apkpath);
-    string  getAPKURL();
-    void setFilePath(const QString& fileName);
-    bool copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist) ;
+    bool copyFile(const QString& sourceFile, const QString& toFile, bool isOverwrite) ;
     QString getFileMd5(QString filepath);
 
     void Download_File(const QString& url, const QString& fileName);
@@ -62,15 +45,12 @@ public slots:
 private:
     QNetworkAccessManager* m_netManager;
     QNetworkReply* m_netReply;
-    SqlOpt *sqlopt;
-
     QFile* m_dFile;
 
     devDB m_devDB;
     pkgDB m_pkgDB;
     apkDB m_apkDB;
     mblDB m_mblDB;
-
 
     QString m_apkIdStr;
     QString m_filePath;
@@ -79,9 +59,9 @@ private:
 
     int Apk_Update_finish;
 
-    bool m_bDevState;
-    bool m_bApkState;
-    bool m_bPkgState;
+    int m_devState;
+    int m_apkState;
+    int m_pkgState;
 };
 
 #endif // DATAUPDATE_H

@@ -10,7 +10,7 @@ using QtJson::JsonArray;
 
 
 bool cmp(const pair<string, int>& t1, const pair<string, int>& t2) {
-            return t1.second < t2.second;
+    return t1.second < t2.second;
 }
 
 DataUpdate::DataUpdate(QObject *parent) :
@@ -18,12 +18,11 @@ DataUpdate::DataUpdate(QObject *parent) :
 {
     m_netManager = new QNetworkAccessManager;
 
-    this->m_bDevState = false;
-    this->m_bApkState = false;
-    this->m_bPkgState = false;
-    sqlopt = new SqlOpt;
-    sqlopt->sqlinit();
+    m_devState = 1;
+    m_apkState = 1;
+    m_pkgState = 1;
 }
+
 DataUpdate::~DataUpdate()
 {
 }
@@ -84,7 +83,7 @@ void DataUpdate::GetPkgLibVer()
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(PkgFinish()));
     QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
-   
+
     qDebug()<<"update pkg ok";
 }
 
@@ -100,7 +99,7 @@ void DataUpdate::DevFinish()
     bool ok;
     //QJson::Parser parser;
     if (dev_rsp_str.isEmpty()){
-        m_bDevState = false;
+        m_devState = 4;
         return;
     }
     //QVariantMap dev_rsp_res = parser.parse(dev_rsp_str.toUtf8(), &ok).toMap();
@@ -114,15 +113,15 @@ void DataUpdate::DevFinish()
         m_apkDB.clearTableItems();
         m_devDB.set(CHAN_ID, cid);
     }
-    qint32  nDevVerState=dev_rsp_res["status"].toInt();
-    if( nDevVerState == 0){
-        m_bDevState = true; // bug here ??
+    int  nDevVerState=dev_rsp_res["status"].toInt();
+    if( nDevVerState == 2){
+        m_devState = 2;
         return;
     }else if(nDevVerState == 1){
-        m_bDevState = false;
+        m_devState = 1;
+        return;
     }
     else{
-        m_bDevState = true;
         QString path=dev_rsp_res["path"].toString();
         QString dev_md5=dev_rsp_res["md5value"].toString();
         QString filename= UPDATE_FILE_NAME;
@@ -130,6 +129,7 @@ void DataUpdate::DevFinish()
 
         if (MD5_Check(filename, dev_md5))
         {
+            m_devState = 0;
             Global::s_needRestart = true;
         }
     }
@@ -146,9 +146,8 @@ void DataUpdate::ApkFinish()
     qDebug()<<apk_rsp_str;
     bool ok;
     //QJson::Parser parser;
-    bool  apk_flag = true;
-    if (apk_rsp_str.size()==0){
-        apk_flag = false;
+    if (apk_rsp_str.isEmpty()){
+        m_apkState = 4;
         return;
     }
     //QVariantMap apk_rsp_res = parser.parse(apk_rsp_str.toUtf8(), &ok).toMap();
@@ -157,13 +156,14 @@ void DataUpdate::ApkFinish()
     m_devDB.set(APK_VER, apkVersion.toStdString());
     qint32  nApkVerState=apk_rsp_res["status"].toInt();
 
-    if( nApkVerState==0){
-        apk_flag = true;
+    if( nApkVerState == 2){
+        m_apkState = 2;
         return;
     }else if(nApkVerState == 1 ){
-        apk_flag = false;
+        m_apkState = 1;
         return;
     }else{
+        Apk_Update_finish = 0;
         apkInfo apkIn;
         //QVariantList apklist = apk_rsp_res["apkList"].toList();
         JsonArray apklist = apk_rsp_res["apkList"].toList();
@@ -174,34 +174,41 @@ void DataUpdate::ApkFinish()
             m_apkIdStr = apk_map["apkId"].toString();
             QString apk_file_name ;
             apk_file_name = TMP_PATH + m_apkIdStr;
-            setApkFile(m_apkIdStr);
             m_preMd5 = apk_map["md5value"].toString();
             apkIn.md5 = apk_map["md5value"].toString().toStdString();
             //QString packagePath = apk_map["packagePath"].toString();
             apkIn.pkgPath = apk_map["packagePath"].toString().toStdString();
             //sqlopt->apk_update_packagePath(m_apkIdStr.toStdString(), packagePath.toStdString());
 
-             QString path = apk_map["path"].toString();
-             string ApkPath = path.toStdString();
-             if( ApkPath.empty()){
-
-                 QNetworkRequest Down_Reqrequest(QUrl(tr(ApkPath.c_str())));
-                 m_netReply = m_netManager->get(Down_Reqrequest);
-                 QEventLoop loop;
-                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
-                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
-                 loop.exec();
-             }else{  // path == NULL
-                 apk_flag = false;
-                 return;
-             }
-             m_apkDB.set(apkIn);
+            QString path = apk_map["path"].toString();
+            string ApkPath = path.toStdString();
+            int apkOkNum = Apk_Update_finish;
+            if(!ApkPath.empty()){
+                QNetworkRequest Down_Reqrequest(QUrl(tr(ApkPath.c_str())));
+                m_netReply = m_netManager->get(Down_Reqrequest);
+                QEventLoop loop;
+                QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
+                QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+                loop.exec();
+            }else{  // path == NULL
+                m_apkState = 4;
+                return;
+            }
+            if ((apkOkNum+1) == Apk_Update_finish)
+            {
+                m_apkDB.set(apkIn);
+            }
+            else
+            {
+                m_apkState = 3;
+                return;
+            }
         }
         if(apkNum == Apk_Update_finish){
-              m_bApkState = true;
-              GetPkgLibVer();
-         }else{
-              m_bApkState= false;
+            m_apkState = 0;
+            GetPkgLibVer();
+        }else{
+            m_apkState = 3;
         }
     }
 #endif
@@ -223,9 +230,8 @@ void DataUpdate::PkgFinish()
     qDebug()<<pkg_rsp_str;
     bool ok;
     //QJson::Parser parser;
-    bool  pkg_flag = true;
-    if (pkg_rsp_str.size()==0){
-        pkg_flag = false;
+    if (pkg_rsp_str.isEmpty()){
+        m_pkgState = 4;
         return;
     }
     //QVariantMap pkg_rsp_res = parser.parse(pkg_rsp_str.toUtf8(), &ok).toMap();
@@ -234,10 +240,10 @@ void DataUpdate::PkgFinish()
     m_devDB.set(PKG_VER, pkgVersion.toStdString());
     qint32  status=pkg_rsp_res["status"].toInt();
     if(  status == 0 ){
-        pkg_flag = true;
+        m_pkgState = 0;
         return;
     }else if(status == 1 ){
-        pkg_flag = false;
+        m_pkgState = 1;
         return;
     }else{
         QString md5;
@@ -246,10 +252,8 @@ void DataUpdate::PkgFinish()
         char  date[12];
         get_date(date, 12, 0);
         QString date_today = date;
-        if( pkg_rsp_res["commonPkg"].isNull() ) {
-        }else{
+        if(!pkg_rsp_res["commonPkg"].isNull() ) {
             pkgInfo pkgIn;
-
             //QVariantMap commpkg = pkg_rsp_res["commonPkg"].toMap();
             JsonObject commpkg = pkg_rsp_res["commonPkg"].toMap();
             pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
@@ -282,9 +286,8 @@ void DataUpdate::PkgFinish()
                 else
                     apkIn.aRun = true;
             }
-
         }
-         if( ! pkg_rsp_res["pkgList"].isNull() ) {
+        if(!pkg_rsp_res["pkgList"].isNull()) {
 
             QString atom_batchcode;
             QString atom_name;
@@ -335,7 +338,7 @@ void DataUpdate::PkgFinish()
                 }
 
                 sort(sortVector.begin(), sortVector.end(), cmp);
-                
+
                 pkgIn.apkList.clear();
                 for(size_t i= 0; i < sortVector.size(); i++)
                 {
@@ -358,9 +361,9 @@ void DataUpdate::PkgFinish()
                     m_mblDB.set(mblIn);
                 }
             }
-         }
-     }
-    m_bPkgState = true;
+        }
+    }
+    m_pkgState = 0;
 #endif
 }
 
@@ -385,7 +388,6 @@ void DataUpdate::Download_File(const QString& urlStr, const QString& fileName)
     }
 
     m_netReply = m_netManager->get(QNetworkRequest(QUrl(urlStr)));
-    setFilePath(fileName);
 
     QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(readyRead()),this,SLOT(DownloadRead()));
@@ -407,26 +409,8 @@ void DataUpdate::DownloadFinish()
     m_netReply->deleteLater();
 }
 
-QString DataUpdate::getFilePath()
-{
-    return m_filePath;
-}
-
-void DataUpdate::setFilePath(const QString& filepath)
-{
-    m_filePath = filepath;
-}
-
-void DataUpdate::setApkFile(const QString& apkfile){
-    m_apkFile = apkfile;
-}
-
-QString DataUpdate::getApkFile(){
-    return m_apkFile;
-}
-
 bool DataUpdate::MD5_Check(QString strFilePath, QString md5){
-    
+
     QFile file(strFilePath);
     if (!file.exists()) return false;
     else if (file.size() == 0) return false;
@@ -442,57 +426,33 @@ bool DataUpdate::MD5_Check(QString strFilePath, QString md5){
 }
 
 void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
-    qDebug() << m_apkIdStr;
-    //QString apk_id = QString::fromStdString(getApkFile());
-    QString file_name;
-    file_name = TMP_PATH + m_apkIdStr;
+    qDebug() << "Download apk "<<m_apkIdStr;
+    QString file_name = TMP_PATH;
+    file_name += "/" + m_apkIdStr;
     QFile fd(file_name);
-
-    mkdir(file_name);
-
     if(fd.open(QIODevice::WriteOnly)){
         fd.write(Reply_apk->readAll());               //////////budge////////
     }
     fd.flush();
     fd.close();
     if (MD5_Check( file_name , m_preMd5) ){
-           //sqllite3  string apk_info = sql_opt.get_all();
-           QString apk_final_path;
-           QString pkg_id;
-           int a, b;
-           pkg_id = QString::fromStdString( sqlopt->apk_get_path( m_apkIdStr.toStdString(), &a, &b));
-            apk_final_path = APK_PATH + pkg_id;
-
-           apk_final_path +=  "/" + m_apkIdStr + ".apk";
-           mk_filedir(apk_final_path);
-           if (copyFileToPath(file_name, apk_final_path, true )){
-               //sqlite3 change data;
-               sqlopt->apk_update(m_apkIdStr.toStdString(), m_preMd5.toStdString());
-               Apk_Update_finish += 1;
-           }
-     }else{
-           QFile::remove(file_name);
-     }
+        QString apk_final_path = APK_PATH;
+        apk_final_path +=  "/" + m_apkIdStr + ".apk";
+        if (copyFile(file_name, apk_final_path, true)){
+            Apk_Update_finish++;
+        }
+    }else{
+        QFile::remove(file_name);
+    }
     m_netReply->deleteLater();
 }
 
-bool DataUpdate::copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist)
+bool DataUpdate::copyFile(const QString& sourceFile, const QString& toFile, bool isOverwrite)
 {
-    toDir.replace("\\","/");
-    if (sourceDir == toDir){
-        return true;
-    }
-    if (!QFile::exists(sourceDir)){
-        return false;
-    }
-    mkdir(toDir);
-    if (QFile::exists(toDir)){
-        if(coverFileIfExist){
-            QFile::remove(toDir);
-        }
-    }//end if
+    if (isOverwrite && QFile::exists(toFile))
+        QFile::remove(toFile);
 
-    if(!QFile::copy(sourceDir, toDir))
+    if(!QFile::copy(sourceFile, toFile))
     {
         return false;
     }
@@ -501,15 +461,15 @@ bool DataUpdate::copyFileToPath(QString sourceDir ,QString toDir, bool coverFile
 
 int DataUpdate::GetDevState()
 {
-    return this->m_bDevState;
+    return m_devState;
 }
 int DataUpdate::GetApkState()
 {
-    return this->m_bApkState;
+    return m_apkState;
 }
 int DataUpdate::GetPkgState()
 {
-   return  this->m_bPkgState;
+    return  m_pkgState;
 }
 
 QString DataUpdate::getFileMd5(QString filePath)
@@ -557,34 +517,5 @@ QString DataUpdate::getFileMd5(QString filePath)
     localFile.close();
     QByteArray md5 = ch.result();
     return md5.toHex();
-}
-
-
-void DataUpdate::mkdir(QString  path){
-    static QDir tmp;
-    QStringList  lpath = path.split("/", QString::SkipEmptyParts);
-    lpath.removeLast();
-    QString new_path;
-    foreach( QString  atom, lpath){
-        new_path += "/";
-        new_path += atom;
-        if( ! tmp.exists(new_path)){
-            tmp.mkdir( new_path);
-        }
-    }
-}
-
-void DataUpdate::mk_filedir(QString  path){
-    static QDir tmp;
-    QStringList  lpath = path.split("/", QString::SkipEmptyParts);
-    QString new_path;
-    foreach( QString  atom, lpath){
-        new_path += "/";
-        new_path += atom;
-        if( ! tmp.exists(new_path)){
-            tmp.mkdir( new_path);
-        }
-    }
-    tmp.rmdir(new_path);
 }
 
