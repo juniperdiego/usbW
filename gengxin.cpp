@@ -1,19 +1,20 @@
 #include "gengxin.h"
 #include "ui_gengxin.h"
 #include "global.h"
-#include <QMessageBox>
 
 
 Gengxin::Gengxin(bool start, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Gengxin)
 {
+    m_dataUp = NULL;
+
     QString msg = tr("系统数据正在更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
     if (start) msg = tr("系统版本更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
     //setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     this->setWindowTitle(tr("更新"));
-    
+
     ui->labUp->setText(msg);
     MvLoading = new QMovie(":/images/loading.gif");
     ui->labMv->setMovie(MvLoading);
@@ -48,7 +49,9 @@ void Gengxin::OnOk()
 void Gengxin::OnTerm()
 {
     if (m_dataUp)
+    {
         m_dataUp->quit();
+    }
 
     reject();
 }
@@ -92,7 +95,7 @@ void Gengxin::UpDone()
     QMessageBox::critical(this, windowTitle(), strState);
 
     if ((apkState == 0 || apkState == 2) && 
-        (pkgState == 0 || pkgState == 2))
+            (pkgState == 0 || pkgState == 2))
     {
         m_updateState = true;
         accept();
@@ -136,6 +139,8 @@ void Gengxin::updateStartVersion()
         strState = "软件版本无需更新!\n";
     else if (devState == 1)
         strState = "软件版本更新失败!\n";
+    else if (devState == 4)
+        strState = "服务器链接错误!\n";
 
     if (!strState.isEmpty())
         QMessageBox::critical(this, windowTitle(), strState);
@@ -144,7 +149,8 @@ void Gengxin::updateStartVersion()
 void Gengxin::StartUpdate()
 {
     MvLoading->start();
-    m_dataUp = new DataUpdate;
+    if (m_dataUp == NULL)
+        m_dataUp = new DataUpdate;
     //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateVersion()));
     m_dataUp->GetDeviceVer();
 
@@ -155,7 +161,8 @@ void Gengxin::StartUpdate()
 void Gengxin::StartUpSoft()
 {
     MvLoading->start();
-    m_dataUp = new DataUpdate;
+    if (m_dataUp == NULL)
+        m_dataUp = new DataUpdate;
     //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateStartVersion()));
     m_dataUp->GetDeviceVer();
     updateStartVersion();

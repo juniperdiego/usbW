@@ -1,29 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define UPLOAD_LOG_PATH "/tmp/log"
-
-#include <QMainWindow>
-#include "ClickedLabel.h"
-#include <QGroupBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QToolBar>
-#include <QSpacerItem>
-#include "devwdg.h"
-#include <QTimer>
 #include "global.h"
-#include <QList>
-#include <QNetworkInterface>
-#include "data_sql.h"
+#include "ClickedLabel.h"
+#include "devwdg.h"
 #include "record.h"
-#include <QNetworkConfigurationManager>
-#include <QVector>
-#include <fileupload.h>
+#include "fileupload.h"
 #include "gengxin.h"
-#include "sqlopt.h"
 
 #define DEVCOUNT 12
 
@@ -38,29 +21,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
     void CreateLayout();
     void CreateStatusbar();
-    void CreateToolbar();
-
     
-//@Fzq
-public:
-    Data_Sql* Data_SqlOpt;
-    FILE_CTL* File_Opt;
-    FileUpload* File_UpLoad;
-    QTimer* UsbDevTimer;
-    int g_i;
-//    DevWdg* UsbDevHandle;
-//    DevWdg* UsbDevHandle3;
-//    USB_State* UsbState;
-    DevWdg* DevArray[DEVCOUNT];
-    //USB_State* UsbState[DEVCOUNT];
-
 private:
-    QString strDevID;
-    QNetworkConfigurationManager* netConf;
     int  GetAllFiles();
-
+    void startUsbScan();
 
 public slots:
     void OnGengxin();
@@ -71,19 +38,24 @@ public slots:
     void OnHelp();
     void ScanUsbDev();
     void TimeNow();
-    void ChangeDevStatus(int i);
     void onlineStateChange(bool bState);
     void setMvState(bool bState);   //change Mv State
     void SetUnUpCount();
 
-signals:
-    void setMvState();
-
 private:
     Ui::MainWindow *ui;
 
-    QToolBar *gexin;
-    QToolBar *wejian;
+    QString m_strDevID;
+    QNetworkConfigurationManager* m_netConf;
+
+    bool m_updateState;
+
+    QTimer* m_usbScanTimer;
+
+    FileUpload* m_fileUpLoad;
+
+    DevWdg* DevArray[DEVCOUNT];
+    //USB_State* UsbState[DEVCOUNT];
 
     ClickedLabel *gxin;
     ClickedLabel *wluo;

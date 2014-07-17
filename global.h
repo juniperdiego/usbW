@@ -2,14 +2,17 @@
 #define GLOBAL_H
 
 //@lgs
+#include <QtGui>
+#include <QtNetwork>
+#if 0
 #include <QObject>
 #include <QString>
-#include <QtNetwork>
 #include <QString>
 #include <QByteArray>
 #include <QCryptographicHash>
 #include <QFile>
 #include <QtDebug>
+#endif
 #include <string>
 #include <stdint.h>
 
@@ -46,6 +49,7 @@ using namespace std;
 #define MAXLINELEN 512
 #define LOG_PATH "/mnt/repos/.kuaijl/log"
 #define PERIOD (60*60*2)
+#define PERIOD_SET_UNUPLOAD 30*60
 
 
 typedef struct USB_STATE{

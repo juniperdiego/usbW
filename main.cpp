@@ -42,6 +42,8 @@ int main(int argc, char *argv[])
             QProcess::startDetached(exePath, QStringList());
             return 0;
         }
+        gengXin.hide();
+        w.OnGengxin();
     }
 
     return a.exec();

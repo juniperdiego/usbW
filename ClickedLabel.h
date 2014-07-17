@@ -15,9 +15,7 @@ signals:
 public:
     ClickedLabel(QWidget *parent=0):QLabel(parent)
     {
-        //QFont font;
-        //font.setPointSize(12);
-        //setFont(font);
+        //setStyleSheet("font-size: 12pt;");
     }
 
     ~ClickedLabel(){}

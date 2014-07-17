@@ -1,8 +1,5 @@
 #ifndef GENGXIN_H
 #define GENGXIN_H
-#include <QDialog>
-#include <QCloseEvent>
-#include <QMovie>
 #include "dataupdate.h"
 
 namespace Ui {
