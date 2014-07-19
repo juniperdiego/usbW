@@ -265,7 +265,8 @@ void DataUpdate::PkgFinish()
             pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
             //pkgIn.pkgName = commpkg["name"].toString().toStdString();
             pkgIn.pkgName = COMMON_PKG_NAME;
-            pkgIn.pkgID = commpkg["packageId"].toString().toStdString();
+            //pkgIn.pkgID = commpkg["packageId"].toString().toStdString();
+            pkgIn.pkgID = COMMON_PKG_NAME;
 
             JsonArray apkList = commpkg["apkList"].toList();
             int length=apkList.size();

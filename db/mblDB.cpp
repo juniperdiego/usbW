@@ -37,7 +37,7 @@ bool mblDB::set( const mblInfo& mbl)
 
     sprintf(sql, "insert or replace into %s\
             (key, pkgID)\
-       values( %d, %d);",
+       values( \"%s\", \"%s\");",
        getTableName().c_str(),
        mbl.mblID.c_str(), 
        mbl.pkgID.c_str() 
