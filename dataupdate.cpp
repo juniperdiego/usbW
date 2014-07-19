@@ -156,10 +156,11 @@ void DataUpdate::ApkFinish()
     JsonObject apk_rsp_res = QtJson::parse(apk_rsp_str, ok).toMap();
     QString apkVersion=apk_rsp_res["version"].toString();
     m_devDB.set(APK_VER, apkVersion.toStdString());
-    qint32  nApkVerState=apk_rsp_res["status"].toInt();
+    int  nApkVerState=apk_rsp_res["status"].toInt();
 
     if( nApkVerState == 2){
         m_apkState = 2;
+        GetPkgLibVer();
         return;
     }else if(nApkVerState == 1 ){
         m_apkState = 1;
@@ -187,7 +188,7 @@ void DataUpdate::ApkFinish()
             int apkOkNum = Apk_Update_finish;
             if(!ApkPath.empty()){
                 QNetworkRequest Down_Reqrequest(QUrl(tr(ApkPath.c_str())));
-                QNetworkReply* netReply = m_netManager->get(Down_Reqrequest);
+                m_netManager->get(Down_Reqrequest);
                 QEventLoop loop;
                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
@@ -242,9 +243,9 @@ void DataUpdate::PkgFinish()
     JsonObject pkg_rsp_res = QtJson::parse(pkg_rsp_str, ok).toMap();
     QString pkgVersion=pkg_rsp_res["version"].toString();
     m_devDB.set(PKG_VER, pkgVersion.toStdString());
-    qint32  status=pkg_rsp_res["status"].toInt();
-    if(  status == 0 ){
-        m_pkgState = 0;
+    int  status=pkg_rsp_res["status"].toInt();
+    if(  status == 2 ){
+        m_pkgState = 2;
         return;
     }else if(status == 1 ){
         m_pkgState = 1;
@@ -270,11 +271,11 @@ void DataUpdate::PkgFinish()
             pkgIn.date = date;
 
             m_pkgDB.set(pkgIn);
-            qint8 type = commpkg["type"].toInt();
+            int type = commpkg["type"].toInt();
             //QVariantList apkList = commpkg["apkList"].toList();
             QString apk_sort;
             foreach (QVariant apkinfo, apkList) {
-                QVariantMap apk_info = apkinfo.toMap();
+                JsonObject apk_info = apkinfo.toMap();
 
                 apkInfo apkIn;
                 apkIn.apkID = apk_info["apkId"].toString().toStdString();
@@ -317,6 +318,7 @@ void DataUpdate::PkgFinish()
                 pkgIn.batchCode = Pkg_atom["batchCode"].toString().toStdString();
                 pkgIn.apkList ;
 
+                apk_list = Pkg_atom["apkList"].toList();
                 vector<pair<string, int> > sortVector;
                 foreach( QVariant atom,  apk_list){
                     apkInfo apkIn;

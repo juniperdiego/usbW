@@ -66,18 +66,20 @@ void FileUpload::UpSingleFile(QString strFile)
         BlockData.append(OneLine);
     }
     BlockData.remove(BlockData.size()-1,1);
-    BlockData.insert(0,tr("{["));
-    BlockData.insert(BlockData.size(),tr("]}"));
+    //BlockData.insert(0,tr("{["));
+    //BlockData.insert(BlockData.size(),tr("]}"));
     //qDebug()<<BlockData<<"\n";
     UpOneBlock(BlockData,FileID);
 }
 void FileUpload::UpOneBlock(QByteArray BlockData,QString FileID)
 {
+    qDebug()<<"UpOneBlock"<<BlockData;
     loop = new QEventLoop;
     QObject::connect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+    const char* upurl = "http://192.168.1.105:8080/nzyw/api/processLog.do?file=data.log&md5Value=aadfadsfasdfaf";
     //QString urlStr = URL_UPLOAD;
     //urlStr += "?file=data.log&md5Value=12323";
-    QNetworkRequest request(QUrl(tr(URL_UPLOAD)));
+    QNetworkRequest request(QUrl(tr(upurl)));
     //QNetworkRequest request(QUrl(urlStr));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
 #if 0

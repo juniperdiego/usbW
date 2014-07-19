@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //UnUpCount->start(PERIOD_SET_UNUPLOAD);
     SetUnUpCount();
 
-#if 0
+#if 1
     m_fileUpLoad = new FileUpload;
     this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
     //QTimer::singleShot(10*60*1000,m_fileUpLoad,SLOT(start()));
@@ -227,6 +227,8 @@ void MainWindow::OnGengxin(bool all)
     UpLoadManual.hide();
 
     m_updateState = UpLoadManual.getUpdateState();
+
+    startUsbScan();
 }
 
 void MainWindow::OnWenjian()
