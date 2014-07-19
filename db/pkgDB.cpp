@@ -48,7 +48,7 @@ bool pkgDB::set( const pkgInfo& pkg)
 
     sprintf(sql, "insert or replace into %s\
             (key, pkgName, batchCode, apkList, apkSum, date)\
-       values( %s, \"%s\",   \"%s\",  \"%s\",   %d,    \"%s\");",
+       values( \"%s\", \"%s\",   \"%s\",  \"%s\",   %d,    \"%s\");",
        getTableName().c_str(),
        pkg.pkgID.c_str(), 
        pkg.pkgName.c_str(),
