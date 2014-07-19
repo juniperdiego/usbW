@@ -90,7 +90,7 @@ private:
     QLabel *sbid;
     QLabel *kjl;
     QLabel *time;
-    QLabel *jiaoshi;
+    ClickedLabel* jiaoshi;
     ClickedLabel* m_jiaozhun;
     ClickedLabel *help;
     QHBoxLayout *statusbox;

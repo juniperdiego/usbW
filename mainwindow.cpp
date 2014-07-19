@@ -6,11 +6,14 @@
 #include "devprocess.h"
 #include "help.h"
 #include "usb_enum.h"
+#include "touch/calibration.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    //setWindowFlags(Qt::FramelessWindowHint);
+#ifdef ARM
+    setWindowFlags(Qt::FramelessWindowHint);
+#endif
 
     //network Information
     QList<QNetworkInterface> NetInterfaceList;
@@ -182,6 +185,7 @@ void MainWindow::CreateStatusbar()
     jiaoshi = new ClickedLabel;
     jiaoshi->setText(tr("<u>校时</u>"));
     jiaoshi->setEnabled(false);
+    m_jiaozhun = new ClickedLabel;
     m_jiaozhun->setText(tr("<u>屏幕校准</u>"));
     m_jiaozhun->setEnabled(false);
     connect(m_jiaozhun, SIGNAL(clicked()), this, SLOT(OnJiaoZhun()));
@@ -259,6 +263,29 @@ void MainWindow::OnShangchuan()
 }
 void MainWindow::OnJiaoZhun()
 {
+    QFile pointercal("/etc/pointercal");
+    if (!pointercal.exists() || pointercal.size() == 0)
+    {
+        for (;;)
+        {
+            Calibration cal;
+            cal.exec();
+
+            QMessageBox message(QMessageBox::Question,
+                    QString::fromUtf8("提示"),
+                    QString::fromUtf8("<p>请确认触摸屏已经校正完毕。</p>"
+                        "<p>如果你不确认此提示消息，将在10秒钟后重新进入触摸屏设置程序。</p>"),
+                    QMessageBox::Yes | QMessageBox::No);
+
+            QTimer::singleShot(10 * 1000, &message, SLOT(reject()));
+            int reply = message.exec();
+            if (reply == QMessageBox::Yes)
+            {
+                ::sync();
+                break;
+            }
+        }
+    }
 }
 void MainWindow::OnHelp()
 {
