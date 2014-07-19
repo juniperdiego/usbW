@@ -175,6 +175,7 @@ void DataUpdate::ApkFinish()
             //QVariantMap  apk_map = atom.toMap();
             JsonObject apk_map = atom.toMap();
             m_apkIdStr = apk_map["apkId"].toString();
+            apkIn.apkID = m_apkIdStr.toStdString();
             QString apk_file_name ;
             apk_file_name = TMP_PATH + m_apkIdStr;
             m_preMd5 = apk_map["md5value"].toString();
@@ -262,7 +263,8 @@ void DataUpdate::PkgFinish()
             //QVariantMap commpkg = pkg_rsp_res["commonPkg"].toMap();
             JsonObject commpkg = pkg_rsp_res["commonPkg"].toMap();
             pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
-            pkgIn.pkgName = commpkg["name"].toString().toStdString();
+            //pkgIn.pkgName = commpkg["name"].toString().toStdString();
+            pkgIn.pkgName = COMMON_PKG_NAME;
             pkgIn.pkgID = commpkg["packageId"].toString().toStdString();
 
             JsonArray apkList = commpkg["apkList"].toList();
@@ -270,10 +272,10 @@ void DataUpdate::PkgFinish()
             pkgIn.apkSum = length;
             pkgIn.date = date;
 
-            m_pkgDB.set(pkgIn);
             int type = commpkg["type"].toInt();
             //QVariantList apkList = commpkg["apkList"].toList();
             QString apk_sort;
+            vector<pair<string, int> > sortVector;
             foreach (QVariant apkinfo, apkList) {
                 JsonObject apk_info = apkinfo.toMap();
 
@@ -290,7 +292,20 @@ void DataUpdate::PkgFinish()
                     apkIn.aRun = false;
                 else
                     apkIn.aRun = true;
+
+                int sort = apk_info["sort"].toInt();
+
+                sortVector.push_back(pair<string,int>(apkIn.apkID, sort));
             }
+
+            sort(sortVector.begin(), sortVector.end(), cmp);
+
+            pkgIn.apkList.clear();
+            for(size_t i= 0; i < sortVector.size(); i++)
+            {
+                pkgIn.apkList.push_back(sortVector[i].first);
+            }
+            m_pkgDB.set(pkgIn);
         }
         if(!pkg_rsp_res["pkgList"].isNull()) {
 
