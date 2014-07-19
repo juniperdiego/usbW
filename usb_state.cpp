@@ -6,6 +6,10 @@
 #include <QtDebug>
 #include "global.h"
 #include "usb_enum.h"
+#include <sstream>
+#include <errno.h>
+
+using namespace std;
 
 USB_State usb_state[12];
 
@@ -100,15 +104,23 @@ void add_callback(int num,  const char *serial){
                 + Global::g_DevID + "|"\
                 + pkgIn.batchCode + "|"\
                 + timeStr;
-                
-    string fileName = LOG_PATH + timeStr + ".csv";
 
-    int fd=open(fileName.c_str(), O_WRONLY|O_NONBLOCK,0);
+    stringstream strStream;
+    strStream << num ;
+    string numStr = strStream.str();
+                
+    string fileName = LOG_PATH + timeStr + "_" + numStr + ".csv";
+
+    //int fd=open(fileName.c_str(), O_WRONLY|O_NONBLOCK,0);
+    int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
     if(fd == -1)
     {
+        printf("errno.%02d is: %s/n", errno, strerror(errno));
         cout << "opening file("<<fileName <<") failed." << endl;
         return;
     }
+    else
+        cout << "opening file("<<fileName <<") suc." << endl;
 
     if(write(fd, msg.c_str(), msg.size()) == -1)
     {
