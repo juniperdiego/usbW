@@ -87,7 +87,6 @@ FORMS    += widget.ui \
     wenjian.ui \
     baobiao.ui \
     fuwuqi.ui \
-    mainwindow.ui \
     shangchuan.ui \
     devwdg.ui \
     help.ui \

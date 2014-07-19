@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include "wenjian.h"
 #include "fuwuqi.h"
 #include "baobiao.h"
@@ -9,12 +8,9 @@
 #include "usb_enum.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
     //setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->setupUi(this);
 
     //network Information
     QList<QNetworkInterface> NetInterfaceList;
@@ -30,16 +26,18 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     Global::g_DevID = m_strDevID.toStdString();
 
-    m_netConf = new QNetworkConfigurationManager;
-    connect(m_netConf, SIGNAL(onlineStateChanged(bool)), this, SLOT(onlineStateChange(bool)));
+    //m_netConf = new QNetworkConfigurationManager;
+    //connect(m_netConf, SIGNAL(onlineStateChanged(bool)), this, SLOT(onlineStateChange(bool)));
+
 
     CreateLayout();
 
+    QWidget* centralWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(layout);
     mainLayout->addLayout(gridlayout);
-    ui->centralwidget->setLayout(mainLayout);
-    ui->centralwidget->adjustSize();
+    centralWidget->setLayout(mainLayout);
+    setCentralWidget(centralWidget);
     this->setFixedSize(800,480);
 
     CreateStatusbar();
@@ -66,8 +64,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-    delete m_netConf;
 }
 
 void MainWindow::CreateLayout()
@@ -136,7 +132,8 @@ void MainWindow::CreateLayout()
     wscnum = new QLabel;
     wscnum->setText("0");
 
-    horizonSpacer1 = new QSpacerItem(800, 40, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem* horizonSpacer1 = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem* horizonSpacer2 = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
     layout->addWidget(gxin);
     layout->addWidget(wluo);
     layout->addWidget(wjian);
@@ -145,7 +142,7 @@ void MainWindow::CreateLayout()
     layout->addSpacerItem(horizonSpacer1);
     layout->addWidget(cangkuid);
     layout->addWidget(id);
-    layout->addSpacerItem(horizonSpacer1);
+    layout->addSpacerItem(horizonSpacer2);
     layout->addWidget(network);
     //layout->addWidget(neicun);
     layout->addWidget(shangchuan);
@@ -155,7 +152,6 @@ void MainWindow::CreateLayout()
 
 
     gridlayout = new QGridLayout;
-
     for(int nDevCount = 0; nDevCount < DEVCOUNT; nDevCount++)
     {
         DevWdg* TmpDevWdg = new DevWdg;
@@ -166,8 +162,6 @@ void MainWindow::CreateLayout()
         DevArray[nDevCount]->SetStatus(tr("空闲"));
         gridlayout->addWidget(DevArray[nDevCount],nDevCount/6,nDevCount%6);
     }
-    //     UsbDevHandle = DevArray[1];
-    //     UsbDevHandle3 = DevArray[2];
 }
 
 void MainWindow::CreateStatusbar()
@@ -225,7 +219,7 @@ void MainWindow::onlineStateChange(bool bState)
         this->network->setPixmap(QPixmap::fromImage(NetImage));
     }
 }
-void MainWindow::OnGengxin()
+void MainWindow::OnGengxin(bool all)
 {
     Gengxin UpLoadManual;
     UpLoadManual.show();

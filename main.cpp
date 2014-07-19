@@ -1,4 +1,5 @@
 #include"mainwindow.h"
+#include "global.h"
 #include <QApplication>
 #include <QtGui>
 
@@ -39,11 +40,15 @@ int main(int argc, char *argv[])
             cmd += UPDATE_FILE_NAME;
             QFile::remove(exePath);
             QProcess::execute(cmd);
+#ifdef ARM
+            Global::reboot();
+#else
             QProcess::startDetached(exePath, QStringList());
+#endif
             return 0;
         }
         gengXin.hide();
-        w.OnGengxin();
+        w.OnGengxin(false);
     }
 
     return a.exec();

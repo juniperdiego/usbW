@@ -10,10 +10,6 @@
 
 #define DEVCOUNT 12
 
-namespace Ui {
-    class MainWindow;
-}
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -30,7 +26,7 @@ private:
     void startUsbScan();
 
 public slots:
-    void OnGengxin();
+    void OnGengxin(bool = true);
     void OnWenjian();
     void OnBaobiao();
     void OnFuwuqi();
@@ -43,10 +39,9 @@ public slots:
     void SetUnUpCount();
 
 private:
-    Ui::MainWindow *ui;
 
     QString m_strDevID;
-    QNetworkConfigurationManager* m_netConf;
+    //QNetworkConfigurationManager* m_netConf;
 
     bool m_updateState;
 
@@ -71,7 +66,6 @@ private:
     QLabel *wscnum;
     QLabel* LabUpdateState;
     QMovie *MvUpdate;
-    QSpacerItem *horizonSpacer1;
 
     QHBoxLayout *layout ;
 

@@ -120,11 +120,16 @@ void Gengxin::updateVersion()
     if (devState && Global::s_needRestart)
     {
         QString exePath = qApp->applicationFilePath();
-        QString newExe = exePath + ".bak";
+        QString cmd = "unzip ";
+        cmd += UPDATE_FILE_NAME;
         QFile::remove(exePath);
-        QFile::copy(newExe, exePath);
+        QProcess::execute(cmd);
+#ifdef ARM
+        Global::reboot();
+#else
         qApp->quit();
         QProcess::startDetached(exePath, QStringList());
+#endif
     }
 }
 
@@ -133,9 +138,9 @@ void Gengxin::updateStartVersion()
     int devState = m_dataUp->GetDevState();
 
     QString strState;
-    if (devState == 2 && Global::s_needRestart)
+    if (devState == 0 && Global::s_needRestart)
         strState = "软件版本更新成功!自动重启软件!\n";
-    else if (devState == 0)
+    else if (devState == 2)
         strState = "软件版本无需更新!\n";
     else if (devState == 1)
         strState = "软件版本更新失败!\n";
@@ -154,8 +159,10 @@ void Gengxin::StartUpdate()
     //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateVersion()));
     m_dataUp->GetDeviceVer();
 
-    connect(m_dataUp, SIGNAL(CloseUp()), this, SLOT(UpDone()));
-    m_dataUp->updateData();
+    m_dataUp->GetApkLibVer();
+    UpDone();
+    //connect(m_dataUp, SIGNAL(CloseUp()), this, SLOT(UpDone()));
+    //m_dataUp->updateData();
 }
 
 void Gengxin::StartUpSoft()

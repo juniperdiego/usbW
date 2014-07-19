@@ -1,18 +1,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-//@lgs
 #include <QtGui>
 #include <QtNetwork>
-#if 0
-#include <QObject>
-#include <QString>
-#include <QString>
-#include <QByteArray>
-#include <QCryptographicHash>
-#include <QFile>
-#include <QtDebug>
-#endif
 #include <string>
 #include <stdint.h>
 
@@ -25,14 +15,12 @@
 #include "db/mblStatDB.h"
 #include "db/logDB.h"
 
-//usb
-//#include "usb/usb_enum.h"
-
 using namespace std;
 
 #define COMMON_PKG_NAME "COMMON_PACKAGE"
 
-//@zb
+//#define ARM
+
 #define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
 #define FIFO "/tmp/usb_fifo"
@@ -72,6 +60,9 @@ typedef struct USB_STATE{
 
 class Global
 {
+public:
+    static void reboot();
+
 public:
     static QString g_IP;                     //服务器IP
     static std::string g_DevID;         //Device ID

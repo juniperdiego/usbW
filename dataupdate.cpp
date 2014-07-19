@@ -34,10 +34,10 @@ void DataUpdate::GetDeviceVer()
     cout<<"GetDeviceVer "<<devVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_DEVVER)));
     QByteArray appArry("code=");
-    appArry.append(QString::fromStdString(Global::g_DevID));// 网卡号 ??
+    appArry.append(QString::fromStdString(Global::g_DevID));
     appArry.append("&version=");
-    //appArry.append(QString::fromStdString(devVer));
-    appArry.append(QString::fromStdString("1.0"));
+    appArry.append(QString::fromStdString(devVer));
+    //appArry.append(QString::fromStdString("0.9"));
     m_netReply = m_netManager->post(request, appArry);
     QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(DevFinish()));
@@ -68,9 +68,9 @@ void DataUpdate::GetApkLibVer()
 void DataUpdate::GetPkgLibVer()
 {
     string apkVer, pkgVer;
-    m_devDB.get(PKG_VER, apkVer);
+    m_devDB.get(APK_VER, apkVer);
     m_devDB.get(PKG_VER, pkgVer);
-    cout<<"GetPkgLibVer "<<pkgVer<<apkVer<<endl;
+    cout<<"GetPkgLibVer "<<pkgVer<<" "<<apkVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_PKGLIBVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
@@ -104,6 +104,7 @@ void DataUpdate::DevFinish()
     }
     //QVariantMap dev_rsp_res = parser.parse(dev_rsp_str.toUtf8(), &ok).toMap();
     JsonObject dev_rsp_res = QtJson::parse(dev_rsp_str, ok).toMap();
+    string version=dev_rsp_res["version"].toString().toStdString();
     string cid=dev_rsp_res["cid"].toString().toStdString();
     if ( cid != org_cid){
         m_devDB.set(APK_VER, "0");
@@ -131,6 +132,7 @@ void DataUpdate::DevFinish()
         {
             m_devState = 0;
             Global::s_needRestart = true;
+            m_devDB.set(DEV_VER, version);
         }
     }
     //emit devFinish();
@@ -152,7 +154,7 @@ void DataUpdate::ApkFinish()
     }
     //QVariantMap apk_rsp_res = parser.parse(apk_rsp_str.toUtf8(), &ok).toMap();
     JsonObject apk_rsp_res = QtJson::parse(apk_rsp_str, ok).toMap();
-    QString apkVersion=apk_rsp_res["apkVersion"].toString();
+    QString apkVersion=apk_rsp_res["version"].toString();
     m_devDB.set(APK_VER, apkVersion.toStdString());
     qint32  nApkVerState=apk_rsp_res["status"].toInt();
 
@@ -185,7 +187,7 @@ void DataUpdate::ApkFinish()
             int apkOkNum = Apk_Update_finish;
             if(!ApkPath.empty()){
                 QNetworkRequest Down_Reqrequest(QUrl(tr(ApkPath.c_str())));
-                m_netReply = m_netManager->get(Down_Reqrequest);
+                QNetworkReply* netReply = m_netManager->get(Down_Reqrequest);
                 QEventLoop loop;
                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
@@ -201,9 +203,11 @@ void DataUpdate::ApkFinish()
             else
             {
                 m_apkState = 3;
+                QObject::disconnect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
                 return;
             }
         }
+        QObject::disconnect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
         if(apkNum == Apk_Update_finish){
             m_apkState = 0;
             GetPkgLibVer();
@@ -227,7 +231,7 @@ void DataUpdate::PkgFinish()
     QByteArray pkg_rsp_byte = m_netReply->readAll();
     QString pkg_rsp_str = QString(pkg_rsp_byte);
     m_netReply->deleteLater();
-    qDebug()<<pkg_rsp_str;
+    qDebug()<<"pkg reply = "<<pkg_rsp_str;
     bool ok;
     //QJson::Parser parser;
     if (pkg_rsp_str.isEmpty()){
@@ -236,7 +240,7 @@ void DataUpdate::PkgFinish()
     }
     //QVariantMap pkg_rsp_res = parser.parse(pkg_rsp_str.toUtf8(), &ok).toMap();
     JsonObject pkg_rsp_res = QtJson::parse(pkg_rsp_str, ok).toMap();
-    QString pkgVersion=pkg_rsp_res["pkgVersion"].toString();
+    QString pkgVersion=pkg_rsp_res["version"].toString();
     m_devDB.set(PKG_VER, pkgVersion.toStdString());
     qint32  status=pkg_rsp_res["status"].toInt();
     if(  status == 0 ){
@@ -426,7 +430,6 @@ bool DataUpdate::MD5_Check(QString strFilePath, QString md5){
 }
 
 void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
-    qDebug() << "Download apk "<<m_apkIdStr;
     QString file_name = TMP_PATH;
     file_name += "/" + m_apkIdStr;
     QFile fd(file_name);
@@ -435,6 +438,7 @@ void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
     }
     fd.flush();
     fd.close();
+    Reply_apk->deleteLater();
     if (MD5_Check( file_name , m_preMd5) ){
         QString apk_final_path = APK_PATH;
         apk_final_path +=  "/" + m_apkIdStr + ".apk";
@@ -444,7 +448,6 @@ void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
     }else{
         QFile::remove(file_name);
     }
-    m_netReply->deleteLater();
 }
 
 bool DataUpdate::copyFile(const QString& sourceFile, const QString& toFile, bool isOverwrite)
@@ -478,7 +481,6 @@ QString DataUpdate::getFileMd5(QString filePath)
 
     if (!localFile.open(QFile::ReadOnly))
     {
-        qDebug() << "file open error.";
         return "";
     }
 
