@@ -15,7 +15,6 @@ usbStatDB::usbStatDB()
         char* errMsg;
         // creat the table
 
-//	sprintf(sql, "create table %s ( id varchar(128), date varchar(32), cnt int, primary key(id, date))", getTableName().c_str());
         sprintf(sql, "CREATE TABLE %s (usbIndex integer, date varchar(32), count integer, PRIMARY KEY (usbIndex, date));", getTableName().c_str());
         int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
         if( rc ){   
@@ -124,7 +123,7 @@ bool usbStatDB::increase(int usbIdx)
         set(usbStatIn);
     }
 
-    sprintf(sql, "update %s set count = count +1 where id='%d' and date='%s';", 
+    sprintf(sql, "update %s set count = count +1 where usbIndex='%d' and date='%s';", 
         getTableName().c_str(), usbIdx, date.c_str());
 
     char* errMsg;
