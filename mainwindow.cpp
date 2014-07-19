@@ -263,6 +263,7 @@ void MainWindow::OnShangchuan()
 }
 void MainWindow::OnJiaoZhun()
 {
+#ifdef ARM
     QFile pointercal("/etc/pointercal");
     if (!pointercal.exists() || pointercal.size() == 0)
     {
@@ -286,6 +287,7 @@ void MainWindow::OnJiaoZhun()
             }
         }
     }
+#endif
 }
 void MainWindow::OnHelp()
 {
