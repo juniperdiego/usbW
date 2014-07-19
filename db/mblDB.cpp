@@ -84,10 +84,20 @@ bool mblDB::get(mblInfo & mbl)
 
     string str;
     while(sqlite3_step(stmt)==SQLITE_ROW ) {   
-        mbl.pkgID = sqlite3_column_int(stmt,3);   
+        str  = sqlite3_column_int(stmt,3);   
         //printf("%s\n",  (const char*)sqlite3_column_text(stmt,0));
     }   
-
     sqlite3_finalize(stmt);
-    return true;
+
+    if(str.empty())
+    {
+        mbl.pkgID.clear();
+        return false;
+    }
+    else
+    {
+        mbl.pkgID = str;
+        return true;
+    }
+
 }

@@ -26,6 +26,7 @@ class usbStatDB :public sqlDB
 
         bool set(const usbStatInfo& usi);
         bool get(const string& date1, const string& date2, vector<usbStatInfo> & usiArray);
+        bool increase(int usbIdx);
 
 };
 

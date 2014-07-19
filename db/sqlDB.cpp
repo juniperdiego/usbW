@@ -131,10 +131,11 @@ string sqlDB::getTableName()
 }
 
 
-void get_date( char date[], int date_length, long int diff)
+void getDate( char *date, long int diff)
 {
+    size_t dateLength = 12;
     time_t timep=time(0);
     timep -= diff;
-    strftime( date, date_length, "%Y%m%d", localtime(&timep));
+    strftime( date, dateLength, "%Y%m%d", localtime(&timep));
 }
 

@@ -6,8 +6,6 @@
 #include <QtDebug>
 #include "global.h"
 #include "usb_enum.h"
-#include "sqlopt.h"
-#include "data_sql.h"
 
 USB_State usb_state[12];
 
@@ -15,120 +13,109 @@ void add_callback(int num,  const char *serial){
 #if 0
     printf("add callback %d %s.\n", num, serial);
 #else
-    Data_Sql data_sql;
 	usb_state[num].num = num;
-	char *device_mod = adb_getprop_cmd("ro.build.product", serial); //to do ????????????
-	sprintf(usb_state[num].mod, "%s", device_mod);
+	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
+	sprintf(usb_state[num].model, "%s", device_model);
 	sprintf(usb_state[num].ser, "%s", serial);
-	string apk_info[MAX_APK_NUM];
 	
 	usb_state[num].install_state=1;
 
 	
 	string apk_path;
-	bool per_flag=true;
-	bool Flag = true;
-	SqlOpt sql_lib;
-	sql_lib.sqlinit();
+
     string pkg_id;
-	string mod = usb_state[num].mod;
-	if( sql_lib.mob_exist( mod)){
-        pkg_id += sql_lib.mob_get_pkgid( mod);
-	}else{
-		mod.clear();
-		mod += "common";
-        pkg_id += sql_lib.mob_get_pkgid( mod);
-	}
+	string model = usb_state[num].model;
 
-	if (Flag){
-        string apk_list = sql_lib.pkg_get_apk_list(pkg_id);
-		int size = apk_list.size();
-        int i,j, pos;
-		for( i=0, j=0; i < apk_list.size(); i++, j++){
-			pos = apk_list.find(";", i);
-			if ( pos == -1){
-				string apk_end = apk_list.substr(0, size -1);
-				apk_info[j]=apk_end;
-			}
-			if ( pos > 0){
-				string sub = apk_list.substr(i, pos-1);
-				apk_info[j] = sub;
-				i = pos;
-			}
-	
-		}
-		string apk_path;
-		int counter;
-		int run;
-        string active;
-        string packageid;
-		for ( i = 0; apk_info[i] != ""; i++){
-			apk_path.clear();
-			apk_path += APKS_PATH ;
+    // 1 get pkg id from model
+    mblDB mblDataBase;
+    mblInfo mblIn;
+    mblIn.mblID = model; 
 
-			apk_path += apk_info[i];
-			per_flag = adb_install_cmd( apk_path.c_str(), serial); //*******************//
-			for( int k = 0; k<2 && per_flag == false; k++){
-                packageid = sql_lib.apk_get_path(apk_info[i], &counter, &run);
-                apk_path += packageid + "/" + apk_info[i] + ".apk";
-				per_flag = adb_install_cmd( apk_path.c_str(), serial);
-				if( counter == 1){
-                     active = sql_lib.apk_get_packagePath( apk_info[i]);
-                    char act[256];
-                    sprintf(act, "%s", active.c_str());
-                    adb_start_app_cmd( act, serial); //**************************//
-				}
-			}
-			if( per_flag == true){
-				int p_num = i / 8;
-				int p_pos = i % 8;
-				usb_state[num].apk_install[p_num] + (int)pow(2.0, (7.0 - p_pos));
-			}
-			Flag = Flag && per_flag;
-		}
-	}
-	if ( Flag){
-		usb_state[num].install_state=3;
-		/*send message*/
+    if(mblDataBase.get(mblIn))
+        pkg_id = mblIn.pkgID;
+    else
+        pkg_id = COMMON_PKG_NAME;
 
-        string usb_num;
-        char usb_num_tmp[8];
-        sprintf( usb_num_tmp,"%d", num);
-        usb_num +=  usb_num_tmp;
+    // 2 get apks form pkg id
+    pkgDB pkgDataBase;
+    pkgInfo pkgIn;
+    pkgIn.pkgID = pkg_id;
 
-        data_sql.incr( 1, usb_num);
-        data_sql.incr(0, device_mod);
+    pkgDataBase.get(pkgIn);
 
-		int fd;
-		char msg[256];
-		char fdname[32];
-		sprintf(fdname, "%s%d", FIFO, num);
-        string batchCode = sql_lib.pkg_get_batchCode(pkg_id);
-        /*
-        imei：手机imei
-        ua：手机ua信息
-        渠道id：加工设备传递给手机
-        加工设备编码：加工设备传递给手机
-        批次号：安装包的批次号，加工设备传递给手机
-        手机加工时间：设备加工手机的时间戳
-        */
-        string cid = sql_lib.dev_get_cid();
-        char unixtime[32];
-        sql_lib.get_unix_time( unixtime);
-        sprintf(msg,"%s,%s,%s,%s,%s,%s", serial, device_mod, cid.c_str(), Global::g_DevID.c_str(), batchCode.c_str(), unixtime);/***************/
-		string send_msg = msg;
-		fd=open(fdname, O_WRONLY|O_NONBLOCK,0);
-		if(fd=open(fdname, O_WRONLY|O_NONBLOCK,0) == -1 ){
-			fd = open( fdname, O_WRONLY|O_NONBLOCK,0);
-		}
-		if(write(fd, send_msg.c_str(), send_msg.size()) == -1){
-			write(fd, send_msg.c_str(), send_msg.size());
-		}
-	}else{
-		usb_state[num].install_state=4;
-	}
-    sql_lib.sqlclose();
-    data_sql.sqlclose();
+    // 3 install all apks
+    for(size_t i =0; i < pkgIn.apkList.size(); i++)
+    {
+        string apkPath = APK_PATH ;
+
+        apkPath += pkgIn.apkList[i] + ".apk";
+        adb_install_cmd(apkPath.c_str(), serial);
+    }
+
+    // 4 update statistic database
+    mblStatDB mblStatDateBase;
+    mblStatDateBase.increase(model);
+    usbStatDB usbStatDateBase;
+    usbStatDateBase.increase(num);
+
+
+#if 1
+
+    // 5 write log
+    // format: 手机imei|手机ua|渠道id|加工设备编码|批次号|手机加工时间戳
+    /*
+       imei：手机imei
+       ua：手机ua信息
+       渠道id：加工设备传递给手机
+       加工设备编码：加工设备传递给手机
+       批次号：安装包的批次号，加工设备传递给手机
+       手机加工时间：设备加工手机的时间戳
+     */
+
+     //imei
+    char* pImei = adb_get_imei_cmd(serial);
+    string ImeiStr = pImei;
+    delete(pImei);
+    
+    // 手机ua is model
+
+    // channel id
+    devDB devDataBase;
+    string chanID;
+    devDataBase.get(CHAN_ID, chanID);
+
+    //加工设备编码 is Global::g_DevID
+
+    //批次号 is pkgIn.batchCode;
+    
+    // 手机加工时间戳
+    char time[32];
+    getDate(time, 0);
+    string timeStr(time);
+    
+
+    string msg = ImeiStr + "|"\
+                + model + "|"\
+                + chanID + "|"\
+                + Global::g_DevID + "|"\
+                + pkgIn.batchCode + "|"\
+                + timeStr;
+                
+    string fileName = LOG_PATH + timeStr + ".csv";
+
+    int fd=open(fileName.c_str(), O_WRONLY|O_NONBLOCK,0);
+    if(fd == -1)
+    {
+        cout << "opening file("<<fileName <<") failed." << endl;
+        return;
+    }
+
+    if(write(fd, msg.c_str(), msg.size()) == -1)
+    {
+        cout << "writing file("<<fileName <<") failed." << endl;
+        return;
+    }
+#endif
 #endif
 }
 

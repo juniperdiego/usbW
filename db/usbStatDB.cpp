@@ -68,7 +68,7 @@ bool usbStatDB::get(const string& date1, const string& date2, vector<usbStatInfo
         char **azResult; 
         char * zErrMsg;
 
-        char* s = "SELECT * FROM usbStatisticTable";
+        char s[] = "SELECT * FROM usbStatisticTable";
         sqlite3_get_table(s_db , s , &azResult , &nrow , &ncolumn , &zErrMsg );
 
         int i = 0 ;
@@ -103,6 +103,39 @@ bool usbStatDB::get(const string& date1, const string& date2, vector<usbStatInfo
     return true;
 }
 
+
+bool usbStatDB::increase(int usbIdx)
+{
+    char  sql[512];
+    string date;
+    char today[12];
+    getDate( today, 0);
+    
+    // check if database have this record
+    // if not exist, initialize count = 0
+    vector<usbStatInfo>  usiArray;
+    get(today, today, usiArray);
+    if(usiArray.empty())
+    {
+        usbStatInfo usbStatIn;
+        usbStatIn.usbIdx = usbIdx; 
+        usbStatIn.date = today;
+        usbStatIn.count = 0;
+        set(usbStatIn);
+    }
+
+    sprintf(sql, "update %s set count = count +1 where id='%d' and date='%s';", 
+        getTableName().c_str(), usbIdx, date.c_str());
+
+    char* errMsg;
+    int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
+    if( rc ){   
+        fprintf(stderr, "Can't update usbStateDB in table %s: %s\n", getTableName().c_str(), errMsg);   
+        sqlite3_close(s_db);   
+        exit(1);
+    }   
+    return true;
+}
 
 
 void print(const usbStatInfo& usi)

@@ -250,7 +250,7 @@ void DataUpdate::PkgFinish()
         QString apk_path;
         //QVariantList apkList;
         char  date[12];
-        get_date(date, 12, 0);
+        getDate(date,  0);
         QString date_today = date;
         if(!pkg_rsp_res["commonPkg"].isNull() ) {
             pkgInfo pkgIn;

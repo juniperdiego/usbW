@@ -56,6 +56,7 @@ extern char * adb_getprop_cmd(const char *prop, const char *serial);
 /*启动应用*/
 extern bool adb_start_app_cmd(char *packge_name, const char *serial);
 
+extern char * adb_get_imei_cmd( const char *serial);
 #ifdef __cplusplus
 }
 #endif

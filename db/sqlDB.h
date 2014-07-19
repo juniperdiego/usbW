@@ -10,7 +10,7 @@
 #include <time.h>
 #include <vector>
 
-void get_date( char date[], int date_length, long int diff);
+void getDate( char *date, long int diff);
 
 
 using namespace std;

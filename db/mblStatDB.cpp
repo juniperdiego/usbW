@@ -22,8 +22,45 @@ mblStatDB::mblStatDB()
             sqlite3_close(s_db);   
             exit(1);
         }   
+
     }
 }
+
+
+bool mblStatDB::increase(const string& mblPattern)
+{
+    char  sql[512];
+    string date;
+    char today[12];
+    getDate( today, 0);
+
+    // check if database have this record
+    // if not exist, initialize count = 0
+    vector<mblStatInfo>  msiArray;
+    get(today, today, msiArray);
+    if(msiArray.empty())
+    {
+        mblStatInfo mblStatIn;
+        mblStatIn.mblPattern = mblPattern; 
+        mblStatIn.date = today;
+        mblStatIn.count = 0;
+        set(mblStatIn);
+    }
+
+
+    sprintf(sql, "update %s set count = count +1 where mblPattern ='%s' and date='%s';", 
+        getTableName().c_str(), mblPattern.c_str(), date.c_str());
+
+    char* errMsg;
+    int rc = sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
+    if( rc ){   
+        fprintf(stderr, "Can't update mblStateDB in table %s: %s\n", getTableName().c_str(), errMsg);   
+        sqlite3_close(s_db);   
+        exit(1);
+    }   
+    return true;
+}
+
 
 mblStatDB::~mblStatDB()
 {
@@ -87,7 +124,6 @@ bool mblStatDB::get(const string& date1, const string& date2, vector<mblStatInfo
         return false;   
     }   
 
-    string str;
     while(sqlite3_step(stmt)==SQLITE_ROW ) {   
         mblStatInfo msi;
 

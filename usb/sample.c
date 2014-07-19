@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     //register_usb_device_callback(add_callback, remove_callback);
     //start_usb_device_monitor();
     //printf(" adb_push_cmd  = %d\n", adb_push_cmd("/home/xianfeng/usb_enum/net_link.txt", "/sd/net_link.txt","0123456789ABCDEF"));
-    printf(" getprop = %s\n", adb_getprop_cmd("ro.build.product","b2269745"));
+    printf(" getprop(ro.build.product) = %s\n", adb_getprop_cmd("ro.build.product","b2269745"));
     printf(" getmodel = %s\n", adb_getprop_cmd("ro.product.model","b2269745"));
     printf(" getimei = %s\n", adb_get_imei_cmd("b2269745"));
     //printf("%d\n", adb_install_cmd("souhushipin_4310.apk","b2269745"));
