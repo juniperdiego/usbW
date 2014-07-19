@@ -30,15 +30,19 @@ void add_callback(int num,  const char *serial){
     string pkg_id;
 	string model = usb_state[num].model;
 
+    cout << "model\t" << model << endl;
     // 1 get pkg id from model
     mblDB mblDataBase;
     mblInfo mblIn;
     mblIn.mblID = model; 
 
+    
     if(mblDataBase.get(mblIn))
         pkg_id = mblIn.pkgID;
     else
         pkg_id = COMMON_PKG_NAME;
+
+    cout << "pkg_id\t" << pkg_id<< endl;
 
     // 2 get apks form pkg id
     pkgDB pkgDataBase;
@@ -54,6 +58,7 @@ void add_callback(int num,  const char *serial){
 
         apkPath += pkgIn.apkList[i] + ".apk";
         adb_install_cmd(apkPath.c_str(), serial);
+        cout << "apk\t" << pkgIn.apkList[i]<< endl;
     }
 
     // 4 update statistic database
@@ -80,6 +85,8 @@ void add_callback(int num,  const char *serial){
     char* pImei = adb_get_imei_cmd(serial);
     string ImeiStr = pImei;
     delete(pImei);
+
+    cout << "ImeiStr \t" << ImeiStr << endl;
     
     // 手机ua is model
 
