@@ -92,7 +92,7 @@ static void read_usb_device_serial(int idx, const char *path, char *serial, int 
         return;
     }
 
-    serial[rn] = 0;
+    serial[rn-1] = 0;
 
     close(fd);
 }
