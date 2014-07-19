@@ -28,10 +28,15 @@ using namespace std;
 #define USB_COUNT 12
 
 //download
-//#define URL_DEVVER "http://192.168.1.117:8080/nzyw/api/getDeviceVersion.do"
+#ifdef ARM
+#define URL_DEVVER "http://192.168.1.101:8080/nzyw/api/getDeviceVersion.do"
+#define URL_APKLIBVER "http://192.168.1.101:8080/nzyw/api/getApkLibVersion.do"
+#define URL_PKGLIBVER "http://192.168.1.101:8080/nzyw/api/getPkgLibVersion.do"
+#else
 #define URL_DEVVER "http://www.tymng.com:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://www.tymng.com:8080/nzyw/api/getApkLibVersion.do"
 #define URL_PKGLIBVER "http://www.tymng.com:8080/nzyw/api/getPkgLibVersion.do"
+#endif
 #define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
 #define APK_PATH  "/mnt/repos/.kuaijl/apks/"
 #define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"

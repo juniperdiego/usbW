@@ -15,8 +15,8 @@ USB_State usb_state[12];
 
 void add_callback(int num,  const char *serial){
 #if 0
-    printf("add callback %d %s.\n", num, serial);
 #else
+    printf("add callback %d %s.\n", num, serial);
 	usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
 	sprintf(usb_state[num].model, "%s", device_model);

@@ -31,6 +31,7 @@ public slots:
     void OnBaobiao();
     void OnFuwuqi();
     void OnShangchuan();
+    void OnJiaoZhun();
     void OnHelp();
     void ScanUsbDev();
     void TimeNow();
@@ -90,6 +91,7 @@ private:
     QLabel *kjl;
     QLabel *time;
     QLabel *jiaoshi;
+    ClickedLabel* m_jiaozhun;
     ClickedLabel *help;
     QHBoxLayout *statusbox;
 };

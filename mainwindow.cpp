@@ -182,6 +182,9 @@ void MainWindow::CreateStatusbar()
     jiaoshi = new ClickedLabel;
     jiaoshi->setText(tr("<u>校时</u>"));
     jiaoshi->setEnabled(false);
+    m_jiaozhun->setText(tr("<u>屏幕校准</u>"));
+    m_jiaozhun->setEnabled(false);
+    connect(m_jiaozhun, SIGNAL(clicked()), this, SLOT(OnJiaoZhun()));
     help = new ClickedLabel;
     help->setText(tr("<u>帮助</u>"));
     connect(help, SIGNAL(clicked()), this, SLOT(OnHelp()));
@@ -192,7 +195,8 @@ void MainWindow::CreateStatusbar()
     statusBar->addWidget(kjl,3);
     statusBar->addWidget(time,4);
     statusBar->addWidget(jiaoshi,5);
-    statusBar->addWidget(help,6);
+    statusBar->addWidget(jiaoshi,6);
+    statusBar->addWidget(help,7);
 }
 
 void MainWindow::startUsbScan()
@@ -252,6 +256,9 @@ void MainWindow::OnShangchuan()
     Shangchuan *sh = new Shangchuan;
     sh->SetUpThread(this->m_fileUpLoad);
     sh->show();
+}
+void MainWindow::OnJiaoZhun()
+{
 }
 void MainWindow::OnHelp()
 {

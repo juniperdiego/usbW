@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-CONFIG += qt debug
+CONFIG += qt debug 
+#CONFIG += touch 
 
 QT       += core gui \
 	network
@@ -47,6 +48,7 @@ SOURCES += db/sqlDB.cpp\
 
 SOURCES += json/json.cpp
 
+
 HEADERS  += widget.h \
     gengxin.h \
     ClickedLabel.h \
@@ -81,6 +83,10 @@ HEADERS  += db/sqlDB.h\
 
 HEADERS  += json/json.h
 
+touch {
+    SOURCES += touch/calibration.cpp
+    HEADERS  += touch/calibration.h
+}
 
 FORMS    += widget.ui \
     gengxin.ui \
