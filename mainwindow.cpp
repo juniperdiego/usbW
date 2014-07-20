@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //UnUpCount->start(PERIOD_SET_UNUPLOAD);
     SetUnUpCount();
 
-#if 1
+#if 0
     m_fileUpLoad = new FileUpload;
     this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
     //QTimer::singleShot(10*60*1000,m_fileUpLoad,SLOT(start()));
@@ -240,12 +240,12 @@ void MainWindow::OnGengxin(bool all)
 void MainWindow::OnWenjian()
 {
     wenjian *wj = new wenjian;
-    wj->show();
+    wj->exec();
 }
 void MainWindow::OnBaobiao()
 {
     baobiao *bb = new baobiao;
-    bb->show();
+    bb->exec();
 }
 void MainWindow::OnFuwuqi()
 {
@@ -254,10 +254,12 @@ void MainWindow::OnFuwuqi()
 }
 void MainWindow::OnShangchuan()
 {
-    //MvUpdate->start();
+    //m_fileUpLoad = new FileUpload;
+    //this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
+
     Shangchuan *sh = new Shangchuan;
-    sh->SetUpThread(this->m_fileUpLoad);
-    sh->show();
+    //sh->SetUpThread(this->m_fileUpLoad);
+    sh->exec();
 }
 void MainWindow::OnJiaoZhun()
 {

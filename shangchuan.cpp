@@ -5,43 +5,37 @@ Shangchuan::Shangchuan(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Shangchuan)
 {
+#ifdef ARM
     setWindowFlags(Qt::FramelessWindowHint);
+#endif
+
     ui->setupUi(this);
 
-    //set the date display policy
-#if 0
-    ui->FromDataEdt->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    ui->FromDataEdt->setCalendarPopup(true);
-    ui->FromDataEdt->setDisplayFormat("yyyy-MM-dd");
-#endif
-    ui->FromDataEdt->setDate(QDate::currentDate());
+    LabUpdateState = new QLabel;
+    LabUpdateState->setVisible(false);
+    MvUpdate = new QMovie(":/images/updating.gif");
+    LabUpdateState->setMovie(MvUpdate);
+    ui->horizontalLayout->addWidget(LabUpdateState);
 
-#if 0
-    ui->ToDataEdt->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    ui->ToDataEdt->setCalendarPopup(true);
-    ui->ToDataEdt->setDisplayFormat("yyyy-MM-dd");
-#endif
+    //set the date display policy
+    ui->FromDataEdt->setDate(QDate::currentDate());
     ui->ToDataEdt->setDate(QDate::currentDate());
 
+    ui->ResTabWid->setHorizontalHeaderLabels(QStringList()<< tr("日期")<<tr("上传文件")<<tr("上传结果"));
     ui->ResTabWid->setColumnWidth(0,150);
     ui->ResTabWid->setColumnWidth(1,350);
     ui->ResTabWid->setColumnWidth(2,210);
     ui->ResTabWid->setRowCount(12);
     this->setWindowTitle(tr("上传"));
     this->setFixedSize(800,480);
-    this->Sql_Log = new Data_Sql;
-    this->Sql_Log->sqlinit();
+
+    m_fileUpLoad = new FileUpload;
+    //this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
 }
 
 Shangchuan::~Shangchuan()
 {
     delete ui;
-    this->Sql_Log->sqlclose();
-    if( Sql_Log != NULL)
-    {
-        delete Sql_Log;
-        Sql_Log = NULL;
-    }
 }
 void Shangchuan::Return()
 {
@@ -49,13 +43,10 @@ void Shangchuan::Return()
 }
 void Shangchuan::Search()
 {
-    ui->ResTabWid->clear();
-    ui->ResTabWid->setHorizontalHeaderLabels(QStringList()<< tr("日期")<<tr("上传文件")<<tr("上传结果"));
-    vector<Req_Log> res;
-    res.clear();
+    vector<logInfo> res;
     string dateFrom = ui->FromDataEdt->text().toStdString();
     string dateTo = ui->ToDataEdt->text().toStdString();
-    Sql_Log->db_log_get(dateFrom,dateTo,&res);
+    m_logDB.get(dateFrom, dateTo, res);
     for (int nRow = 0; nRow < res.size(); nRow++)
     {
         for( int nCol = 0; nCol < 3; nCol++)
@@ -64,17 +55,17 @@ void Shangchuan::Search()
             switch(nCol)
             {
             case 0:
-                newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].id.c_str()));
+                newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].date.c_str()));
                 break;
              case 1:
                 {
-                    QString strTotal = QString("%1").arg(res[nRow].log_total);
+                    QString strTotal = QString("%1.csv").arg(res[nRow].date.c_str());
                     newItem = new QTableWidgetItem(strTotal);
                     break;
                 }
              case 2:
                 {
-                    QString strDone = QString("%1").arg(res[nRow].log_upload);
+                    QString strDone = QString("%1").arg(res[nRow].isUploaded);
                     newItem = new QTableWidgetItem(strDone);
                     break;
                 }
@@ -86,15 +77,18 @@ void Shangchuan::Search()
 }
 void Shangchuan::Upload()
 {
-    File_Up->terminate();
-    File_Up->start();
-}
-void Shangchuan::SetUpThread(FileUpload* File_Up)
-{
-    this->File_Up = File_Up;
-}
-//@Func Search
-//@Param (DataTime String, DataTime String, Vector<Struct> &)
+    //MvUpdate->start();
+    //LabUpdateState->setVisible(true);
+    int num = m_fileUpLoad->startUpload();
+    //MvUpdate->stop();
+    //LabUpdateState->setVisible(false);
 
-//@Func Update
-//@Param (int &Suc, int &Tol)
+    QString strState;
+    if (num == -1)
+        strState = "没有文件需要上传!\n";
+    else
+        strState = tr("%1个文件上传失败!\n").arg(num);
+
+    QMessageBox::information(this, windowTitle(), strState);
+}
+

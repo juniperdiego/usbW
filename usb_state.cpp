@@ -129,11 +129,17 @@ void add_callback(int num,  const char *serial){
     else
         cout << "opening file("<<fileName <<") suc." << endl;
 
+    logDB logDB;
+    logInfo log;
+    log.date = timeStr;
+    logDB.set(log);
+
     if(write(fd, msg.c_str(), msg.size()) == -1)
     {
         cout << "writing file("<<fileName <<") failed." << endl;
         return;
     }
+
 #endif
 #endif
 }

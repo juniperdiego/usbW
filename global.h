@@ -29,9 +29,9 @@ using namespace std;
 
 //download
 #ifdef ARM
-#define URL_DEVVER "http://192.168.1.101:8080/nzyw/api/getDeviceVersion.do"
-#define URL_APKLIBVER "http://192.168.1.101:8080/nzyw/api/getApkLibVersion.do"
-#define URL_PKGLIBVER "http://192.168.1.101:8080/nzyw/api/getPkgLibVersion.do"
+#define URL_DEVVER "http://192.168.1.105:8080/nzyw/api/getDeviceVersion.do"
+#define URL_APKLIBVER "http://192.168.1.105:8080/nzyw/api/getApkLibVersion.do"
+#define URL_PKGLIBVER "http://192.168.1.105:8080/nzyw/api/getPkgLibVersion.do"
 #else
 #define URL_DEVVER "http://www.tymng.com:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://www.tymng.com:8080/nzyw/api/getApkLibVersion.do"
@@ -42,7 +42,7 @@ using namespace std;
 #define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
 
 //update
-#define URL_UPLOAD "http://192.168.1.103:8080/nzyw/api/processLog.do"
+#define URL_UPLOAD "http://192.168.1.105:8080/nzyw/api/processLog.do"
 #define BLOCKSIZE 100
 #define MAXLINELEN 512
 #define LOG_PATH "/mnt/repos/.kuaijl/log/"

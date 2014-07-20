@@ -2,7 +2,7 @@
 #define SHANGCHUAN_H
 
 #include <QDialog>
-#include "data_sql.h"
+#include "global.h"
 #include "fileupload.h"
 
 namespace Ui {
@@ -23,11 +23,14 @@ private slots:
     void Search();
     void Upload();
 private:
-    Data_Sql* Sql_Log;
-    FileUpload* File_Up;
+    FileUpload* m_fileUpLoad;
+    logDB m_logDB;    
 
 private:
     Ui::Shangchuan *ui;
+
+    QLabel* LabUpdateState;
+    QMovie* MvUpdate;
 };
 
 #endif // SHANGCHUAN_H

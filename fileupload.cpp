@@ -1,105 +1,101 @@
-#include "fileupload.h"
+#include "json/json.h"
 #include "global.h"
+#include "fileupload.h"
+#include "dataupdate.h"
 #include <QtDebug>
 
+using QtJson::JsonObject;
+using QtJson::JsonArray;
+
 FileUpload::FileUpload(QObject *parent) :
-    QThread(parent)
+    QObject(parent)
 {
-    this->nUpFaildRetryNum = 2;
-    this->nUpFaildNum = 0;
-  //  this->NetUp = new QNetworkAccessManager(this);
-    this->Log_Sql = new Data_Sql;
-    this->Log_Sql->sqlinit();
+    this->m_nUpFaildRetryNum = 2;
+    this->m_nUpFaildNum = 0;
+    this->m_netManager = new QNetworkAccessManager(this);
 }
 FileUpload::~FileUpload()
 {
-    this->NetUp->deleteLater();
-    this->Log_Sql->sqlclose();
-    if(Log_Sql != NULL)
-    {
-        delete Log_Sql;
-        Log_Sql = NULL;
-    }
 }
 
-void FileUpload::SetUrlUp(const QUrl Url_Up)
+void FileUpload::UpSingleFile(const QString& strFile)
 {
-    this->UrlUp = Url_Up;
-}
-void FileUpload::SetFileString(QString strFile)
-{
-    this->strFile = strFile;
-}
-void FileUpload::ResetFaildNum()
-{
-    this->nUpFaildNum = 0;
-}
-void FileUpload::AddFaildNum()
-{
-    this->nUpFaildNum++;
-}
-bool FileUpload::IncLog(std::string strLogDate)
-{
-    return true;
-}
-void FileUpload::UpSingleFile(QString strFile)
-{
-    QFile Fd(strFile);
     QByteArray BlockData;
-    BlockData.clear();
-    QFileInfo FInfor(strFile);
-    QString FileID = FInfor.baseName();
+    m_curFileInfo.setFile(strFile);
+    QString FileID = m_curFileInfo.fileName();
+    QFile Fd(strFile);
     Fd.open(QIODevice::ReadOnly | QIODevice::Text);
-    while( !Fd.atEnd())
+    while(!Fd.atEnd())
     {
         QByteArray OneLine = Fd.readLine(MAXLINELEN);
+#if 0
         char * crystr = OneLine.data();
         for( int i=0; i<OneLine.size(); i++){
-            //crystr[i] = crystr[i] ^ 0x12;
+            crystr[i] = crystr[i] ^ 0x12;
         }
         QByteArray byte( crystr);
         OneLine = byte;
+#endif
+        for (int i = 0; i < OneLine.length(); ++i)
+        {
+            //OneLine[i] = OneLine[i] ^ 0x12;
+        }
 
-        //OneLine.insert(0,tr("\""));
-        //OneLine.replace(QByteArray(","),QByteArray("|"));
-        //OneLine.replace(QByteArray("\n"),QByteArray("\","));
         BlockData.append(OneLine);
+        BlockData.append("\n");
     }
-    BlockData.remove(BlockData.size()-1,1);
+    //BlockData.remove(BlockData.size()-1,1);
     //BlockData.insert(0,tr("{["));
     //BlockData.insert(BlockData.size(),tr("]}"));
     //qDebug()<<BlockData<<"\n";
-    UpOneBlock(BlockData,FileID);
+
+    QString md5 = DataUpdate::getFileMd5(strFile); 
+    UpOneBlock(BlockData, FileID, md5);
 }
-void FileUpload::UpOneBlock(QByteArray BlockData,QString FileID)
+void FileUpload::UpOneBlock(const QByteArray& BlockData, const QString& fileBName, const QString& md5)
 {
     qDebug()<<"UpOneBlock"<<BlockData;
-    loop = new QEventLoop;
-    QObject::connect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
-    const char* upurl = "http://192.168.1.105:8080/nzyw/api/processLog.do?file=data.log&md5Value=aadfadsfasdfaf";
-    //QString urlStr = URL_UPLOAD;
-    //urlStr += "?file=data.log&md5Value=12323";
-    QNetworkRequest request(QUrl(tr(upurl)));
-    //QNetworkRequest request(QUrl(urlStr));
+    string urlStr = URL_UPLOAD;
+    urlStr += "?file=";
+    urlStr += qPrintable(fileBName);
+
+    QNetworkRequest request(QUrl(urlStr.c_str()));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-#if 0
-    QByteArray SendData("id=");
-    SendData.append(FileID);
-    SendData.append("&data=");
-    SendData.append(BlockData);
-#endif
-    //QByteArray SendData("file=");
-    QByteArray SendData;
-    SendData.append(BlockData);
-    //SendData.append("&md5Value=");
-    //SendData.append(FileID);
-    qDebug()<<SendData<<"\n";
-    NetUp->post(request, SendData);
-    loop->exec();
-   // UpFinishSingleFile();
+
+    m_netManager->post(request, BlockData);
+
+    QEventLoop loop;
+    QObject::connect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+    QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    loop.exec();
+    //UpFinishSingleFile();
 }
 void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
 {
+    QByteArray replyByte = Reply_Up->readAll();
+    QString replyStr = QString(replyByte);
+    Reply_Up->deleteLater();
+    qDebug()<<replyStr;
+    bool ok;
+    if (replyStr.isEmpty()){
+        return;
+    }
+    JsonObject up_rsp_res = QtJson::parse(replyStr, ok).toMap();
+    int status=up_rsp_res["version"].toInt();
+   
+    if (status == 0)
+    {
+        logInfo log;
+        QString baseName = m_curFileInfo.baseName(); 
+        log.date = baseName.toStdString();
+        log.isUploaded = true;
+        m_logDB.set(log);
+        QFile::remove(m_curFileInfo.absoluteFilePath());
+    }
+    else if (status == 1)
+    {
+        m_nUpFaildNum++;
+    }
 #if 0
     QByteArray Res = Reply_Up->readAll();
     //Test
@@ -107,7 +103,7 @@ void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
     QJson::Parser ResParser;
     bool bFlag;
     QVariantMap ResMap = ResParser.parse(Res,&bFlag).toMap();
-    QString FopenedFilePath = LOGPATH;
+    QString FopenedFilePath = LOG_PATH;
     FopenedFilePath += tr("/");
     FopenedFilePath += ResMap["id"].toString();
     FopenedFilePath +=tr(".csv");
@@ -122,12 +118,12 @@ void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
             ResetFaildNum();
             //写数据库
             this->Log_Sql->log_read_incr(strFileDate.toStdString());
-           // disconnect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+           // disconnect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
         }
         else if(ResMap["status"].toInt() == 0)
         {
             AddFaildNum();
-            if(this->nUpFaildNum <= this->nUpFaildRetryNum)
+            if(this->m_nUpFaildNum <= this->m_nUpFaildRetryNum)
             {
                 UpSingleFile(this->strFile);
             }
@@ -135,52 +131,49 @@ void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
             {
                 ResetFaildNum();
                 Fd.close();
-                //disconnect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+                //disconnect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
             }
         }
         else
         {
             if(Fd.exists())
                 Fd.close();
-            //disconnect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+            //disconnect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
             qDebug()<<"Error status\n";
         }
     }
     else
    {
         qDebug()<<"Error parser or File not exsist\n";
-        //disconnect(NetUp,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
+        //disconnect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
    }
     loop->quit();
 #endif
 }
-void FileUpload::HandleError(QNetworkReply::NetworkError NetError)
-{
 
-}
-
-void FileUpload::run()
+int FileUpload::startUpload()
 {
-    NetUp = new QNetworkAccessManager();
-    while(1)
+    m_nUpFaildNum = 0;
+    //emit SetUpState(true);
+    QStringList LogLst = GetAllFiles(LOG_PATH);
+    if (LogLst.count() == 0) return -1;
+    QString strLog;
+    foreach(strLog, LogLst)
     {
-        emit SetUpState(true);
-#if 0
-        QStringList LogLst = GetAllFiles(LOGPATH);
-        QString strLog;
-        foreach(strLog, LogLst)
-        {
-            UpSingleFile(strLog);
-        }
-        sleep(5);   //@zb
-#endif
-        UpSingleFile("data.log");
-        emit SetUpState(false);
-      //  sleep(3);   //@zb
+        UpSingleFile(strLog);
     }
+
+    //emit SetUpState(false);
+
+    return m_nUpFaildNum;
 }
+
 QStringList FileUpload::GetAllFiles(QString strPath)
 {
+    char time[32];
+    getDate(time, 0);
+    string timeStr(time);
+
     QDir dir(strPath);
     QFileInfoList FileInfoLst;
     QStringList strFileLst;
@@ -190,14 +183,41 @@ QStringList FileUpload::GetAllFiles(QString strPath)
         return strFileLst;
     }
     dir.setFilter(QDir::Files | QDir::NoSymLinks);
-    dir.setSorting(QDir::Time);
+    dir.setSorting(QDir::Time|QDir::Reversed);
     FileInfoLst = dir.entryInfoList();
     int nFileCount = FileInfoLst.count();
     if (nFileCount <= 0)
     {
         return strFileLst;
     }
-    for(int i = 1; i < nFileCount; i++) //The latest log not include
-        strFileLst.append(FileInfoLst.at(i).absoluteFilePath());
+    for(int i = 0; i < nFileCount; i++)
+    {
+        QString baseName = FileInfoLst[i].baseName();
+        if (!baseName.startsWith(time))
+            strFileLst.append(FileInfoLst.at(i).absoluteFilePath());
+    }
     return strFileLst;
 }
+
+#if 0
+void FileUpload::mergeLogFile(const QStringList& fileList)
+{
+    QStringList bNameList;
+    for (int i = 0; i < fileList.count(); ++i)
+    {
+        QFileInfo fileInfo(fileList[i]);
+        QString baseName = fileInfo.baseName();
+        if (!bNameList.contains(baseName))
+            bNameList.append(baseName);
+    }
+
+    for (int i = 0; i < bNameList.count(); ++i)
+    {
+        QString dateName = bNameList.section("_", 1, 1);
+        dateName += "*";
+        QRegExp regExp(dateName, Qt::CaseSensitive, QRegExp::WildcardUnix)
+        QStringList filterList = fileList.filter(bNameList
+    }
+}
+#endif
+

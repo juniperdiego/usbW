@@ -3,45 +3,34 @@
 
 #include <QObject>
 #include <QtNetwork>
-#include <QThread>
-#include "data_sql.h"
+#include "global.h"
 
-class FileUpload : public QThread
+class FileUpload : public QObject
 {
     Q_OBJECT
 public:
     explicit FileUpload(QObject *parent = 0);
-    void  UpSingleFile(QString strFile);
-    QStringList GetAllFiles(QString strPath);
     ~FileUpload();
 
-private:
-    QNetworkAccessManager* NetUp;
-    QUrl UrlUp;
-    qint8 nUpFaildRetryNum;
-    qint8 nUpFaildNum;
-    QString strFile;
-    Data_Sql* Log_Sql;
-    QEventLoop* loop;
-
+    void  UpSingleFile(const QString& strFile);
+    QStringList GetAllFiles(QString strPath);
+    int startUpload();
 
 private:
-    void SetUrlUp(const QUrl Url_Up);
-    void SetFileString(QString strFile);
-    void UpOneBlock(QByteArray BlockData,QString FileID);
-    void ResetFaildNum();
-    void AddFaildNum();
-    bool IncLog(std::string strLogDate);
+    QNetworkAccessManager* m_netManager;
+    QFileInfo m_curFileInfo;
+    int m_nUpFaildRetryNum;
+    int m_nUpFaildNum;
+    logDB m_logDB;
+
+private:
+    void UpOneBlock(const QByteArray& BlockData, const QString& FileBName, const QString& md5);
 
 signals:
     void SetUpState(bool bState);
 
 public slots:
     void UpFinishSingleFile(QNetworkReply* Reply);
-    void HandleError(QNetworkReply::NetworkError);
-
-protected:
-    void run();
 };
 
 #endif // FILEUPLOAD_H

@@ -92,7 +92,7 @@ void Gengxin::UpDone()
         default : break;
     }
 
-    QMessageBox::critical(this, windowTitle(), strState);
+    QMessageBox::information(this, windowTitle(), strState);
 
     if ((apkState == 0 || apkState == 2) && 
             (pkgState == 0 || pkgState == 2))
@@ -148,7 +148,7 @@ void Gengxin::updateStartVersion()
         strState = "服务器链接错误!\n";
 
     if (!strState.isEmpty())
-        QMessageBox::critical(this, windowTitle(), strState);
+        QMessageBox::information(this, windowTitle(), strState);
 }
 
 void Gengxin::StartUpdate()

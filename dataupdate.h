@@ -19,7 +19,7 @@ public:
     void updateData();
 
     bool copyFile(const QString& sourceFile, const QString& toFile, bool isOverwrite) ;
-    QString getFileMd5(QString filepath);
+    static QString getFileMd5(QString filepath);
 
     void Download_File(const QString& url, const QString& fileName);
     bool MD5_Check(QString strFilePath, QString md5);

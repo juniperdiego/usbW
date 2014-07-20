@@ -215,6 +215,7 @@ void DataUpdate::ApkFinish()
             GetPkgLibVer();
         }else{
             m_apkState = 3;
+            m_pkgState = 3;
         }
     }
 #endif
