@@ -50,6 +50,7 @@ bool adb_install_cmd(const char *apk_name, const char *serial)
 char * adb_getprop_cmd(const char *prop, const char *serial) {
     FILE *fp;
     char *str = malloc(sizeof(char) * 1024);
+    memset(str, 1024, 0);
     //char str[1024];
     char cmd[1024];
     snprintf(cmd, sizeof(cmd), "adb -s %s shell getprop %s", serial, prop);
@@ -61,10 +62,16 @@ char * adb_getprop_cmd(const char *prop, const char *serial) {
     }
 
     while (fgets(str, /*sizeof(str)*/1024, fp) != NULL) {
-        if ((strlen(str) > 1) && (str[strlen(str) - 1] == '\n')) {
-            str[strlen(str) - 1] = '\0';
+        if ((strlen(str) > 1) && 
+                (str[strlen(str) - 1] == '\n') ) 
+        {
+            if(strlen(str) > 2 && str[strlen(str) - 2] == 13)
+                str[strlen(str) - 2] = '\0';
+            else
+                str[strlen(str) - 1] = '\0';
         }
     }
+
     pclose(fp);
     return (char *)str;
 }
@@ -85,7 +92,10 @@ char * adb_get_imei_cmd( const char *serial) {
 
     while (fgets(str, sizeof(str), fp) != NULL) {
         if ((strlen(str) > 1) && (str[strlen(str) - 1] == '\n')) {
-            str[strlen(str) - 1] = '\0';
+            if(strlen(str) > 2 && str[strlen(str) - 2] == 13)
+                str[strlen(str) - 2] = '\0';
+            else
+                str[strlen(str) - 1] = '\0';
         }
     }
     pclose(fp);
