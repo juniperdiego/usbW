@@ -62,7 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //QTimer::singleShot(10*60*1000,m_fileUpLoad,SLOT(start()));
     m_fileUpLoad->start();
 #endif
-
 }
 
 MainWindow::~MainWindow()
@@ -187,7 +186,6 @@ void MainWindow::CreateStatusbar()
     jiaoshi->setEnabled(false);
     m_jiaozhun = new ClickedLabel;
     m_jiaozhun->setText(tr("<u>屏幕校准</u>"));
-    m_jiaozhun->setEnabled(false);
     connect(m_jiaozhun, SIGNAL(clicked()), this, SLOT(OnJiaoZhun()));
     help = new ClickedLabel;
     help->setText(tr("<u>帮助</u>"));
@@ -199,7 +197,7 @@ void MainWindow::CreateStatusbar()
     statusBar->addWidget(kjl,3);
     statusBar->addWidget(time,4);
     statusBar->addWidget(jiaoshi,5);
-    statusBar->addWidget(jiaoshi,6);
+    statusBar->addWidget(m_jiaozhun,6);
     statusBar->addWidget(help,7);
 }
 
