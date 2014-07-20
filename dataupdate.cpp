@@ -104,10 +104,9 @@ void DataUpdate::DevFinish()
     }
     //QVariantMap dev_rsp_res = parser.parse(dev_rsp_str.toUtf8(), &ok).toMap();
     JsonObject dev_rsp_res = QtJson::parse(dev_rsp_str, ok).toMap();
+    Global::setSysTime(dev_rsp_res["date"].toString());
     string version=dev_rsp_res["version"].toString().toStdString();
     string cid=dev_rsp_res["cid"].toString().toStdString();
-    string time=dev_rsp_res["date"].toString().toStdString();
-
 
     if ( cid != org_cid){
         m_devDB.set(APK_VER, "0");

@@ -19,7 +19,7 @@ using namespace std;
 
 #define COMMON_PKG_NAME "COMMON_PACKAGE"
 
-#define ARM
+//#define ARM
 
 #define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
@@ -67,6 +67,7 @@ class Global
 {
 public:
     static void reboot();
+    static void setSysTime(const QString& t);
 
 public:
     static QString g_IP;                     //服务器IP

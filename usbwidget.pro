@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 CONFIG += qt debug 
-CONFIG += touch 
+#CONFIG += touch 
 
 QT       += core gui \
 	network
@@ -34,8 +34,7 @@ SOURCES += main.cpp\
     sqlopt.cpp \
     record.cpp \
     data_sql.cpp \
-    upstate.cpp \
-    threadcontrol.cpp
+    upstate.cpp 
 
 SOURCES += db/sqlDB.cpp\
             db/devDB.cpp\
@@ -69,8 +68,7 @@ HEADERS  += widget.h \
     sqlopt.h \
     record.h \
     data_sql.h \
-    upstate.h \
-    threadcontrol.h
+    upstate.h 
 
 HEADERS  += db/sqlDB.h\
             db/pkgDB.h\
@@ -102,8 +100,8 @@ RESOURCES += \
     usbwidget.qrc
 
 LIBS += -lsqlite3 \
-#            ./usb/pc/libusb_enum.a
-            ./usb/arm/libusb_enum.a
+            ./usb/pc/libusb_enum.a
+#            ./usb/arm/libusb_enum.a
 
 #LIBS += -lqjson
 
