@@ -70,7 +70,7 @@ void DataUpdate::GetPkgLibVer()
     string apkVer, pkgVer;
     m_devDB.get(APK_VER, apkVer);
     m_devDB.get(PKG_VER, pkgVer);
-    cout<<"GetPkgLibVer "<<pkgVer<<" "<<apkVer<<endl;
+    cout<<"GetPkgLibVer ["<<pkgVer<<"] "<<apkVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_PKGLIBVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
@@ -106,13 +106,18 @@ void DataUpdate::DevFinish()
     JsonObject dev_rsp_res = QtJson::parse(dev_rsp_str, ok).toMap();
     string version=dev_rsp_res["version"].toString().toStdString();
     string cid=dev_rsp_res["cid"].toString().toStdString();
+    string time=dev_rsp_res["date"].toString().toStdString();
+
+
     if ( cid != org_cid){
         m_devDB.set(APK_VER, "0");
         m_devDB.set(PKG_VER, "0");
         //clear items of pkg and apk table
         m_pkgDB.clearTableItems();
         m_apkDB.clearTableItems();
+        m_mblDB.clearTableItems();
         m_devDB.set(CHAN_ID, cid);
+        // todo, rm all apk
     }
     int  nDevVerState=dev_rsp_res["status"].toInt();
     if( nDevVerState == 2){
@@ -244,6 +249,7 @@ void DataUpdate::PkgFinish()
     //QVariantMap pkg_rsp_res = parser.parse(pkg_rsp_str.toUtf8(), &ok).toMap();
     JsonObject pkg_rsp_res = QtJson::parse(pkg_rsp_str, ok).toMap();
     QString pkgVersion=pkg_rsp_res["version"].toString();
+    cout << "set PKG_VER\t[" << pkgVersion.toStdString() <<"]" << endl;
     m_devDB.set(PKG_VER, pkgVersion.toStdString());
     int  status=pkg_rsp_res["status"].toInt();
     if(  status == 2 ){
@@ -263,51 +269,55 @@ void DataUpdate::PkgFinish()
             pkgInfo pkgIn;
             //QVariantMap commpkg = pkg_rsp_res["commonPkg"].toMap();
             JsonObject commpkg = pkg_rsp_res["commonPkg"].toMap();
-            pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
-            //pkgIn.pkgName = commpkg["name"].toString().toStdString();
-            pkgIn.pkgName = COMMON_PKG_NAME;
-            //pkgIn.pkgID = commpkg["packageId"].toString().toStdString();
-            pkgIn.pkgID = COMMON_PKG_NAME;
-
-            JsonArray apkList = commpkg["apkList"].toList();
-            int length=apkList.size();
-            pkgIn.apkSum = length;
-            pkgIn.date = date;
-
-            int type = commpkg["type"].toInt();
-            //QVariantList apkList = commpkg["apkList"].toList();
-            QString apk_sort;
-            vector<pair<string, int> > sortVector;
-            foreach (QVariant apkinfo, apkList) {
-                JsonObject apk_info = apkinfo.toMap();
-
-                apkInfo apkIn;
-                apkIn.apkID = apk_info["apkId"].toString().toStdString();
-                m_apkDB.get(apkIn);
-
-                apkIn.counter = apk_info["counter"].toInt();
-                if(apk_info["icon"].toInt() == 0)
-                    apkIn.dIcon = false;
-                else
-                    apkIn.dIcon = true;
-                if(apk_info["run"].toInt() == 0)
-                    apkIn.aRun = false;
-                else
-                    apkIn.aRun = true;
-
-                int sort = apk_info["sort"].toInt();
-
-                sortVector.push_back(pair<string,int>(apkIn.apkID, sort));
-            }
-
-            sort(sortVector.begin(), sortVector.end(), cmp);
-
-            pkgIn.apkList.clear();
-            for(size_t i= 0; i < sortVector.size(); i++)
+            
+            if( !commpkg["packageId"].toString().isEmpty() ) 
             {
-                pkgIn.apkList.push_back(sortVector[i].first);
+                pkgIn.pkgID = COMMON_PKG_NAME;
+                pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
+                //pkgIn.pkgName = commpkg["name"].toString().toStdString();
+                pkgIn.pkgName = COMMON_PKG_NAME;
+
+
+                JsonArray apkList = commpkg["apkList"].toList();
+                int length=apkList.size();
+                pkgIn.apkSum = length;
+                pkgIn.date = date;
+
+                int type = commpkg["type"].toInt();
+                //QVariantList apkList = commpkg["apkList"].toList();
+                QString apk_sort;
+                vector<pair<string, int> > sortVector;
+                foreach (QVariant apkinfo, apkList) {
+                    JsonObject apk_info = apkinfo.toMap();
+
+                    apkInfo apkIn;
+                    apkIn.apkID = apk_info["apkId"].toString().toStdString();
+                    m_apkDB.get(apkIn);
+
+                    apkIn.counter = apk_info["counter"].toInt();
+                    if(apk_info["icon"].toInt() == 0)
+                        apkIn.dIcon = false;
+                    else
+                        apkIn.dIcon = true;
+                    if(apk_info["run"].toInt() == 0)
+                        apkIn.aRun = false;
+                    else
+                        apkIn.aRun = true;
+
+                    int sort = apk_info["sort"].toInt();
+
+                    sortVector.push_back(pair<string,int>(apkIn.apkID, sort));
+                }
+
+                sort(sortVector.begin(), sortVector.end(), cmp);
+
+                pkgIn.apkList.clear();
+                for(size_t i= 0; i < sortVector.size(); i++)
+                {
+                    pkgIn.apkList.push_back(sortVector[i].first);
+                }
+                m_pkgDB.set(pkgIn);
             }
-            m_pkgDB.set(pkgIn);
         }
         if(!pkg_rsp_res["pkgList"].isNull()) {
 
@@ -333,6 +343,14 @@ void DataUpdate::PkgFinish()
                 pkgIn.pkgID = Pkg_atom["packageId"].toString().toStdString();
                 pkgIn.pkgName = Pkg_atom["name"].toString().toStdString();
                 pkgIn.batchCode = Pkg_atom["batchCode"].toString().toStdString();
+                int type = Pkg_atom["type"].toInt();
+
+                if(type == 2)//dlete the package
+                {
+                    m_pkgDB.deleteRecord(pkgIn.pkgID);
+                    m_mblDB.deleteRecord(pkgIn.pkgID);
+                    continue;
+                }
                 pkgIn.apkList ;
 
                 apk_list = Pkg_atom["apkList"].toList();

@@ -139,3 +139,19 @@ bool pkgDB::get(pkgInfo & pkg)
     sqlite3_finalize(stmt);
     return true;
 }
+
+bool pkgDB::deleteRecord(const string& pkgID)
+{
+
+    char sql[1024] ="";
+    char* errMsg = NULL;
+    sprintf(sql, "delete from %s where key = '%s';", getTableName().c_str(), pkgID.c_str());
+    if(SQLITE_OK != sqlite3_exec(s_db, sql, NULL, NULL, &errMsg))
+    {
+        fprintf(stderr, "Can't delete record %s: %s\n", getTableName().c_str(), errMsg);   
+        sqlite3_close(s_db);   
+        return false;
+    }
+    return true;
+}
+

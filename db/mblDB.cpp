@@ -55,19 +55,21 @@ bool mblDB::get(mblInfo & mbl)
     sqlite3_stmt *stmt;
     int rc;
 
+    cout << "mbl.mblID\t["<< mbl.mblID <<"]"<<endl;
+
     sprintf(sql, "select pkgID from %s where key = '%s';", getTableName().c_str(), mbl.mblID.c_str());
-#if 0
+#if 1
     {
         int nrow = 0, ncolumn = 0;
         char **azResult; 
         char * zErrMsg;
 
-        //sql = "SELECT * FROM SensorData ";
-        sqlite3_get_table(s_db , sql , &azResult , &nrow , &ncolumn , &zErrMsg );
+        char s[] = "SELECT * FROM mobileTable";
+        sqlite3_get_table(s_db , s , &azResult , &nrow , &ncolumn , &zErrMsg );
 
         int i = 0 ;
         printf( "row:%d column=%d \n" , nrow , ncolumn );
-        printf( "\nThe result of querying is : \n" );
+        printf( "\nThe result of querying is :***\n" );
 
         for( i=0 ; i<( nrow + 1 ) * ncolumn ; i++ )
             printf( "azResult[%d] = %s\n", i , azResult[i] );
@@ -84,10 +86,11 @@ bool mblDB::get(mblInfo & mbl)
 
     string str;
     while(sqlite3_step(stmt)==SQLITE_ROW ) {   
-        str  = sqlite3_column_int(stmt,3);   
+        str =  (const char*)sqlite3_column_text(stmt,0);
+        cout << str << endl;
         //printf("%s\n",  (const char*)sqlite3_column_text(stmt,0));
     }   
-    sqlite3_finalize(stmt);
+    cout <<"mbl.mblID\t[" << mbl.mblID <<"]"<< endl;
 
     if(str.empty())
     {
@@ -101,3 +104,19 @@ bool mblDB::get(mblInfo & mbl)
     }
 
 }
+
+bool mblDB::deleteRecord(const string& pkgID)
+{
+
+    char sql[1024] ="";
+    char* errMsg = NULL;
+    sprintf(sql, "delete from %s where pkgID = '%s';", getTableName().c_str(), pkgID.c_str());
+    if(SQLITE_OK != sqlite3_exec(s_db, sql, NULL, NULL, &errMsg))
+    {
+        fprintf(stderr, "Can't delete record %s: %s\n", getTableName().c_str(), errMsg);   
+        sqlite3_close(s_db);   
+        return false;
+    }
+    return true;
+}
+

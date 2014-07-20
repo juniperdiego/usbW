@@ -29,6 +29,7 @@ class pkgDB :public sqlDB
         pkgDB();
         ~pkgDB();
 
+        bool deleteRecord(const string& pkgID);
         bool set(const pkgInfo& pkg);
         bool get(pkgInfo & pkg);
 

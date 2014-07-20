@@ -22,6 +22,7 @@ class mblDB :public sqlDB
         mblDB();
         ~mblDB();
 
+        bool deleteRecord(const string& pkgID);
         bool set(const mblInfo& pkg);
         bool get(mblInfo & pkg);
 

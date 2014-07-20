@@ -110,7 +110,8 @@ void add_callback(int num,  const char *serial){
                 + chanID + "|"\
                 + Global::g_DevID + "|"\
                 + pkgIn.batchCode + "|"\
-                + timeStr;
+                + timeStr 
+                + "\n";
 
     stringstream strStream;
     strStream << num ;
@@ -172,6 +173,11 @@ void remove_callback(int num)
 
 void call()
 {
+    static bool isInMonitor = false;
+    if(isInMonitor == false)
+        isInMonitor = true;
+    else
+        return;
     register_usb_device_callback(add_callback, remove_callback);
     start_usb_device_monitor();
 //	char adb_pus_1[] = "/home/xianfeng/usb_enum/net_link.txt";

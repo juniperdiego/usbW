@@ -110,6 +110,8 @@ bool sqlDB::deleteTable()
     return true;
 }
 
+
+
 bool sqlDB::clearTableItems()
 {
     char sql[1024] ="";
