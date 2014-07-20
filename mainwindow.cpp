@@ -98,9 +98,11 @@ void MainWindow::CreateLayout()
     cangkuid = new QLabel;
     cangkuid->setText("仓库ID:");
 
+    devDB devDB;
+    string cid;
+    devDB.get(CHAN_ID, cid);
     id = new QLabel;
-    QString strStoreID = "zb";//QString::fromStdString(sql_opt->get_stroeid());//@
-    id->setText(strStoreID);
+    id->setText(QString::fromStdString(cid));
 
     //更新图标
     LabUpdateState = new QLabel;
@@ -176,7 +178,7 @@ void MainWindow::CreateStatusbar()
     kjl->setText(tr("      快精灵"));
     time = new QLabel;
     QDateTime im = QDateTime::currentDateTime();
-    QString str = im.toString("yyyy-MM-dd hh:mm:ss ddd");
+    QString str = im.toString("yyyy-MM-dd hh:mm:ss");
     time->setText(str);
     QTimer* timTm = new QTimer;
     connect(timTm,SIGNAL(timeout()),this,SLOT(TimeNow()));
@@ -373,7 +375,7 @@ void MainWindow::ScanUsbDev()
 void MainWindow::TimeNow()
 {
     QDateTime im = QDateTime::currentDateTime();
-    QString str = im.toString("yyyy-MM-dd hh:mm:ss ddd");
+    QString str = im.toString("yyyy-MM-dd hh:mm:ss");
     this->time->setText(str);
 }
 
