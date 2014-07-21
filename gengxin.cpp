@@ -8,10 +8,14 @@ Gengxin::Gengxin(bool start, QWidget *parent) :
     ui(new Ui::Gengxin)
 {
     m_dataUp = NULL;
+    m_updateState = false;
+
+#ifdef ARM
+    setWindowFlags(Qt::FramelessWindowHint);
+#endif
 
     QString msg = tr("系统数据正在更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
     if (start) msg = tr("系统版本更新中...\n请不要插/拔数据线进行安装工作或进行其他操作");
-    //setWindowFlags(Qt::FramelessWindowHint);
     ui->setupUi(this);
     this->setWindowTitle(tr("更新"));
 
@@ -37,15 +41,17 @@ void Gengxin::SetBtnInvis()
 {
     ui->ConfirmBtn->setVisible(false);
     ui->CancleBtn->setVisible(false);
-    ui->pushBtnTerm->setVisible(true);
+    ui->pushBtnTerm->setVisible(false);
 }
+
 void Gengxin::OnOk()
 {
     ui->ConfirmBtn->setVisible(false);
     ui->CancleBtn->setVisible(false);
     ui->pushBtnTerm->setVisible(true);
-    StartUpdate();
+    StartUpAll();
 }
+
 void Gengxin::OnTerm()
 {
     if (m_dataUp)
@@ -66,7 +72,7 @@ bool Gengxin::getUpdateState()
     return m_updateState;
 }
 
-void Gengxin::UpDone()
+void Gengxin::upDataDone()
 {
     int pkgState = m_dataUp->GetPkgState();
     int apkState = m_dataUp->GetApkState();
@@ -109,33 +115,7 @@ void Gengxin::UpDone()
     }
 }
 
-void Gengxin::StopUpdate()
-{
-}
-
-void Gengxin::updateVersion()
-{
-    updateStartVersion();
-
-    bool devState = m_dataUp->GetDevState();
-
-    if (devState && Global::s_needRestart)
-    {
-        QString exePath = qApp->applicationFilePath();
-        QString cmd = "unzip ";
-        cmd += UPDATE_FILE_NAME;
-        QFile::remove(exePath);
-        QProcess::execute(cmd);
-#ifdef ARM
-        Global::reboot();
-#else
-        qApp->quit();
-        QProcess::startDetached(exePath, QStringList());
-#endif
-    }
-}
-
-void Gengxin::updateStartVersion()
+void Gengxin::upSoftDone()
 {
     int devState = m_dataUp->GetDevState();
 
@@ -151,20 +131,27 @@ void Gengxin::updateStartVersion()
 
     if (!strState.isEmpty())
         QMessageBox::information(this, windowTitle(), strState);
+
+    if (Global::s_needRestart)
+    {
+        QString exePath = qApp->applicationFilePath();
+        QString cmd = "unzip ";
+        cmd += UPDATE_FILE_NAME;
+        QFile::remove(exePath);
+        QProcess::execute(cmd);
+#ifdef ARM
+        Global::reboot();
+#else
+        qApp->quit();
+        QProcess::startDetached(exePath, QStringList());
+#endif
+    }
 }
 
-void Gengxin::StartUpdate()
+void Gengxin::StartUpAll()
 {
-    MvLoading->start();
-    if (m_dataUp == NULL)
-        m_dataUp = new DataUpdate;
-    //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateVersion()));
-    m_dataUp->GetDeviceVer();
-
-    m_dataUp->GetApkLibVer();
-    UpDone();
-    //connect(m_dataUp, SIGNAL(CloseUp()), this, SLOT(UpDone()));
-    //m_dataUp->updateData();
+    StartUpSoft();
+    StartUpData();
 }
 
 void Gengxin::StartUpSoft()
@@ -172,7 +159,15 @@ void Gengxin::StartUpSoft()
     MvLoading->start();
     if (m_dataUp == NULL)
         m_dataUp = new DataUpdate;
-    //connect(m_dataUp, SIGNAL(devFinish()), this, SLOT(updateStartVersion()));
     m_dataUp->GetDeviceVer();
-    updateStartVersion();
+    upSoftDone();
+}
+
+void Gengxin::StartUpData()
+{
+    MvLoading->start();
+    if (m_dataUp == NULL)
+        m_dataUp = new DataUpdate;
+    m_dataUp->GetApkLibVer();
+    upDataDone();
 }

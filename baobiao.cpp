@@ -7,7 +7,9 @@ baobiao::baobiao(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::baobiao)
 {
+#ifdef ARM
     setWindowFlags(Qt::FramelessWindowHint);
+#endif
 
     ui->setupUi(this);
     ui->tabWidget->setTabText(0,"机型");

@@ -230,38 +230,37 @@ void MainWindow::onlineStateChange(bool bState)
 }
 void MainWindow::OnGengxin(bool all)
 {
-    Gengxin UpLoadManual;
-    UpLoadManual.show();
-    UpLoadManual.StartUpdate();
-    UpLoadManual.hide();
+    static Gengxin* up = new Gengxin;
+    up->show();
+    if (all)
+        up->StartUpAll();
+    else
+        up->StartUpData();
+    up->hide();
 
-    m_updateState = UpLoadManual.getUpdateState();
+    m_updateState = up->getUpdateState();
 
     startUsbScan();
 }
 
 void MainWindow::OnWenjian()
 {
-    wenjian *wj = new wenjian;
+    static wenjian *wj = new wenjian;
     wj->exec();
 }
 void MainWindow::OnBaobiao()
 {
-    baobiao *bb = new baobiao;
+    static baobiao *bb = new baobiao;
     bb->exec();
 }
 void MainWindow::OnFuwuqi()
 {
-    fuwuqi *fq = new fuwuqi;
+    static fuwuqi *fq = new fuwuqi;
     fq->exec();
 }
 void MainWindow::OnShangchuan()
 {
-    //m_fileUpLoad = new FileUpload;
-    //this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
-
-    Shangchuan *sh = new Shangchuan;
-    //sh->SetUpThread(this->m_fileUpLoad);
+    static Shangchuan *sh = new Shangchuan;
     sh->exec();
 }
 void MainWindow::OnJiaoZhun()
@@ -294,8 +293,8 @@ void MainWindow::OnJiaoZhun()
 }
 void MainWindow::OnHelp()
 {
-    Help* HelpDoc = new Help;
-    HelpDoc->show();
+    static Help* HelpDoc = new Help;
+    HelpDoc->exec();
 }
 
 //Scanning USB Dev On Timer 1s

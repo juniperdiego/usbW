@@ -26,6 +26,8 @@ using namespace std;
 #define FIFO "/tmp/usb_fifo"
 #define MAX_APK_NUM (64/8)
 #define USB_COUNT 12
+#define WEB_SITE "www.baidu.com"
+#define APP_NAME "Zig"
 
 //download
 #ifdef ARM

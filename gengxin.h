@@ -19,9 +19,9 @@ protected:
 
 public:
     void SetBtnInvis();
-    void StartUpdate();
+    void StartUpAll();
     void StartUpSoft();
-    void StopUpdate();
+    void StartUpData();
     bool getUpdateState();
 
 private:
@@ -31,11 +31,10 @@ private:
 
 public slots:
     void OnOk();
-    void UpDone();
     void OnCancle();
     void OnTerm();
-    void updateStartVersion();
-    void updateVersion();
+    void upSoftDone();
+    void upDataDone();
 
 private:
     Ui::Gengxin *ui;

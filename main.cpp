@@ -7,6 +7,15 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+#ifdef ARM
+    //font
+    QFont font;
+    font.setPointSize(12);
+    font.setFamily(("wqyzh"));
+    font.setBold(false);
+    a.setFont(font);
+#endif
+
     QTextCodec *codec = QTextCodec::codecForName("UTF-8");  
 
     QTextCodec::setCodecForLocale(codec);  
@@ -20,8 +29,23 @@ int main(int argc, char *argv[])
     appDir.mkpath(LOG_PATH);
 
     //test network
-    QHostInfo host = QHostInfo::fromName("www.baidu.com");
-    if (!host.addresses().isEmpty()) Global::s_netState = true;
+    int time = 20;
+    while(time)
+    {
+        QHostInfo host = QHostInfo::fromName(WEB_SITE);
+        if (!host.addresses().isEmpty()) 
+        {
+            Global::s_netState = true;
+            break;
+        }
+        sleep(5);
+        --time;
+    }
+
+    if (!Global::s_netState)
+    {
+        QMessageBox::information(NULL, APP_NAME, "没有发现网络连接，软件无法正常使用！");
+    }
 
     MainWindow w;
     w.setWindowTitle("Welcome");
@@ -32,7 +56,7 @@ int main(int argc, char *argv[])
         Gengxin gengXin(true);
         gengXin.show();
         gengXin.StartUpSoft();
-
+#if 0
         if (Global::s_needRestart)
         {
             QString exePath = qApp->applicationFilePath();
@@ -47,6 +71,7 @@ int main(int argc, char *argv[])
 #endif
             return 0;
         }
+#endif
         gengXin.hide();
         w.OnGengxin(false);
     }
