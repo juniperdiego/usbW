@@ -31,9 +31,6 @@ SOURCES += main.cpp\
     dataupdate.cpp \
     fileupload.cpp \
     usb_state.cpp \
-    sqlopt.cpp \
-    record.cpp \
-    data_sql.cpp \
     upstate.cpp 
 
 SOURCES += db/sqlDB.cpp\
@@ -62,12 +59,7 @@ HEADERS  += widget.h \
     help.h \
     dataupdate.h \
     fileupload.h \
-    parser.h \
-    qjson_export.h \
     usb_enum.h \
-    sqlopt.h \
-    record.h \
-    data_sql.h \
     upstate.h 
 
 HEADERS  += db/sqlDB.h\

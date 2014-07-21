@@ -92,6 +92,7 @@ void MainWindow::CreateLayout()
     connect(bbiao,SIGNAL(clicked()),this,SLOT(OnBaobiao()));
 
     fwuqi = new ClickedLabel;
+    fwuqi->setVisible(false);
     fwuqi->setText("<u>服务器</u>");
     connect(fwuqi,SIGNAL(clicked()),this,SLOT(OnFuwuqi()));
 
@@ -300,57 +301,10 @@ void MainWindow::OnHelp()
 //Scanning USB Dev On Timer 1s
 void MainWindow::ScanUsbDev()
 {
-    //qDebug("ScanUsbDev %d",i++);
-    //    QString s = QString::number (g_i, 10);
-    //    this->UsbDevHandle->SetNum(s);
-    //    if(g_i%2)
-    //    {
-    //        this->UsbDevHandle->SetStatus(tr("占用"));
-    //        this->UsbDevHandle->StartProcBar();
-    //    }
-    //    if( g_i >= 50)
-    //        this->UsbDevHandle->StopProcBar();
-    //    qDebug()<<g_i<<"\n";
-    ///*    else
-    //    {
-    //        this->UsbDevHandle->SetStatus(tr("空闲"));
-    //        this->UsbDevHandle->StopProcBar();
-    //    }*/
-    //    //this->UsbDevHandle->repaint();
-    //    //test
-    //    if( g_i== 0 )
-    //    {
-    //        UsbState->install_state = 0;
-    //    }
-    //    if( g_i >= 10 && g_i <=20)
-    //    {
-    //        UsbState->install_state = 1;
-    //        UsbState->apk_num = (g_i -10);
-    //        UsbState->apk_total = 10;
-    //    }
-    //    if(g_i > 20 && g_i < 25)
-    //    {
-    //        UsbState->install_state = 2;
-    //    }
-    //    if(g_i >=25 && g_i<30)
-    //    {
-    //        UsbState->install_state = 3;
-    //    }
-    //    if(g_i >= 30)
-    //    {
-    //        UsbState->install_state = 0;
-    //    }
-    //   //this->UsbDevHandle3->DevWdgPrecess(UsbState);
-    //    for(int nCount = 2; nCount < DEVCOUNT; nCount++)
-    //    {
-    //        DevArray[nCount]->DevWdgPrecess(UsbState);
-    //    }
-    //    g_i++;
-
     for(int i =0; i < DEVCOUNT; i++)
     {
-        //   Global::usb_state[i].install_state = 1;
         DevArray[i]->DevWdgPrecess(&(Global::usb_state[i]));
+#if 0
         if(Global::usb_state[i].install_state == 0 )
             DevArray[i]->SetStatus(tr("空闲"));
         else if(Global::usb_state[i].install_state ==1)
@@ -369,6 +323,7 @@ void MainWindow::ScanUsbDev()
         {
             DevArray[i]->SetStatus(tr("失败"));
         }
+#endif
     }
 }
 

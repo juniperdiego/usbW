@@ -98,6 +98,8 @@ void Gengxin::UpDone()
             (pkgState == 0 || pkgState == 2))
     {
         m_updateState = true;
+        QDate date = QDate::currentDate();
+        Global::s_updateTime = date.toString("yyyy-MM-dd hh:mm");
         accept();
     }
     else

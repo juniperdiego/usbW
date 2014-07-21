@@ -46,12 +46,32 @@
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>文件数量(1)</string>
+       <string>包列表</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QComboBox" name="comboBox"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>APK个数:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="apkLabel">
+      <property name="minimumSize">
+       <size>
+        <width>30</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>15</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -82,7 +102,7 @@
     <item row="0" column="0" colspan="2">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>SD卡可用空间:</string>
+       <string>可用空间:</string>
       </property>
      </widget>
     </item>
@@ -110,7 +130,7 @@
     <item row="1" column="3">
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>更新数量:</string>
+       <string>APK总数:</string>
       </property>
      </widget>
     </item>
@@ -126,8 +146,8 @@
    <slot>onreturn()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>36</y>
+     <x>52</x>
+     <y>38</y>
     </hint>
     <hint type="destinationlabel">
      <x>53</x>
@@ -135,8 +155,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>comboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>wenjian</receiver>
+   <slot>onPkgChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>357</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onreturn()</slot>
+  <slot>onPkgChanged(int)</slot>
  </slots>
 </ui>

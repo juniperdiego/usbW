@@ -10,21 +10,29 @@ wenjian::wenjian(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::wenjian)
 {
-    //setWindowFlags(Qt::FramelessWindowHint);
+#ifdef ARM
+    setWindowFlags(Qt::FramelessWindowHint);
+#endif
+
     ui->setupUi(this);
     //this->showMaximized();
     this->setWindowTitle(tr("文件"));
+#if 0
    // this->setFixedSize(640,500);
     ui->comboBox->addItem("1222");
     ui->comboBox->addItem("3333");
-    connect(ui->comboBox,SIGNAL(activated(QString)),this,SLOT(OnChangeContent(QString)));
+    //connect(ui->comboBox,SIGNAL(activated(QString)),this,SLOT(OnChangeContent(QString)));
     ui->label->setVisible(false);
     ui->comboBox->setVisible(false);
-    //GetFreeSpace();
     QProcess* pDf = new QProcess;
     connect(pDf, SIGNAL(finished(int)), this, SLOT(SetFreeSpace(int)));
     //pDf->start(tr("df"),QStringList()<<"-h");
     pDf->start("df -h");
+#endif
+
+    m_process = new QProcess(this);
+    connect(m_process, SIGNAL(finished(int)), this, SLOT(setFreeSpace1(int)));
+
     UpdateContent();
 }
 
@@ -35,63 +43,45 @@ wenjian::~wenjian()
 
 void wenjian::onreturn()
 {
+    m_process->kill();
     this->close();
 }
 
 void wenjian::UpdateContent()
 {
-
     QPalette pe;
     pe.setColor(QPalette::WindowText,Qt::blue);
-
     ui->cardspaceLabel->setPalette(pe);
     ui->ldateLabel->setPalette(pe);
     ui->updatenumLabel->setPalette(pe);
 
-    QString cdspace = GetcardSpace();
-    QString datestr = GetUpdatetime();
-    int updatenum = GetUpdatenum();
-    QString num = QString("%1").arg(updatenum);
-
-
-    ui->cardspaceLabel->setText(cdspace);
-    ui->ldateLabel->setText(datestr);
-    ui->updatenumLabel->setText(num);
+    setFreeSpace();
+    setUpdatetime();
+    setUpdatenum();
 }
 
-QString wenjian::GetcardSpace()
+void wenjian::setFreeSpace()
 {
-    return QString(tr("15.69"));
+    m_process->start("df -h");
 }
-QString wenjian::GetUpdatetime()
+
+void wenjian::setUpdatetime()
 {
-    QDate date = QDate::currentDate();
-    QString rd = date.toString("yyyy-MM-dd");
-    return rd;
+    ui->ldateLabel->setText(Global::s_updateTime);
 }
-int wenjian::GetUpdatenum()
+
+void wenjian::setUpdatenum()
 {
     int num = 19;
-    return num;
+
+    ui->updatenumLabel->setText(QString().setNum(num));
 }
 
-QString wenjian::GetFreeSpace()
-{
-    QProcess* pDf = new QProcess;
-    connect(pDf, SIGNAL(finished(int)), this, SLOT(SetFreeSpace(int)));
-    //pDf->start(tr("df"),QStringList()<<"-h");
-    pDf->start("df -h");
-//    if(NULL != pDf)
-//    {
-//        delete pDf;
-//        pDf = NULL;
-//    }
-}
-void wenjian::SetFreeSpace(int nCode)
+void wenjian::setFreeSpace1(int)
 {
     QProcess* pRes =( QProcess*)sender();
     QString strRes = pRes->readAll();
-    //qDebug()<<strRes;
+    qDebug()<<strRes;
 #if 0
     QStringList strLstLine = strRes.split("\n");
     qDebug()<<strLstLine;
@@ -143,10 +133,8 @@ void wenjian::SetFreeSpace(int nCode)
     ui->cardspaceLabel->setText(QString::number(dFreeSpace));
 }
 
-void wenjian::OnChangeContent(QString str)
-{}
-//@Add Func1
-//@Param (Vector<String> &)
+void wenjian::onPkgChanged(int index)
+{    
+    qDebug()<<index;
+}
 
-//@Add Func2
-//@Param (String, Data & , int &)

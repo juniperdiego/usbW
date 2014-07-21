@@ -76,6 +76,7 @@ public:
     static int g_UnUpNum;           //未上传文件数量
     static USB_State usb_state[USB_COUNT];
     static bool s_needRestart;
+    static QString s_updateTime;
 };
 
 #endif // GLOBAL_H

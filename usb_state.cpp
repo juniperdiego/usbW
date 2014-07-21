@@ -11,24 +11,21 @@
 
 using namespace std;
 
-USB_State usb_state[12];
-
 void add_callback(int num,  const char *serial){
 #if 0
 #else
     printf("add callback %d %s.\n", num, serial);
-	usb_state[num].num = num;
+	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
-	sprintf(usb_state[num].model, "%s", device_model);
-	sprintf(usb_state[num].ser, "%s", serial);
+	sprintf(Global::usb_state[num].model, "%s", device_model);
+	sprintf(Global::usb_state[num].ser, "%s", serial);
 	
-	usb_state[num].install_state=1;
-
+	Global::usb_state[num].install_state=1;
 	
 	string apk_path;
 
     string pkg_id;
-	string model = usb_state[num].model;
+	string model = Global::usb_state[num].model;
 
     cout << "model\t" << model << endl;
     // 1 get pkg id from model
@@ -149,10 +146,10 @@ void remove_callback( int num){
 #if 0
     printf("remove callback %d.\n", num);
 #else
-	if( usb_state[num].install_state == 1)
-		usb_state[num].install_state = 3;
+	if( Global::usb_state[num].install_state == 1)
+		Global::usb_state[num].install_state = 3;
 	else
-		usb_state[num].install_state = 0;
+		Global::usb_state[num].install_state = 0;
 #endif
 }
 

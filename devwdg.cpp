@@ -9,31 +9,21 @@ DevWdg::DevWdg(QWidget *parent) :
     ui->setupUi(this);
     nProgBarValue = 0;
     this->setAutoFillBackground(true);
-   QPalette Palette;
-   Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/bluebg.png")));
-   this->setPalette(Palette);
-   this->setFixedSize(100,190);
-   Palette.setColor(QPalette::WindowText, Qt::white);
-   ui->labNum->setText(tr(""));
-   ui->labStatus->setText(tr(""));
-   ui->labNum->setPalette(Palette);
-   ui->labStatus->setPalette(Palette);
-   ui->labPerc->setPalette(Palette);
-   ui->progBar_Install->setTextVisible(false);
-   ui->progBar_Install->setVisible(false);
-   ui->labPerc->setVisible(false);
-   timPerc = new QTimer;;
-   timProg = new QTimer;
- /*  if(this->strStatus == tr("空闲"))
-   {
-       ui->progBar_Install->setVisible(false);
-       ui->labPerc->setVisible(false);
-   }
-   else
-   {
-       ui->progBar_Install->setVisible(true);
-       ui->labPerc->setVisible(true);
-   }*/
+    QPalette Palette;
+    Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/bluebg.png")));
+    this->setPalette(Palette);
+    this->setFixedSize(100,190);
+    Palette.setColor(QPalette::WindowText, Qt::white);
+    ui->labNum->setText(tr(""));
+    ui->labStatus->setText(tr(""));
+    ui->labNum->setPalette(Palette);
+    ui->labStatus->setPalette(Palette);
+    ui->labPerc->setPalette(Palette);
+    ui->progBar_Install->setTextVisible(false);
+    ui->progBar_Install->setVisible(false);
+    ui->labPerc->setVisible(false);
+    timPerc = new QTimer;;
+    timProg = new QTimer;
 }
 
 void DevWdg::SetNum(QString strNum)
@@ -56,10 +46,10 @@ void DevWdg::SetApkNum(int nIns, int nTotal)
 void DevWdg::StartPercLab()
 {
     ui->labPerc->setVisible(true);
-/*    QString strIns = QString::number(this->nInsApk,10);
-    QString strTotal = QString::number(this->nTotalApk,10);
-    QString strLab = strIns + tr("/") +strTotal;
-    ui->labPerc->setText(strLab);*/
+    /*    QString strIns = QString::number(this->nInsApk,10);
+          QString strTotal = QString::number(this->nTotalApk,10);
+          QString strLab = strIns + tr("/") +strTotal;
+          ui->labPerc->setText(strLab);*/
     connect(this->timPerc,SIGNAL(timeout()),this,SLOT(percRun()));
     timPerc->start(100);
 }
@@ -79,17 +69,17 @@ void DevWdg::StopPercLab()
 }
 void DevWdg::StartProcBar()
 {
-        ui->progBar_Install->setVisible(true);
-        ui->progBar_Install->setRange(0,99);
-        connect(this->timProg,SIGNAL(timeout()),this,SLOT(progRun()));
-        timProg->start(100);
+    ui->progBar_Install->setVisible(true);
+    ui->progBar_Install->setRange(0,99);
+    connect(this->timProg,SIGNAL(timeout()),this,SLOT(progRun()));
+    timProg->start(101);
 }
 void DevWdg::StopProcBar()
 {
     if( this->strStatus == tr("安装中"))
     {
         if(timProg->isActive())
-             timProg->stop();
+            timProg->stop();
         ui->progBar_Install->setValue(99);
         nProgBarValue = 0;
     }
@@ -100,11 +90,11 @@ void DevWdg::StopProcBar()
 }
 void DevWdg::progRun()
 {
-        nProgBarValue++;
-        if( nProgBarValue >=99)
-            nProgBarValue = 0;
-        ui->progBar_Install->setValue(nProgBarValue);
-        ui->progBar_Install->repaint();
+    nProgBarValue++;
+    if( nProgBarValue >=99)
+        nProgBarValue = 0;
+    ui->progBar_Install->setValue(nProgBarValue);
+    ui->progBar_Install->repaint();
 }
 void DevWdg::percRun()
 {
