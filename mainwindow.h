@@ -8,8 +8,6 @@
 #include "fileupload.h"
 #include "gengxin.h"
 
-#define DEVCOUNT 12
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -39,6 +37,9 @@ public slots:
     void setMvState(bool bState);   //change Mv State
     void SetUnUpCount();
 
+public:
+    static DevWdg* s_devArray[DEVCOUNT];
+
 private:
 
     QString m_strDevID;
@@ -50,7 +51,6 @@ private:
 
     FileUpload* m_fileUpLoad;
 
-    DevWdg* DevArray[DEVCOUNT];
     //USB_State* UsbState[DEVCOUNT];
 
     ClickedLabel *gxin;

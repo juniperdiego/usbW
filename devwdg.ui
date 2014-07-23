@@ -93,7 +93,7 @@
        <number>24</number>
       </property>
       <property name="textVisible">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
