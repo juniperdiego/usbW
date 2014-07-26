@@ -12,9 +12,9 @@
 using namespace std;
 
 void add_callback(int num,  const char *serial){
-#if 0
-#else
+#if 1
     printf("add callback %d %s.\n", num, serial);
+#else
     Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
@@ -161,7 +161,7 @@ void add_callback(int num,  const char *serial){
 }
 
 void remove_callback( int num){
-#if 0
+#if 1
     printf("remove callback %d.\n", num);
 #else
 	if( Global::usb_state[num].install_state == 1)
