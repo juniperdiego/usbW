@@ -140,7 +140,7 @@ void add_callback(int num,  const char *serial){
     strStream << num ;
     string numStr = strStream.str();
                 
-    string fileName = LOG_PATH + timeStr + "_" + numStr + ".csv";
+    string fileName = LOG_PATH + timeStr /*+ "_" + numStr */ + ".csv";
 
     //int fd=open(fileName.c_str(), O_WRONLY|O_NONBLOCK,0);
     int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
