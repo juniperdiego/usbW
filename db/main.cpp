@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-#if 1
+#if 0
     // 1  test devDB
     devDB  dev_db;
 
@@ -46,7 +46,6 @@ int main()
     cout <<"apkVer\t" << apkVer<<endl;
     cout <<"chanID\t" << chanID<<endl;
     cout << endl;
-#endif
 
     // 2  test pkgDB
 #if 0
@@ -318,49 +317,51 @@ class apkInfo {
         print(array[i]);
     }
 
+#endif
 
     // 4 test mblStat
     mblStatDB msd;
     
     mblStatInfo msi;
     msi.mblPattern =  "Nokia";  
-    msi.date = "2012-01-01";
+    msi.date = "20140725";
     msi.count = 10;
     msd.set(msi);
 
-    msi.mblPattern =  "Nokia";  
-    msi.date = "2012-01-03";
-    msi.count = 15;
-    msd.set(msi);
+
+    //msi.mblPattern =  "Nokia";  
+    //msi.date = "20140726";
+    //msi.count = 0;
+    //msd.set(msi);
 
     msi.mblPattern =  "MOto";  
-    msi.date = "2012-01-01";
+    msi.date = "20140724";
     msi.count = 20;
     msd.set(msi);
 
     msi.mblPattern =  "Moto";  
-    msi.date = "2012-01-05";
+    msi.date = "20140724";
     msi.count = 30;
     msd.set(msi);
 
     msi.mblPattern =  "MOTO";  
-    msi.date = "2012-01-03";
+    msi.date = "20140725";
     msi.count = 40;
     msd.set(msi);
 
     msi.mblPattern =  "APPLE";  
-    msi.date = "2012-01-07";
-    msi.count = 50;
+    msi.date = "20140726";
+    //msi.count = 50;
     msd.set(msi);
 
     msi.mblPattern =  "APPLE";  
-    msi.date = "2012-01-08";
+    msi.date = "20140725";
     msi.count = 70;
     msd.set(msi);
 
     vector<mblStatInfo> m_array;
 
-    msd.get("2012-01-01","2012-01-01", m_array);
+    msd.get("20140726","20140726", m_array);
     for(size_t i = 0; i< m_array.size(); i++)
     {
         print(m_array[i]);
@@ -368,7 +369,7 @@ class apkInfo {
     
     cout << endl;
 
-    msd.get("2012-01-01","2012-01-03", m_array);
+    msd.get("20140725","20140726", m_array);
     for(size_t i = 0; i< m_array.size(); i++)
     {
         print(m_array[i]);
@@ -376,14 +377,23 @@ class apkInfo {
     cout << endl;
 
 
-    msd.get("2012-01-01","2012-01-05", m_array);
+    msd.get("20140724","20140725", m_array);
     for(size_t i = 0; i< m_array.size(); i++)
     {
         print(m_array[i]);
     }
     cout << endl;
 
+    msd.increase("APPLE");
+    msd.increase("Nokia");
+    cout << "============"<< endl;
+    msd.get("20140726","20140726", m_array);
+    for(size_t i = 0; i< m_array.size(); i++)
+    {
+        print(m_array[i]);
+    }
 
+#if 0
 
     // 5 test mblStat
     logDB logdb;
@@ -427,6 +437,7 @@ class apkInfo {
         print(logArray[i]);
     }
     cout << endl;
+#endif
 
     return 0;
 }

@@ -26,6 +26,7 @@ class mblStatDB :public sqlDB
 
         bool set(const mblStatInfo& msi);
         bool get(const string& date1, const string& date2, vector<mblStatInfo> & msiArray);
+        bool get(mblStatInfo& mblStat);
         bool increase(const string& mblPattern);
 };
 
