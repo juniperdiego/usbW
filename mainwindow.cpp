@@ -8,6 +8,8 @@
 #include "usb_enum.h"
 #include "touch/calibration.h"
 
+DevWdg* MainWindow::s_devArray[DEVCOUNT] = {NULL};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -160,12 +162,12 @@ void MainWindow::CreateLayout()
     for(int nDevCount = 0; nDevCount < DEVCOUNT; nDevCount++)
     {
         DevWdg* TmpDevWdg = new DevWdg;
-        DevArray[nDevCount] = TmpDevWdg;
+        s_devArray[nDevCount] = TmpDevWdg;
         //VecDev.append(TmpDevWdg);
         QString strNum = QString::number((nDevCount+1),10);
-        DevArray[nDevCount]->SetNum(strNum);
-        DevArray[nDevCount]->SetStatus(tr("空闲"));
-        gridlayout->addWidget(DevArray[nDevCount],nDevCount/6,nDevCount%6);
+        s_devArray[nDevCount]->SetNum(strNum);
+        s_devArray[nDevCount]->SetStatus(tr("空闲"));
+        gridlayout->addWidget(s_devArray[nDevCount],nDevCount/6,nDevCount%6);
     }
 }
 
@@ -210,9 +212,9 @@ void MainWindow::startUsbScan()
 
     call();
 
-    m_usbScanTimer = new QTimer;
-    connect(m_usbScanTimer,SIGNAL(timeout()),this,SLOT(ScanUsbDev()));
-    m_usbScanTimer->start(1000);
+    //m_usbScanTimer = new QTimer;
+    //connect(m_usbScanTimer,SIGNAL(timeout()),this,SLOT(ScanUsbDev()));
+    //m_usbScanTimer->start(1000);
 }
 
 void MainWindow::onlineStateChange(bool bState)
@@ -302,27 +304,7 @@ void MainWindow::ScanUsbDev()
 {
     for(int i =0; i < DEVCOUNT; i++)
     {
-        DevArray[i]->DevWdgPrecess(&(Global::usb_state[i]));
-#if 0
-        if(Global::usb_state[i].install_state == 0 )
-            DevArray[i]->SetStatus(tr("空闲"));
-        else if(Global::usb_state[i].install_state ==1)
-        {
-            DevArray[i]->SetStatus(tr("安装中"));
-        }
-        else if(Global::usb_state[i].install_state == 2)
-        {
-            DevArray[i]->SetStatus(tr("完成"));
-        }
-        else if(Global::usb_state[i].install_state == 3)
-        {
-            DevArray[i]->SetStatus(tr("中断"));
-        }
-        else if(Global::usb_state[i].install_state == 4)
-        {
-            DevArray[i]->SetStatus(tr("失败"));
-        }
-#endif
+        s_devArray[i]->DevWdgPrecess(&(Global::usb_state[i]));
     }
 }
 

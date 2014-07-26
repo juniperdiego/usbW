@@ -3,8 +3,8 @@
 #include <string>
 #include <math.h>
 #include <stdint.h>
-#include <QtDebug>
 #include "global.h"
+#include "mainwindow.h"
 #include "usb_enum.h"
 #include <sstream>
 #include <errno.h>
@@ -15,6 +15,7 @@ void add_callback(int num,  const char *serial){
 #if 0
 #else
     printf("add callback %d %s.\n", num, serial);
+    Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
 	sprintf(Global::usb_state[num].model, "%s", device_model);
@@ -50,12 +51,18 @@ void add_callback(int num,  const char *serial){
 
     // 3 install all apks
     apkDB apkDataBase;
-    for(size_t i =0; i < pkgIn.apkList.size(); i++)
+    int pkgNum = pkgIn.apkList.size();
+    Global::usb_state[num].apk_total = pkgNum;
+
+    for(int i =0; i < pkgNum; i++)
     {
         string apkPath = APK_PATH ;
 
         apkPath += pkgIn.apkList[i] + ".apk";
-        adb_install_cmd(apkPath.c_str(), serial);
+        if (!adb_install_cmd(apkPath.c_str(), serial)) 
+            Global::usb_state[num].fail_total++;
+        Global::usb_state[num].apk_num = i;
+        MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 
         apkInfo apkIn;
@@ -67,6 +74,7 @@ void add_callback(int num,  const char *serial){
             adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
         }
     }
+	Global::usb_state[num].install_state=2;
 
     // 4 update statistic database
     mblStatDB mblStatDateBase;

@@ -22,7 +22,7 @@ public:
     void SetStatus(QString strStatus);
     void StartProcBar();
     void StopProcBar();
-    void SetApkNum(int nIns, int nTotal);
+    void setApkNum(int nIns, int nTotal);
     void StartPercLab();
     void StopPercLab();
     void DevWdgPrecess(USB_State* usbState);

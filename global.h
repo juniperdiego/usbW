@@ -25,7 +25,7 @@ using namespace std;
 #define SER_LENGTH 15
 #define FIFO "/tmp/usb_fifo"
 #define MAX_APK_NUM (64/8)
-#define USB_COUNT 12
+#define DEVCOUNT 12
 #define WEB_SITE "www.baidu.com"
 #define APP_NAME "Zig"
 
@@ -53,14 +53,15 @@ using namespace std;
 
 
 typedef struct USB_STATE{
-    int8_t num;						 //usb ser
-    int8_t install_state;                 //usb state 0?????? 1????װ??2????װ???? 3????װ?ж?4????װ????ȫ
+    int num;						 //usb ser
+    int install_state;                 //usb state 0?????? 1????װ??2????װ???? 3????װ?ж?4????װ????ȫ
                                      //0:free  1:installing  2:install_complete  3:break off 4:install uncomplete
     char   model[64];                  //device mod
     char   ser[SER_LENGTH];          //device ser
-    int8_t apk_num;                  //apk install now
-    int8_t apk_total;                //apk total num
-    int8_t apk_install[MAX_APK_NUM];  //apk install state
+    int apk_num;                  //apk install now
+    int apk_total;                //apk total num
+    int fail_total;                //apk fail total num
+    int apk_install[MAX_APK_NUM];  //apk install state
 }USB_State;
 
 
@@ -76,7 +77,7 @@ public:
     static std::string g_DevID;         //Device ID
     static bool s_netState;             //网络状态
     static int g_UnUpNum;           //未上传文件数量
-    static USB_State usb_state[USB_COUNT];
+    static USB_State usb_state[DEVCOUNT];
     static bool s_needRestart;
     static QString s_updateTime;
 };
