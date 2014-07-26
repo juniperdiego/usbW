@@ -37,13 +37,11 @@ void DevWdg::SetNum(QString strNum)
 {
     this->strNum = strNum;
     ui->labNum->setText(strNum);
-    //ui->labNum->repaint();
 }
 void DevWdg::SetStatus(QString strStatus) //End Use
 {
     this->strStatus = strStatus;
     ui->labStatus->setText(strStatus);
-    //ui->labStatus->repaint();
 }
 void DevWdg::setApkNum(int nIns, int nTotal)
 {
