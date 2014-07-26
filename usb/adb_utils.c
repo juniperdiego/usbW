@@ -49,9 +49,9 @@ bool adb_install_cmd(const char *apk_name, const char *serial)
 
 char * adb_getprop_cmd(const char *prop, const char *serial) {
     FILE *fp;
-    char *str = malloc(sizeof(char) * 1024);
-    memset(str, 1024, 0);
-    //char str[1024];
+    char *result = malloc(sizeof(char) * 1024);
+    memset(result, 1024, 0);
+    char str[1024];
     char cmd[1024];
     snprintf(cmd, sizeof(cmd), "adb -s %s shell getprop %s", serial, prop);
     printf("getprop cmd = %s\n", cmd);
@@ -73,7 +73,8 @@ char * adb_getprop_cmd(const char *prop, const char *serial) {
     }
 
     pclose(fp);
-    return (char *)str;
+    strcpy(result, str);
+    return (char *)result;
 }
 
 
