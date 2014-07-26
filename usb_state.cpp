@@ -17,6 +17,7 @@ void add_callback(int num,  const char *serial){
     printf("add callback %d %s.\n", num, serial);
 #else
     printf("add callback %d %s.\n", num, serial);
+    sleep(3);
     Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
