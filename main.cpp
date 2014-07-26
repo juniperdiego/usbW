@@ -10,9 +10,9 @@ int main(int argc, char *argv[])
 #ifdef ARM
     //font
     QFont font;
-    font.setPointSize(12);
-    font.setFamily(("wqyzh"));
-    font.setBold(false);
+    font.setPointSize(16);
+    //font.setFamily(("wqyzh"));
+    //font.setBold(false);
     a.setFont(font);
 #endif
 

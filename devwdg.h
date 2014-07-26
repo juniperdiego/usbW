@@ -38,10 +38,10 @@ private:
     QTimer* timPerc;
     USB_State* usbState;
 
-private slots:
+public slots:
     void progRun();
     void percRun();
-
+    void onUpdateState(int);
 };
 
 #endif // DEVWDG_H

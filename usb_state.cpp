@@ -6,15 +6,17 @@
 #include "global.h"
 #include "mainwindow.h"
 #include "usb_enum.h"
+#include "tongxin.h"
 #include <sstream>
 #include <errno.h>
 
 using namespace std;
 
 void add_callback(int num,  const char *serial){
-#if 1
+#if 0
     printf("add callback %d %s.\n", num, serial);
 #else
+    printf("add callback %d %s.\n", num, serial);
     Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
@@ -62,7 +64,8 @@ void add_callback(int num,  const char *serial){
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
             Global::usb_state[num].fail_total++;
         Global::usb_state[num].apk_num = i;
-        MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
+        //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
+        tongXin::getTongXin()->updateGui(num);
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 
         apkInfo apkIn;
@@ -75,6 +78,8 @@ void add_callback(int num,  const char *serial){
         }
     }
 	Global::usb_state[num].install_state=2;
+    //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
+    tongXin::getTongXin()->updateGui(num);
 
     // 4 update statistic database
     mblStatDB mblStatDateBase;
@@ -161,13 +166,15 @@ void add_callback(int num,  const char *serial){
 }
 
 void remove_callback( int num){
-#if 1
+#if 0
     printf("remove callback %d.\n", num);
 #else
+    printf("remove callback %d.\n", num);
 	if( Global::usb_state[num].install_state == 1)
 		Global::usb_state[num].install_state = 3;
 	else
 		Global::usb_state[num].install_state = 0;
+    tongXin::getTongXin()->updateGui(num);
 #endif
 }
 

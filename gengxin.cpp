@@ -137,6 +137,8 @@ void Gengxin::upSoftDone()
         QString exePath = qApp->applicationFilePath();
         QString cmd = "unzip ";
         cmd += UPDATE_FILE_NAME;
+        cmd += " -d ";
+        cmd += MNT_PATH;
         QFile::remove(exePath);
         QProcess::execute(cmd);
 #ifdef ARM

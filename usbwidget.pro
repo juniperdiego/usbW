@@ -60,6 +60,7 @@ HEADERS  += widget.h \
     dataupdate.h \
     fileupload.h \
     usb_enum.h \
+    tongxin.h \
     upstate.h 
 
 HEADERS  += db/sqlDB.h\
@@ -92,7 +93,7 @@ RESOURCES += \
     usbwidget.qrc
 
 LIBS += -lsqlite3 \
-#           ./usb/pc/libusb_enum.a
+#            ./usb/pc/libusb_enum.a
             ./usb/arm/libusb_enum.a
 
 #LIBS += -lqjson

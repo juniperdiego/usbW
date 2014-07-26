@@ -1,6 +1,10 @@
 #include "devwdg.h"
 #include "ui_devwdg.h"
+#include "tongxin.h"
+#include "mainwindow.h"
 #include <QPalette>
+
+tongXin* tongXin::_self = NULL;
 
 DevWdg::DevWdg(QWidget *parent) :
     QWidget(parent),
@@ -25,19 +29,21 @@ DevWdg::DevWdg(QWidget *parent) :
     ui->labPerc->setVisible(false);
     timPerc = new QTimer;;
     timProg = new QTimer;
+
+    connect(tongXin::getTongXin(), SIGNAL(updateState(int)), this, SLOT(onUpdateState(int)));
 }
 
 void DevWdg::SetNum(QString strNum)
 {
     this->strNum = strNum;
     ui->labNum->setText(strNum);
-    ui->labNum->repaint();
+    //ui->labNum->repaint();
 }
 void DevWdg::SetStatus(QString strStatus) //End Use
 {
     this->strStatus = strStatus;
     ui->labStatus->setText(strStatus);
-    ui->labStatus->repaint();
+    //ui->labStatus->repaint();
 }
 void DevWdg::setApkNum(int nIns, int nTotal)
 {
@@ -47,7 +53,7 @@ void DevWdg::setApkNum(int nIns, int nTotal)
 void DevWdg::StartPercLab()
 {
     ui->labPerc->setVisible(true);
-    percRun();
+    ui->progBar_Install->setValue(0);
     //connect(this->timPerc,SIGNAL(timeout()),this,SLOT(percRun()));
     //timPerc->start(100);
 }
@@ -68,6 +74,7 @@ void DevWdg::StopPercLab()
 void DevWdg::StartProcBar()
 {
     ui->progBar_Install->setVisible(true);
+    ui->progBar_Install->setRange(0, nTotalApk);
     progRun();
     //connect(this->timProg,SIGNAL(timeout()),this,SLOT(progRun()));
     //timProg->start(101);
@@ -88,32 +95,33 @@ void DevWdg::StopProcBar()
 }
 void DevWdg::progRun()
 {
-    nProgBarValue++;
-    if( nProgBarValue >=99)
-        nProgBarValue = 0;
-    ui->progBar_Install->setValue(nProgBarValue);
-    //ui->progBar_Install->repaint();
+    ui->progBar_Install->setValue(nInsApk);
 }
 void DevWdg::percRun()
 {
     this->setApkNum((int)this->usbState->apk_num ,(int)usbState->apk_total);
-    QString strIns = QString::number(this->nInsApk,10);
-    QString strTotal = QString::number(this->nTotalApk,10);
-    QString strLab = strIns + tr("/") +strTotal;
+    QString strLab = tr("%1/%2").arg(nInsApk).arg(nTotalApk);
     ui->labPerc->setText(strLab);
-    //ui->labPerc->repaint();
 }
+
+void DevWdg::onUpdateState(int num) 
+{
+    MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
+}
+
 void DevWdg::DevWdgPrecess(USB_State* usbState)
 {
     this->usbState = usbState;
     if((this->strStatus == tr("空闲") && usbState->install_state ==1) || (this->strStatus == tr("中断") && usbState->install_state ==1))
     {
-        //设置状态
         this->SetStatus(tr("安装中"));
-        //启动进度条
-        this->StartProcBar();
-        //启动安装数
         this->StartPercLab();
+        this->StartProcBar();
+    }
+    if (usbState->install_state == 1)
+    {
+        this->percRun();
+        this->progRun();
     }
     if(usbState->install_state == 2)
     {

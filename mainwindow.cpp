@@ -1,3 +1,4 @@
+#include "global.h"
 #include "mainwindow.h"
 #include "wenjian.h"
 #include "fuwuqi.h"
@@ -96,7 +97,7 @@ void MainWindow::CreateLayout()
     fwuqi = new ClickedLabel;
     fwuqi->setVisible(false);
     fwuqi->setText("<u>服务器</u>");
-    connect(fwuqi,SIGNAL(clicked()),this,SLOT(OnFuwuqi()));
+    connect(fwuqi,SIGNAL(clicked()),this,SLOT(OnJiaoZhun()));
 
     cangkuid = new QLabel;
     cangkuid->setText("仓库ID:");
@@ -269,6 +270,7 @@ void MainWindow::OnJiaoZhun()
 {
 #ifdef ARM
     QFile pointercal("/etc/pointercal");
+    //if (pointercal.exists()) pointercal.remove();
     if (!pointercal.exists() || pointercal.size() == 0)
     {
         for (;;)
