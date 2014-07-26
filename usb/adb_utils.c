@@ -100,10 +100,20 @@ char * adb_get_imei_cmd( const char *serial) {
     }
     pclose(fp);
 
+
+    // check if this string begin with "Device ID"
+    char * devPos = strstr(str, "Device ID");
+    if(devPos == NULL) // not found
+    {
+        result = '\0';
+        return (char *)result;
+    }
+
     // handle this kind of string
     //"Device ID = 352956061737216"
     char* p = str;
     char* start = NULL;
+
     while(p != '\0')
     {
         if(*p == '=' && *(p+1) != '\0' && *(p+2) != '\0')
