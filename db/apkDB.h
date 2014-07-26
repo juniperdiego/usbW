@@ -35,6 +35,7 @@ class apkDB :public sqlDB
 
         bool set(const apkInfo& apk);
         bool get(apkInfo & apk);
+        bool getRecordCount(int & count);
 
 };
 

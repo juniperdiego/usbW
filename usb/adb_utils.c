@@ -129,9 +129,9 @@ bool adb_push_cmd(char *src, const char *dest, const char *serial)
 /*
 * adb -s 0123456789ABCDEF shell am start -n com.android.browser/com.android.browser.BrowserActivity
 */
-bool adb_start_app_cmd(char *packge_name, const char *serial)
+bool adb_start_app_cmd(char *pkgPath, const char *serial)
 {
     char cmd[1024];
-    snprintf(cmd, sizeof(cmd), "adb -s %s shell am start -n %s", serial, packge_name);
+    snprintf(cmd, sizeof(cmd), "adb -s %s shell am start -n %s", serial, pkgPath);
     return system(cmd) == 0;
 }

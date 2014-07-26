@@ -49,6 +49,7 @@ void add_callback(int num,  const char *serial){
     pkgDataBase.get(pkgIn);
 
     // 3 install all apks
+    apkDB apkDataBase;
     for(size_t i =0; i < pkgIn.apkList.size(); i++)
     {
         string apkPath = APK_PATH ;
@@ -56,6 +57,15 @@ void add_callback(int num,  const char *serial){
         apkPath += pkgIn.apkList[i] + ".apk";
         adb_install_cmd(apkPath.c_str(), serial);
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
+
+        apkInfo apkIn;
+        apkIn.apkID = pkgIn.apkList[i];
+        apkDataBase.get(apkIn);
+        if(apkIn.aRun)
+        {
+            // start the app
+            adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
+        }
     }
 
     // 4 update statistic database

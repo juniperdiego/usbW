@@ -74,7 +74,7 @@ int main()
     apkList.push_back("6.apk");
     apkList.push_back("7.apk");
 
-    pInfo.pkgID = 100;
+    pInfo.pkgID = "100";
     pInfo.pkgName = "name1";
     pInfo.batchCode = "batchcode1";
     pInfo.apkList  = apkList;
@@ -124,7 +124,7 @@ int main()
 
 #if 1
     apkList.push_back("8.apk");
-    pInfo.pkgID = 200;
+    pInfo.pkgID = "200";
     pInfo.pkgName = "name2";
     pInfo.batchCode = "batchcode2";
     pInfo.apkList  = apkList;
@@ -145,6 +145,21 @@ int main()
     }
     cout << endl;
 #endif
+
+    vector<pkgInfo> pkgVector;
+    pkg_db.getAll(pkgVector);
+
+    for(int i = 0; i< pkgVector.size(); i++)
+    {
+        cout << "===================" << endl;
+        cout << "pInfo.pkgID\t" <<  pkgVector[i].pkgID<<endl;
+        cout << "pInfo.pkgName \t" << pkgVector[i].pkgName<<endl;
+        cout << "pInfo.batchCode\t" << pkgVector[i].batchCode <<endl;
+        cout << "pInfo.apkSum  \t" << pkgVector[i].apkSum <<endl;
+        cout << "pInfo.date \t" << pkgVector[i].date<<endl;
+        cout << "===================" << endl;
+    }
+
     
     // 3 test exist/delet/clear table
     bool rc = pkg_db.tableExist();
@@ -215,27 +230,43 @@ class apkInfo {
     apk_db.get(aInfo);
     print(aInfo);
 
-    aInfo.apkID  = 2000;
-    aInfo.pkgName = "xxxpkdfd";
+    aInfo.apkID  = "2000";
+    aInfo.pkgPath= "xxxpkdfd";
     aInfo.counter = 3454;
-    aInfo.dIcon = NO_DSP;
-    aInfo.aRun = RUN;
+    aInfo.dIcon = true;
+    aInfo.aRun = true;
     aInfo.md5 = "12345678901234567890123456789023";
 
     apk_db.set(aInfo);
     apk_db.get(aInfo);
     print(aInfo);
 
-    aInfo.apkID  = 2003;
-    aInfo.pkgName = "xcvcvxxxpkdfd";
+    aInfo.apkID  = "2003";
+    aInfo.pkgPath = "xcvcvxxxpkdfd";
     aInfo.counter = 345455555;
-    aInfo.dIcon = NO_DSP;
-    aInfo.aRun = RUN;
+    aInfo.dIcon = false;
+    aInfo.aRun = false;
+    aInfo.md5 = "1234xxxx678901234567890123456789023";
+
+    apk_db.set(aInfo);
+
+    aInfo.apkID  = "2004";
+    aInfo.pkgPath = "xcvcvxxxpkdfd";
+    aInfo.counter = 345455555;
+    aInfo.dIcon = false;
+    aInfo.aRun = false;
     aInfo.md5 = "1234xxxx678901234567890123456789023";
 
     apk_db.set(aInfo);
     apk_db.get(aInfo);
+    
     print(aInfo);
+
+    int count ;
+
+    apk_db.getRecordCount(count);
+    
+    cout << "==================count\t" << count << endl;
 
 
     // 4 test usbStat

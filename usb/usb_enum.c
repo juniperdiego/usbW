@@ -101,6 +101,7 @@ static void * do_usb_device_enum_thread(void *args)
 {
     int idx;
     char save_serial[64] = {0};
+    bool devExist = false;
 
     idx = (int) (args);
 
@@ -109,6 +110,7 @@ static void * do_usb_device_enum_thread(void *args)
 
             char serial[64];
             read_usb_device_serial(idx, usb_device_list[idx], serial, sizeof(serial));
+            devExist = true;
 
             if (! save_serial[0]) {
                 strcpy(save_serial, serial);
@@ -121,7 +123,11 @@ static void * do_usb_device_enum_thread(void *args)
                 }
             }
         } else {
-            usb_device_montor.rm_cb(idx);
+            if(devExist == true)
+            {
+                devExist = false;
+                usb_device_montor.rm_cb(idx);
+            }
         }
 
         usleep(10 * 1000);

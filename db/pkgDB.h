@@ -32,6 +32,8 @@ class pkgDB :public sqlDB
         bool deleteRecord(const string& pkgID);
         bool set(const pkgInfo& pkg);
         bool get(pkgInfo & pkg);
+        bool getAll(vector<pkgInfo> & pkgInfoList);
+
 
 };
 
