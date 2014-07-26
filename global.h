@@ -62,7 +62,6 @@ typedef struct USB_STATE{
     int apk_num;                  //apk install now
     int apk_total;                //apk total num
     int fail_total;                //apk fail total num
-    int apk_install[MAX_APK_NUM];  //apk install state
 }USB_State;
 
 

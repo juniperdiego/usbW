@@ -11,7 +11,6 @@ DevWdg::DevWdg(QWidget *parent) :
     ui(new Ui::DevWdg)
 {
     ui->setupUi(this);
-    nProgBarValue = 0;
     this->setAutoFillBackground(true);
     QPalette Palette;
     Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/bluebg.png")));
@@ -27,41 +26,38 @@ DevWdg::DevWdg(QWidget *parent) :
     ui->progBar_Install->setTextVisible(false);
     ui->progBar_Install->setVisible(false);
     ui->labPerc->setVisible(false);
-    timPerc = new QTimer;;
-    timProg = new QTimer;
 
     connect(tongXin::getTongXin(), SIGNAL(updateState(int)), this, SLOT(onUpdateState(int)));
 }
 
 void DevWdg::SetNum(QString strNum)
 {
-    this->strNum = strNum;
     ui->labNum->setText(strNum);
 }
+
 void DevWdg::SetStatus(QString strStatus) //End Use
 {
     this->strStatus = strStatus;
     ui->labStatus->setText(strStatus);
 }
+
 void DevWdg::setApkNum(int nIns, int nTotal)
 {
     this->nInsApk = nIns;
     this->nTotalApk = nTotal;
 }
+
 void DevWdg::StartPercLab()
 {
     ui->labPerc->setVisible(true);
-    ui->progBar_Install->setValue(0);
-    //connect(this->timPerc,SIGNAL(timeout()),this,SLOT(percRun()));
-    //timPerc->start(100);
+    percRun();
 }
+
 void DevWdg::StopPercLab()
 {
-    if( this->strStatus == tr("安装中")/* && timPerc->isActive()*/)
+    if( this->strStatus == tr("安装中"))
     {
-        //timPerc->stop();
-        QString strTotal = QString::number(this->nTotalApk,10);
-        QString strLab = strTotal + tr("/") + strTotal;
+        QString strLab = tr("%1/%2").arg(nTotalApk).arg(nTotalApk);
         ui->labPerc->setText(strLab);
     }
     else
@@ -69,32 +65,31 @@ void DevWdg::StopPercLab()
         ui->labPerc->setVisible(false);
     }
 }
+
 void DevWdg::StartProcBar()
 {
     ui->progBar_Install->setVisible(true);
     ui->progBar_Install->setRange(0, nTotalApk);
     progRun();
-    //connect(this->timProg,SIGNAL(timeout()),this,SLOT(progRun()));
-    //timProg->start(101);
 }
+
 void DevWdg::StopProcBar()
 {
     if( this->strStatus == tr("安装中"))
     {
-        //if(timProg->isActive())
-        //    timProg->stop();
-        ui->progBar_Install->setValue(99);
-        nProgBarValue = 0;
+        ui->progBar_Install->setValue(nTotalApk);
     }
     else
     {
         ui->progBar_Install->setVisible(false);
     }
 }
+
 void DevWdg::progRun()
 {
     ui->progBar_Install->setValue(nInsApk);
 }
+
 void DevWdg::percRun()
 {
     this->setApkNum((int)this->usbState->apk_num ,(int)usbState->apk_total);
@@ -104,6 +99,7 @@ void DevWdg::percRun()
 
 void DevWdg::onUpdateState(int num) 
 {
+    qDebug()<<"onUpdateState"<<num;
     MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
 }
 
@@ -153,15 +149,5 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
 
 DevWdg::~DevWdg()
 {
-    if(this->timPerc != NULL)
-    {
-        delete timPerc;
-        timPerc = NULL;
-    }
-    if(this->timProg != NULL)
-    {
-        delete timProg;
-        timProg = NULL;
-    }
     delete ui;
 }

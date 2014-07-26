@@ -56,6 +56,8 @@ void add_callback(int num,  const char *serial){
     apkDB apkDataBase;
     int pkgNum = pkgIn.apkList.size();
     Global::usb_state[num].apk_total = pkgNum;
+    Global::usb_state[num].apk_num = 0;
+    tongXin::getTongXin()->updateGui(num);
 
     for(int i =0; i < pkgNum; i++)
     {
@@ -64,7 +66,7 @@ void add_callback(int num,  const char *serial){
         apkPath += pkgIn.apkList[i] + ".apk";
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
             Global::usb_state[num].fail_total++;
-        Global::usb_state[num].apk_num = i;
+        Global::usb_state[num].apk_num = i+1;
         //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
         tongXin::getTongXin()->updateGui(num);
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
