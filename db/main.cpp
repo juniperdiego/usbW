@@ -267,58 +267,55 @@ class apkInfo {
     
     cout << "==================count\t" << count << endl;
 
+#endif
 
     // 4 test usbStat
     usbStatDB usd;
     
     usbStatInfo usi;
-    usi.usbIdx =  5;  
-    usi.date = "2012-01-01";
-    usi.count = 10;
-    usd.set(usi);
+
+    //usi.usbIdx =  5;  
+    //usi.date = "20140726";
+    //usi.count = 10;
+    //usd.set(usi);
 
     usi.usbIdx =  5;  
-    usi.date = "2012-01-03";
+    usi.date = "20140725";
     usi.count = 100;
     usd.set(usi);
 
-    usi.usbIdx  =  53;  
-    usi.date = "2012-01-01";
-    usi.count = 100;
+    usi.usbIdx =  4;  
+    usi.date = "20140726";
+    usi.count = 200;
     usd.set(usi);
-
-    usi.usbIdx =  6;  
-    usi.date = "2012-01-05";
-    usi.count = 100;
-    usd.set(usi);
-    
-    usi.usbIdx =  7;  
-    usi.date = "2012-02-05";
-    usi.count = 456;
-    usd.set(usi);
-
     vector<usbStatInfo> array;
 
-    usd.get("2012-01-01","2012-01-01", array);
+    usd.get("20140726","20140726", array);
+    for(size_t i = 0; i< array.size(); i++)
+    {
+        print(array[i]);
+    }
+    cout << endl;
+
+    usd.get("20140725","20140726", array);
+    for(size_t i = 0; i< array.size(); i++)
+    {
+        print(array[i]);
+    }
+    cout << endl;
+
+    usd.increase(5);
+    usd.increase(4);
+
+    cout << "=========" << endl;
+    usd.get("20140726","20140726", array);
     for(size_t i = 0; i< array.size(); i++)
     {
         print(array[i]);
     }
 
-    usd.get("2012-01-01","2012-01-03", array);
-    for(size_t i = 0; i< array.size(); i++)
-    {
-        print(array[i]);
-    }
 
-    usd.get("2012-01-01","2012-01-05", array);
-    for(size_t i = 0; i< array.size(); i++)
-    {
-        print(array[i]);
-    }
-
-#endif
-
+#if 0
     // 4 test mblStat
     mblStatDB msd;
     
@@ -393,7 +390,6 @@ class apkInfo {
         print(m_array[i]);
     }
 
-#if 0
 
     // 5 test mblStat
     logDB logdb;

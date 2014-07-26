@@ -58,7 +58,7 @@ bool mblDB::get(mblInfo & mbl)
     cout << "mbl.mblID\t["<< mbl.mblID <<"]"<<endl;
 
     sprintf(sql, "select pkgID from %s where key = '%s';", getTableName().c_str(), mbl.mblID.c_str());
-#if 1
+#if 0
     {
         int nrow = 0, ncolumn = 0;
         char **azResult; 
