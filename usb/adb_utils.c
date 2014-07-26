@@ -82,6 +82,8 @@ char * adb_get_imei_cmd( const char *serial) {
     char *result = malloc(sizeof(char) * 1024);
     char str[1024];
     char cmd[1024];
+    bool findImei = false;
+
     snprintf(cmd, sizeof(cmd), "adb -s %s shell dumpsys iphonesubinfo", serial);
     printf("getprop cmd = %s\n", cmd);
     fflush(stdout);
@@ -96,14 +98,20 @@ char * adb_get_imei_cmd( const char *serial) {
                 str[strlen(str) - 2] = '\0';
             else
                 str[strlen(str) - 1] = '\0';
+
+            // check if this string begin with "Device ID"
+            char * devPos = strstr(str, "Device ID");
+            if(devPos != NULL) // found
+            {
+                findImei = true;
+                break;
+            }
         }
     }
     pclose(fp);
 
 
-    // check if this string begin with "Device ID"
-    char * devPos = strstr(str, "Device ID");
-    if(devPos == NULL) // not found
+    if(findImei == false) // not found
     {
         result = '\0';
         return (char *)result;
