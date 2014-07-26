@@ -1,7 +1,7 @@
 #ifndef WENJIAN_H
 #define WENJIAN_H
 
-#include <QDialog>
+#include "global.h"
 #include <QProcess>
 
 namespace Ui {
@@ -28,6 +28,10 @@ private:
     void setUpdatenum();
 
 private:
+    vector<pkgInfo> m_pkgInfos;
+    apkDB m_apkDB;
+    pkgDB m_pkgDB;
+
     Ui::wenjian *ui;
     QProcess*   m_process;
 };

@@ -29,13 +29,9 @@ public:
 
 private:
     Ui::DevWdg *ui;
-    QString strNum;
     QString strStatus;
     int nTotalApk;
     int nInsApk;
-    int nProgBarValue;
-    QTimer* timProg;
-    QTimer* timPerc;
     USB_State* usbState;
 
 public slots:
