@@ -1,4 +1,5 @@
 #include "sqlDB.h"
+#include "../global.h"
 
 sqlite3 * sqlDB::s_db = NULL;
 unsigned int sqlDB::s_refCnt = 0;
@@ -17,7 +18,7 @@ sqlDB::sqlDB()
     //cout << "s_refCnt \t" << s_refCnt<<endl;
     if(s_db == NULL)
     {
-        const string dbName = "zig.db";
+        const string dbName = string(DB_PATH) + "zig.db";
 
         // 1. open the database
         int rc;

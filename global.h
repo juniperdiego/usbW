@@ -42,6 +42,7 @@ using namespace std;
 #define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
 #define APK_PATH  "/mnt/repos/.kuaijl/apks/"
 #define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
+#define DB_PATH "/mnt/repos/.kuaijl/"
 
 //update
 #define URL_UPLOAD "http://192.168.1.105:8080/nzyw/api/processLog.do"
