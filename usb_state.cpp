@@ -77,6 +77,7 @@ void add_callback(int num,  const char *serial){
         if(apkIn.aRun)
         {
             // start the app
+            cout <<"pkgPath\t"<< apkIn.pkgPath << endl;
             adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
         }
     }
