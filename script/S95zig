@@ -1,0 +1,36 @@
+#!/bin/sh
+
+#
+# Zig start/stop script
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/mnt/repos
+
+export TSLIB_CONSOLEDEVICE=none
+export TSLIB_FBDEVICE=/dev/fb0
+export TSLIB_TSDEVICE=/dev/input/event1
+export QWS_MOUSE_PROTO=tslib:/dev/input/event1
+export LANG=zh_CN.UTF8
+
+case "$1" in
+  start)
+	echo -n "Starting zig: "
+	# start
+	start-stop-daemon --start --background --exec usbwidget -- -qws -display LinuxFB:/dev/fb0 -font wqyzh
+	echo "OK"
+	;;
+  stop)
+  	echo -n "Stopping zig:"
+  	start-stop-daemon --stop --name usbwidget
+  	echo "OK"
+  	;;
+  restart|reload)
+  	"$0" stop
+  	"$0" start
+  	;;
+  *)
+  	echo "Usage: $0 {start|stop|restart}"
+  	exit 1
+ esac
+ 
+

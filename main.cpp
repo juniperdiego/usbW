@@ -11,8 +11,6 @@ int main(int argc, char *argv[])
     //font
     QFont font;
     font.setPointSize(16);
-    //font.setFamily(("wqyzh"));
-    //font.setBold(false);
     a.setFont(font);
 #endif
 
