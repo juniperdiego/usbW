@@ -45,7 +45,7 @@ using namespace std;
 #define DB_PATH "/mnt/repos/.kuaijl/"
 
 //update
-#define URL_UPLOAD "http://192.168.1.105:8080/nzyw/api/processLog.do"
+#define URL_UPLOAD "http://192.168.1.108:8080/nzyw/api/processLog.do"
 #define BLOCKSIZE 100
 #define MAXLINELEN 512
 #define LOG_PATH "/mnt/repos/.kuaijl/log/"

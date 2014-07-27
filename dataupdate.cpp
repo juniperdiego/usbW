@@ -8,8 +8,23 @@ using QtJson::JsonArray;
 
 #define HAVE_QJSON
 
+class apkSortInfo {
+    public:
+        string      apkID;
+        bool        dIcon;
+        bool        aRun;
 
-bool cmp(const pair<string, int>& t1, const pair<string, int>& t2) {
+    apkSortInfo()
+            :
+            dIcon(false), 
+            aRun(false) 
+    {
+    };
+};
+
+
+
+bool cmp(const pair<apkSortInfo, int>& t1, const pair<apkSortInfo, int>& t2) {
     return t1.second < t2.second;
 }
 
@@ -273,7 +288,6 @@ void DataUpdate::PkgFinish()
             {
                 pkgIn.pkgID = COMMON_PKG_NAME;
                 pkgIn.batchCode = commpkg["batchCode"].toString().toStdString();
-                //pkgIn.pkgName = commpkg["name"].toString().toStdString();
                 pkgIn.pkgName = COMMON_PKG_NAME;
 
 
@@ -282,18 +296,14 @@ void DataUpdate::PkgFinish()
                 pkgIn.apkSum = length;
                 pkgIn.date = date;
 
-                int type = commpkg["type"].toInt();
-                //QVariantList apkList = commpkg["apkList"].toList();
-                QString apk_sort;
-                vector<pair<string, int> > sortVector;
+                //int type = commpkg["type"].toInt();
+                vector<pair<apkSortInfo, int> > sortVector;
                 foreach (QVariant apkinfo, apkList) {
                     JsonObject apk_info = apkinfo.toMap();
 
-                    apkInfo apkIn;
+                    apkSortInfo apkIn;
                     apkIn.apkID = apk_info["apkId"].toString().toStdString();
-                    m_apkDB.get(apkIn);
 
-                    apkIn.counter = apk_info["counter"].toInt();
                     if(apk_info["icon"].toInt() == 0)
                         apkIn.dIcon = false;
                     else
@@ -305,7 +315,7 @@ void DataUpdate::PkgFinish()
 
                     int sort = apk_info["sort"].toInt();
 
-                    sortVector.push_back(pair<string,int>(apkIn.apkID, sort));
+                    sortVector.push_back(pair<apkSortInfo,int>(apkIn, sort));
                 }
 
                 sort(sortVector.begin(), sortVector.end(), cmp);
@@ -313,8 +323,15 @@ void DataUpdate::PkgFinish()
                 pkgIn.apkList.clear();
                 for(size_t i= 0; i < sortVector.size(); i++)
                 {
-                    pkgIn.apkList.push_back(sortVector[i].first);
+                    pkgIn.apkList.push_back(sortVector[i].first.apkID);
                 }
+
+                pkgIn.autoRunList.clear();
+                for(size_t i= 0; i < sortVector.size(); i++)
+                {
+                    pkgIn.autoRunList.push_back(sortVector[i].first.aRun);
+                }
+
                 m_pkgDB.set(pkgIn);
             }
         }
@@ -325,7 +342,6 @@ void DataUpdate::PkgFinish()
             QString atom_id;
             QString atom_packageid;
             QString atom_apksort;
-            qint32  atom_type;
             //QVariantList apk_list;
             JsonArray apk_list;
             //QVariantList mob_list;
@@ -350,19 +366,15 @@ void DataUpdate::PkgFinish()
                     m_mblDB.deleteRecord(pkgIn.pkgID);
                     continue;
                 }
-                pkgIn.apkList ;
 
                 apk_list = Pkg_atom["apkList"].toList();
-                vector<pair<string, int> > sortVector;
+                vector<pair<apkSortInfo, int> > sortVector;
                 foreach( QVariant atom,  apk_list){
-                    apkInfo apkIn;
-                    //QVariantMap apkMap = atom.toMap();
+                    apkSortInfo apkIn;
                     JsonObject apkMap= atom.toMap();
 
                     apkIn.apkID = apkMap["apkId"].toString().toStdString();
-                    m_apkDB.get(apkIn);
 
-                    apkIn.counter = apkMap["counter"].toInt();
                     if(apkMap["icon"].toInt() == 0)
                         apkIn.dIcon = false;
                     else
@@ -374,7 +386,7 @@ void DataUpdate::PkgFinish()
 
                     int sort = apkMap["sort"].toInt();
 
-                    sortVector.push_back(pair<string,int>(apkIn.apkID, sort));
+                    sortVector.push_back(pair<apkSortInfo,int>(apkIn, sort));
                 }
 
                 sort(sortVector.begin(), sortVector.end(), cmp);
@@ -382,15 +394,21 @@ void DataUpdate::PkgFinish()
                 pkgIn.apkList.clear();
                 for(size_t i= 0; i < sortVector.size(); i++)
                 {
-                    pkgIn.apkList.push_back(sortVector[i].first);
+                    pkgIn.apkList.push_back(sortVector[i].first.apkID);
                 }
+
+                pkgIn.autoRunList.clear();
+                for(size_t i= 0; i < sortVector.size(); i++)
+                {
+                    pkgIn.autoRunList.push_back(sortVector[i].first.aRun);
+                }
+
                 pkgIn.apkSum = sortVector.size();
                 pkgIn.date = date;
 
                 m_pkgDB.set(pkgIn);
 
                 //update mblDB
-
                 mob_list = Pkg_atom["modelList"].toList();
                 foreach( QVariant atom, mob_list){
                     QString mob = atom.toString();

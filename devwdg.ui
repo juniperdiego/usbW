@@ -101,7 +101,7 @@
      <widget class="QLabel" name="labPerc">
       <property name="font">
        <font>
-        <pointsize>10</pointsize>
+        <pointsize>12</pointsize>
         <italic>false</italic>
        </font>
       </property>

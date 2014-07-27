@@ -1,7 +1,6 @@
 #include "global.h"
 #include "mainwindow.h"
 #include "wenjian.h"
-#include "fuwuqi.h"
 #include "baobiao.h"
 #include "shangchuan.h"
 #include "devprocess.h"
@@ -65,6 +64,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //QTimer::singleShot(10*60*1000,m_fileUpLoad,SLOT(start()));
     m_fileUpLoad->start();
 #endif
+
+    if (!Global::s_netState)
+        startUsbScan();
 }
 
 MainWindow::~MainWindow()
@@ -209,8 +211,6 @@ void MainWindow::CreateStatusbar()
 
 void MainWindow::startUsbScan()
 {
-    if (!m_updateState) return;
-
     call();
 
     //m_usbScanTimer = new QTimer;
@@ -243,7 +243,8 @@ void MainWindow::OnGengxin(bool all)
 
     m_updateState = up->getUpdateState();
 
-    startUsbScan();
+    if (m_updateState)
+        startUsbScan();
 }
 
 void MainWindow::OnWenjian()
@@ -258,8 +259,8 @@ void MainWindow::OnBaobiao()
 }
 void MainWindow::OnFuwuqi()
 {
-    static fuwuqi *fq = new fuwuqi;
-    fq->exec();
+    //static fuwuqi *fq = new fuwuqi;
+    //fq->exec();
 }
 void MainWindow::OnShangchuan()
 {

@@ -43,6 +43,7 @@ void wenjian::UpdateContent()
     ui->cardspaceLabel->setPalette(pe);
     ui->ldateLabel->setPalette(pe);
     ui->updatenumLabel->setPalette(pe);
+    ui->apkLabel->setPalette(pe);
 
     ui->comboBox->clear();
     m_pkgDB.getAll(m_pkgInfos);
@@ -77,35 +78,6 @@ void wenjian::setFreeSpace1(int)
 {
     QProcess* pRes =( QProcess*)sender();
     QString strRes = pRes->readAll();
-    qDebug()<<strRes;
-#if 0
-    QStringList strLstLine = strRes.split("\n");
-    qDebug()<<strLstLine;
-    QStringList strLstMnt;
-    strLstMnt = strLstLine.filter("run");/////////////@
-    qDebug()<<strLstMnt;
-    QList<QString> strLstOneSpace;
-    double dFreeSpace = 0;
-    for(int i = 0; i<strLstMnt.size(); i++)
-    {
-        strLstOneSpace.append(strLstMnt[i].simplified());
-        qDebug()<<strLstOneSpace[i];
-        QString strTmp = strLstMnt[i].simplified();
-        QStringList strLstOneSplit = strTmp.split(" ");
-        QString strNum = strLstOneSplit[3].left(strLstOneSplit[3].size()-1);
-        QString strUnit = strLstOneSplit[3].right(1);
-        if(strUnit == "G"){
-              dFreeSpace += strNum.toDouble();
-         }else{
-               if(strUnit == "M")
-                   dFreeSpace += strNum.toDouble()/1024;
-               else
-                    dFreeSpace += strNum.toDouble()/(1024*1024);
-          }
-    }
-    QString strFreeSpace = QString::number(dFreeSpace, 'f', 4);
-    ui->cardspaceLabel->setText(strFreeSpace);
-#endif
     double dFreeSpace = 0;
     QStringList strLstLine = strRes.split("\n", QString::SkipEmptyParts);
     for (int i = strLstLine.count()-1; i >= 0; i--)

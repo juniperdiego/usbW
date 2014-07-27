@@ -18,35 +18,21 @@ baobiao::baobiao(QWidget *parent) :
     ui->JixingTab->setColumnWidth(1,350);
     ui->JixingTab->setColumnWidth(2,210);
     ui->JixingTab->setRowCount(12);
-    //ui->JixingTab->insertRow(0);
 
     ui->UsbTab->setColumnWidth(0,150);
     ui->UsbTab->setColumnWidth(1,350);
     ui->UsbTab->setColumnWidth(2,210);
     ui->UsbTab->setRowCount(12);
-   // ui->UsbTab->insertRow(0);
 
 
     //set the date display policy
-#if 0
-    ui->FromdateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    ui->FromdateEdit->setCalendarPopup(true);
-    ui->FromdateEdit->setDisplayFormat("yyyy-MM-dd");
-#endif
     ui->FromdateEdit->setDate(QDate::currentDate());
-#if 0
-    ui->TodateEdit->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    ui->TodateEdit->setCalendarPopup(true);
-    ui->TodateEdit->setDisplayFormat("yyyy-MM-dd");
-#endif
     ui->TodateEdit->setDate(QDate::currentDate());
 
     ui->searchBtn->setAutoFillBackground(true);
-    //ui->searchBtn->setStyleSheet("QPushButton{border:3px solid green;border-radius:8px}");
 
     this->setWindowTitle(tr("报表"));
     this->setFixedSize(800,480);
-
 }
 
 baobiao::~baobiao()
@@ -64,15 +50,13 @@ void baobiao::OnSearchData()
     ui->JixingTab->setHorizontalHeaderLabels(QStringList()<< tr("日期")<<tr("机型")<<tr("安装数量"));
     ui->UsbTab->clear();
     ui->UsbTab->setHorizontalHeaderLabels(QStringList()<<tr("日期")<<tr("USB口")<<tr("安装数量"));
-    string dateFrom = ui->FromdateEdit->text().toStdString();
-    string dateTo = ui->TodateEdit->text().toStdString();
+    string dateFrom = ui->FromdateEdit->text().remove('-').toStdString();
+    string dateTo = ui->TodateEdit->text().remove('-').toStdString();
     int nMod = 0;
     if( ui->tabWidget->currentIndex() == 0)
         nMod = 0;
     else if( ui->tabWidget->currentIndex() == 1)
         nMod = 1;
-    //this->Data_SqlOpt->db_get(dateFrom, dateTo, nMod, &res);
-
 
     if( nMod == 0)
     {

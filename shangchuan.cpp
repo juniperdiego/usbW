@@ -44,9 +44,10 @@ void Shangchuan::Return()
 void Shangchuan::Search()
 {
     vector<logInfo> res;
-    string dateFrom = ui->FromDataEdt->text().toStdString();
-    string dateTo = ui->ToDataEdt->text().toStdString();
+    string dateFrom = ui->FromDataEdt->text().remove('-').toStdString();
+    string dateTo = ui->ToDataEdt->text().remove('-').toStdString();
     m_logDB.get(dateFrom, dateTo, res);
+    //cout<<dateFrom<<"\t"<<dateTo<<"\t"<<res.size()<<endl;
     for (int nRow = 0; nRow < res.size(); nRow++)
     {
         for( int nCol = 0; nCol < 3; nCol++)
@@ -86,8 +87,10 @@ void Shangchuan::Upload()
     QString strState;
     if (num == -1)
         strState = "没有文件需要上传!\n";
-    else
+    else if (num > 0)
         strState = tr("%1个文件上传失败!\n").arg(num);
+    else
+        strState = "文件上传成功!\n";
 
     QMessageBox::information(this, windowTitle(), strState);
 }

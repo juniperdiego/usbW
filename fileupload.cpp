@@ -38,16 +38,12 @@ void FileUpload::UpSingleFile(const QString& strFile)
 #endif
         for (int i = 0; i < OneLine.length(); ++i)
         {
-            //OneLine[i] = OneLine[i] ^ 0x12;
+            OneLine[i] = OneLine[i] ^ 0x12;
         }
 
         BlockData.append(OneLine);
-        BlockData.append("\n");
+        //BlockData.append("\n");
     }
-    //BlockData.remove(BlockData.size()-1,1);
-    //BlockData.insert(0,tr("{["));
-    //BlockData.insert(BlockData.size(),tr("]}"));
-    //qDebug()<<BlockData<<"\n";
 
     QString md5 = DataUpdate::getFileMd5(strFile); 
     UpOneBlock(BlockData, FileID, md5);
@@ -68,7 +64,6 @@ void FileUpload::UpOneBlock(const QByteArray& BlockData, const QString& fileBNam
     QObject::connect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
     QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
     loop.exec();
-    //UpFinishSingleFile();
 }
 void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
 {

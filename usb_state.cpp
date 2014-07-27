@@ -21,7 +21,9 @@ void add_callback(int num,  const char *serial){
     Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
-	sprintf(Global::usb_state[num].model, "%s", device_model);
+    QString devModel = QString(device_model).simplified();
+    devModel.replace(' ', '_');
+	sprintf(Global::usb_state[num].model, "%s", devModel.toStdString().c_str());
 	sprintf(Global::usb_state[num].ser, "%s", serial);
 	
 	Global::usb_state[num].install_state=1;
@@ -54,12 +56,12 @@ void add_callback(int num,  const char *serial){
 
     // 3 install all apks
     apkDB apkDataBase;
-    int pkgNum = pkgIn.apkList.size();
-    Global::usb_state[num].apk_total = pkgNum;
+    int apkNum = pkgIn.apkList.size();
+    Global::usb_state[num].apk_total = apkNum;
     Global::usb_state[num].apk_num = 0;
     tongXin::getTongXin()->updateGui(num);
 
-    for(int i =0; i < pkgNum; i++)
+    for(int i =0; i < apkNum; i++)
     {
         string apkPath = APK_PATH ;
 
@@ -71,12 +73,13 @@ void add_callback(int num,  const char *serial){
         tongXin::getTongXin()->updateGui(num);
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 
-        apkInfo apkIn;
-        apkIn.apkID = pkgIn.apkList[i];
-        apkDataBase.get(apkIn);
-        if(apkIn.aRun)
+        bool aRun = pkgIn.autoRunList[i];
+        if(aRun)
         {
             // start the app
+            apkInfo apkIn;
+            apkIn.apkID = pkgIn.apkList[i];
+            apkDataBase.get(apkIn);
             cout <<"pkgPath\t"<< apkIn.pkgPath << endl;
             adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
         }

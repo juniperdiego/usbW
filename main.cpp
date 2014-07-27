@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     appDir.mkpath(LOG_PATH);
 
     //test network
-    int time = 20;
+    int time = 6;
     while(time)
     {
         QHostInfo host = QHostInfo::fromName(WEB_SITE);
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     if (!Global::s_netState)
     {
-        QMessageBox::information(NULL, APP_NAME, "没有发现网络连接，软件无法正常使用！");
+        QMessageBox::information(NULL, APP_NAME, "没有发现网络连接，无法更新软件数据，系统将离线运行！");
     }
 
     MainWindow w;

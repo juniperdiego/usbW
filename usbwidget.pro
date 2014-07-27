@@ -17,11 +17,9 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp \
     gengxin.cpp \
     wenjian.cpp \
     baobiao.cpp \
-    fuwuqi.cpp \
     mainwindow.cpp \
     shangchuan.cpp \
     global.cpp \
@@ -45,12 +43,10 @@ SOURCES += db/sqlDB.cpp\
 SOURCES += json/json.cpp
 
 
-HEADERS  += widget.h \
-    gengxin.h \
+HEADERS  += gengxin.h \
     ClickedLabel.h \
     wenjian.h \
     baobiao.h \
-    fuwuqi.h \
     mainwindow.h \
     shangchuan.h \
     global.h \

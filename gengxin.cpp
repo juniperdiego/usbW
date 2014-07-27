@@ -105,7 +105,7 @@ void Gengxin::upDataDone()
     {
         m_updateState = true;
         QDate date = QDate::currentDate();
-        Global::s_updateTime = date.toString("yyyy-MM-dd hh:mm");
+        Global::s_updateTime = date.toString("yyyy-MM-dd");
         accept();
     }
     else
