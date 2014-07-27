@@ -25,7 +25,7 @@ bool adb_install_cmd(const char *apk_name, const char *serial)
         if ((strlen(str) > 1) && (str[strlen(str) - 1] == '\n')) {
             str[strlen(str) - 1] = '\0';
         }
-        
+
         if (! strncmp(str, "Failure", 7)) {
             printf("install app error\n");
             succ = false;

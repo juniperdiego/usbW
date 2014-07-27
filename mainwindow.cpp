@@ -234,6 +234,7 @@ void MainWindow::onlineStateChange(bool bState)
 void MainWindow::OnGengxin(bool all)
 {
     static Gengxin* up = new Gengxin;
+    up->setWindowModality(Qt::ApplicationModal);
     up->show();
     if (all)
         up->StartUpAll();
@@ -271,7 +272,7 @@ void MainWindow::OnJiaoZhun()
 {
 #ifdef ARM
     QFile pointercal("/etc/pointercal");
-    //if (pointercal.exists()) pointercal.remove();
+    if (pointercal.exists()) pointercal.remove();
     if (!pointercal.exists() || pointercal.size() == 0)
     {
         for (;;)

@@ -26,6 +26,12 @@ int main(int argc, char *argv[])
     appDir.mkpath(APK_PATH);
     appDir.mkpath(LOG_PATH);
 
+    //QEventLoop loop;
+    //QMessageBox msgBox(QMessageBox::Information, APP_NAME, "系统正在检测网络，请稍后！");
+    //QObject::connect(&msgBox, SIGNAL(rejected()), &loop, SLOT(quit()));
+    //msgBox.exec();
+    //loop.exec();
+
     //test network
     int time = 6;
     while(time)
@@ -39,6 +45,8 @@ int main(int argc, char *argv[])
         sleep(5);
         --time;
     }
+
+    //msgBox.hide();
 
     if (!Global::s_netState)
     {
