@@ -7,16 +7,9 @@ class apkInfo {
     public:
         string      apkID;
         string      pkgPath;
-        int         counter;
-        bool        dIcon;
-        bool        aRun;
         string      md5;
 
     apkInfo()
-            :
-            counter(0),
-            dIcon(false), 
-            aRun(false) 
     {
     };
 };

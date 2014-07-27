@@ -14,7 +14,7 @@ pkgDB::pkgDB()
     {
         char* errMsg;
         // creat the table
-        sprintf(sql, "CREATE TABLE %s ( key varchar(128) PRIMARY KEY, pkgName varchar(128), batchCode varchar(32), apkList TEXT,  apkSum int,  date varchar(16));", getTableName().c_str());
+        sprintf(sql, "CREATE TABLE %s ( key varchar(128) PRIMARY KEY, pkgName varchar(128), batchCode varchar(32), apkList TEXT, autoRunList TEXT,  apkSum int,  date varchar(16));", getTableName().c_str());
         int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
         if( rc ){   
             fprintf(stderr, "Can't create table %s: %s\n", getTableName().c_str(), errMsg);   
@@ -37,6 +37,7 @@ bool pkgDB::set( const pkgInfo& pkg)
     char* errMsg;
 
     string apkListStr;
+    string autoRunListStr;
 
     size_t size = pkg.apkList.size();
     for(size_t i = 0; i < size; i++)
@@ -46,14 +47,26 @@ bool pkgDB::set( const pkgInfo& pkg)
             apkListStr += "|";
     }
 
+    size = pkg.autoRunList.size();
+    for(size_t i = 0; i < size; i++)
+    {
+        if(pkg.autoRunList[i])
+            autoRunListStr += "1"; // autoRun
+        else
+            autoRunListStr += "2";// not run
+
+        autoRunListStr += "|";
+    }
+
     sprintf(sql, "insert or replace into %s\
-            (key, pkgName, batchCode, apkList, apkSum, date)\
-       values( \"%s\", \"%s\",   \"%s\",  \"%s\",   %d,    \"%s\");",
+            (key, pkgName, batchCode, apkList, autoRunList, apkSum, date)\
+       values( \"%s\", \"%s\",   \"%s\",  \"%s\", \"%s\",   %d,    \"%s\");",
        getTableName().c_str(),
        pkg.pkgID.c_str(), 
        pkg.pkgName.c_str(),
        pkg.batchCode.c_str(),
        apkListStr.c_str(),
+       autoRunListStr.c_str(),
        pkg.apkSum,
        pkg.date.c_str()
        );
@@ -83,7 +96,7 @@ bool pkgDB::get(pkgInfo & pkg)
     sqlite3_stmt *stmt;
     int rc;
 
-    sprintf(sql, "select pkgName, batchCode, apkList, apkSum, date from %s where key = '%s';", getTableName().c_str(), pkg.pkgID.c_str());
+    sprintf(sql, "select pkgName, batchCode, apkList, autoRunList, apkSum, date from %s where key = '%s';", getTableName().c_str(), pkg.pkgID.c_str());
 #if 0
     {
         int nrow = 0, ncolumn = 0;
@@ -111,12 +124,14 @@ bool pkgDB::get(pkgInfo & pkg)
     }   
 
     string str;
+    string autoStr;
     while(sqlite3_step(stmt)==SQLITE_ROW ) {   
         pkg.pkgName = string( (const char*)sqlite3_column_text(stmt,0)); 
         pkg.batchCode = string( (const char*)sqlite3_column_text(stmt,1));
         str = string( (const char*)sqlite3_column_text(stmt,2));   
-        pkg.apkSum = sqlite3_column_int(stmt,3);   
-        pkg.date = string( (const char*)sqlite3_column_text(stmt,4));   
+        autoStr = string( (const char*)sqlite3_column_text(stmt,3));   
+        pkg.apkSum = sqlite3_column_int(stmt,4);   
+        pkg.date = string( (const char*)sqlite3_column_text(stmt,5));   
         //printf("%s\n",  (const char*)sqlite3_column_text(stmt,0));
     }   
 
@@ -132,6 +147,26 @@ bool pkgDB::get(pkgInfo & pkg)
             end = i;
             string tmp =  str.substr(start, end-start);
             pkg.apkList.push_back(tmp);
+            start = i+1;
+        }
+    }
+
+    pkg.autoRunList.clear();
+
+    start = 0; 
+    end = 0;
+    for(size_t i = 0; i< autoStr.size(); i++)
+    {
+        if(autoStr[i] == '|')
+        {
+            end = i;
+            string tmp =  autoStr.substr(start, end-start);
+            if(tmp == "1")
+                pkg.autoRunList.push_back(true);
+            else if(tmp == "2")
+                pkg.autoRunList.push_back(false);
+            else
+                cout << "error in pkg.get() funciton" << endl;
             start = i+1;
         }
     }

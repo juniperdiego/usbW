@@ -11,6 +11,7 @@ class pkgInfo
         string          pkgName;
         string          batchCode;
         vector<string>  apkList;
+        vector<bool>    autoRunList;
         int             apkSum;
         string          date;
 
