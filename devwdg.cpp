@@ -15,7 +15,7 @@ DevWdg::DevWdg(QWidget *parent) :
     QPalette Palette;
     Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/bluebg.png")));
     this->setPalette(Palette);
-    this->setFixedSize(100,190);
+    this->setFixedSize(120,190);
     Palette.setColor(QPalette::WindowText, Qt::white);
     ui->labNum->setText(tr(""));
     ui->labStatus->setText(tr(""));
@@ -26,6 +26,7 @@ DevWdg::DevWdg(QWidget *parent) :
     ui->progBar_Install->setTextVisible(false);
     ui->progBar_Install->setVisible(false);
     ui->labPerc->setVisible(false);
+    ui->labUa->setVisible(false);
 
     connect(tongXin::getTongXin(), SIGNAL(updateState(int)), this, SLOT(onUpdateState(int)));
 }
@@ -109,6 +110,8 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
     if((this->strStatus == tr("空闲") && usbState->install_state ==1) || (this->strStatus == tr("中断") && usbState->install_state ==1))
     {
         this->SetStatus(tr("安装中"));
+        ui->labUa->setText(QString(usbState->model));
+        ui->labUa->setVisible(true);
         this->StartPercLab();
         this->StartProcBar();
     }
@@ -128,6 +131,7 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
         this->SetStatus(tr("空闲"));
         ui->progBar_Install->setVisible(false);
         ui->labPerc->setVisible(false);
+        ui->labUa->setVisible(false);
     }
     if(usbState->install_state == 3)
     {
