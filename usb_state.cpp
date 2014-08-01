@@ -9,6 +9,8 @@
 #include "tongxin.h"
 #include <sstream>
 #include <errno.h>
+#include <signal.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -66,8 +68,15 @@ void add_callback(int num,  const char *serial){
         string apkPath = APK_PATH ;
 
         apkPath += pkgIn.apkList[i] + ".apk";
+
+        if(!serialNumExistInPort(num, serial))
+            continue;
+
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
+        {
             Global::usb_state[num].fail_total++;
+            continue;
+        }
         Global::usb_state[num].apk_num = i+1;
         //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
         tongXin::getTongXin()->updateGui(num);
@@ -203,6 +212,83 @@ void remove_callback(int num)
 }
 */
 
+vector<string> getSerialNums()
+{
+    vector<string> strings;
+    for(int i = 0; i< 12; i++)
+    {
+        char serial[64];
+        if(getSerialNumInPort(i, serial))
+            strings.push_back(serial);
+    }
+    return strings;
+}
+
+#define ADB_CMD1 "adb -s "
+#define ADB_CMD2 "install"
+#define SPACE " " 
+
+static void* adb_killer(void *args)
+{
+
+    //FILE *fp = popen("ps aux | grep \'adb\' | awk \'{ for(i=2;i<=NF;i++)printf $i\" \"; printf \"\\n\"}\'", "r");//打开管道，执行shell 命令
+    //FILE *fp = popen("ps aux | grep \'adb\' ", "r");//打开管道，执行shell 命令
+    while(1)
+    {
+        FILE *fp = popen("ps | grep \'adb\' ", "r");//打开管道，执行shell 命令
+        char buffer[1024] = {0};
+
+        while (NULL != fgets(buffer, 1024, fp)) //逐行读取执行结果并打印
+        {   
+            printf("PID:  %s", buffer);
+            char* p_adb = strstr(buffer, ADB_CMD1);
+            char* p_install = strstr(buffer, ADB_CMD2);
+            if(!p_adb || !p_install)
+                continue;
+
+            // the character after the end of serial number
+            *(p_install-1) = '\0';
+            char *p = p_adb + strlen(ADB_CMD1);
+            printf("serial:  [%s]\n", p); 
+
+            char *p_pid = buffer;// the char points pid
+            while(*p_pid == ' ') // skip space
+                p_pid ++; 
+
+            char* p_fisrt_space = strstr(p_pid, SPACE);// the first space after pid
+            *p_fisrt_space  = '\0';
+            string pidStr = p_pid;
+
+            // check whether the serial num is in use
+            string serStr = p;
+            vector<string> serialStrs = getSerialNums();
+            for(size_t i = 0; i < serialStrs.size(); i++)
+            {
+                cout << "serial num :\t" <<  serialStrs[i] <<endl;
+            }
+
+            if(find(serialStrs.begin(), serialStrs.end(), serStr) != serialStrs.end())
+            {
+                cout << "pid("<< pidStr <<") is running" << endl;
+                continue;
+            }
+            else
+            {
+                cout << "pid("<< pidStr <<") is not running" << endl;
+            }
+
+            int pid = atoi(p_pid);
+            printf("kill pid:  [%d]\n", pid);
+            kill(pid,SIGKILL );
+        }
+        pclose(fp); //关闭返回的文件指针，注意不是用fclose噢
+
+        usleep(2000 * 1000);
+    }
+
+    return NULL;
+}
+
 void call()
 {
     static bool isInMonitor = false;
@@ -212,6 +298,13 @@ void call()
         return;
     register_usb_device_callback(add_callback, remove_callback);
     start_usb_device_monitor();
+
+    pthread_t adb_killer_ptid;
+
+    int ret = pthread_create(&adb_killer_ptid, NULL, adb_killer ,NULL);
+    if (ret != 0) {
+        printf("adb killer thread  create failed.\n");
+    }
 //	char adb_pus_1[] = "/home/xianfeng/usb_enum/net_link.txt";
 //	char adb_pus_2[] = "/sd/net_link.txt";
 //	char adb_pus_3[] = "0123456789ABCDEF";

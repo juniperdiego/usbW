@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
 {
     int i, ret;
     
+#if 0
      for (i = 0; i < 3; i ++) {
              ret = pthread_create(&ptid[i], NULL, install_apk, (void *)i);
              if (ret != 0) {
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
      for (i = 0; i < 3; i ++) {
              pthread_join(ptid[i], NULL);
          }
+#endif
 
 #if 0
     register_usb_device_callback(add_callback, remove_callback);
@@ -57,7 +59,32 @@ int main(int argc, char *argv[])
 
     //start com.android.browser/com.android.browser.BrowserActivity
     //printf("start app %d \n", adb_start_app_cmd("com.android.browser/com.android.browser.BrowserActivitya", "0123456789ABCDEF"));
+    
 #endif
+    int j;
+    for(j = 1; j < 2; j++)
+    {
+        //if(serialNumExistInPort(int idx, const char * serial))
+
+        char cmd[1024];
+        snprintf(cmd, sizeof(cmd), "%d.apk ",j);
+        //if(serialNumExistInPort(5, "b2269745"))
+        if(1)
+        {
+            printf("exist\n");
+            adb_install_cmd(cmd, "b2269745");
+        }
+        else
+            printf("not exist\n");
+    }
+
+    printf("xxxxxxxxa\nx");
+    fflush(stdout);
+    //printf(" getprop(ro.build.product) = [%s]\n", adb_getprop_cmd("ro.build.product","9a1fd61b"));
+    //printf(" getmodel = [%s]n", adb_getprop_cmd("ro.product.model","9a1fd61b"));
+    //printf(" getimei = [%s]n", adb_get_imei_cmd("9a1fd61b"));
+    //adb_install_cmd("1.apk", "9a1fd61b");
+
     return 0;
 }
 

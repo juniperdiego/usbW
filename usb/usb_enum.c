@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include<signal.h>
 
 const char *usb_device_list[] = {
     "/sys/devices/platform/sw-ehci.1/usb1/1-1/1-1.2/1-1.2.1/",
@@ -24,6 +25,7 @@ const char *usb_device_list[] = {
     "/sys/devices/platform/sw-ehci.2/usb3/3-1/3-1.2/3-1.2.2/",
     "/sys/devices/platform/sw-ehci.2/usb3/3-1/3-1.2/3-1.2.3/"
 };
+
 
 #define USB_DEVICE_NUM (sizeof(usb_device_list) / sizeof(usb_device_list[0]))
 
@@ -172,3 +174,35 @@ void start_usb_device_monitor(void)
         //pthread_join(usb_device_montor.ptid[i], NULL);
     }
 } 
+
+bool getSerialNumInPort(int idx, char* serial)
+{
+    if(usb_device_path_exist(usb_device_list[idx]))
+    {
+        char serialInPort[64];
+        read_usb_device_serial(idx, usb_device_list[idx], serialInPort, sizeof(serialInPort));
+
+        strcpy(serial, serialInPort);
+
+        printf("serialInPort\t:%s\n",serialInPort);
+        return true;
+    }
+    printf("false 2\n");
+    return false;
+}
+
+bool serialNumExistInPort(int idx, const char* serial)
+{
+    if(usb_device_path_exist(usb_device_list[idx]))
+    {
+        char serialInPort[64];
+        read_usb_device_serial(idx, usb_device_list[idx], serialInPort, sizeof(serialInPort));
+
+        if(strcmp(serial, serialInPort) == 0)
+            return true;
+        else
+            return false;
+    }
+    printf("false 2\n");
+    return false;
+}

@@ -57,6 +57,11 @@ extern char * adb_getprop_cmd(const char *prop, const char *serial);
 extern bool adb_start_app_cmd(char *packge_name, const char *serial);
 
 extern char * adb_get_imei_cmd( const char *serial);
+
+extern bool getSerialNumInPort(int idx, char* serial);
+
+bool serialNumExistInPort(int idx, const char* serial);
+
 #ifdef __cplusplus
 }
 #endif
