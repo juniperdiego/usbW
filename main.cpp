@@ -33,14 +33,21 @@ int main(int argc, char *argv[])
     //loop.exec();
 
     //test network
-    int time = 6;
+    int time = 2;
     while(time)
     {
-        QHostInfo host = QHostInfo::fromName(WEB_SITE);
-        if (!host.addresses().isEmpty()) 
+        QNetworkInterface netInterface = QNetworkInterface::interfaceFromName(NET_NAME);
+        if (netInterface.isValid())
         {
-            Global::s_netState = true;
-            break;
+            if (netInterface.flags().testFlag(QNetworkInterface::IsUp))
+            {
+                QHostInfo host = QHostInfo::fromName(WEB_SITE);
+                if (!host.addresses().isEmpty()) 
+                {
+                    Global::s_netState = true;
+                    break;
+                }
+            }
         }
         sleep(5);
         --time;

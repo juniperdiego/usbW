@@ -4,18 +4,23 @@
 #include <QLabel>
 #include <QWidget>
 #include <QMouseEvent>
+#include <QApplication>
 
 class ClickedLabel : public QLabel
 {
     Q_OBJECT
 signals:
     void clicked();
- //   void clicked(int x);
 
 public:
-    ClickedLabel(QWidget *parent=0):QLabel(parent)
+    ClickedLabel(int size = -1, QWidget *parent=0):QLabel(parent)
     {
-        //setStyleSheet("font-size: 12pt;");
+        if (size != -1)
+        {
+            QFont font = QApplication::font();
+            font.setPointSize(size);
+            setFont(font);
+        }
     }
 
     ~ClickedLabel(){}

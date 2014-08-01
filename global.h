@@ -19,7 +19,7 @@ using namespace std;
 
 #define COMMON_PKG_NAME "COMMON_PACKAGE"
 
-#define ARM
+//#define ARM
 
 #define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
@@ -28,6 +28,7 @@ using namespace std;
 #define DEVCOUNT 12
 #define WEB_SITE "www.baidu.com"
 #define APP_NAME "Zig"
+#define NET_NAME "eth0"
 
 //download
 #ifdef ARM
@@ -42,7 +43,8 @@ using namespace std;
 #define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
 #define APK_PATH  "/mnt/repos/.kuaijl/apks/"
 #define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
-#define DB_PATH "/mnt/repos/.kuaijl/"
+//#define DB_PATH "/mnt/repos/.kuaijl/"
+#define DB_PATH ""
 
 //update
 #define URL_UPLOAD "http://192.168.1.108:8080/nzyw/api/processLog.do"

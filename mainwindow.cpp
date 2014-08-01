@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     NetInterfaceList = QNetworkInterface::allInterfaces();
     foreach(QNetworkInterface net, NetInterfaceList)
     {
-        //qDebug()<<net;
         if (net.name() == "eth0")
         {
             m_strDevID = net.hardwareAddress();
@@ -34,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //m_netConf = new QNetworkConfigurationManager;
     //connect(m_netConf, SIGNAL(onlineStateChanged(bool)), this, SLOT(onlineStateChange(bool)));
 
+    QTimer* netTimer = new QTimer;
+    connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
+    netTimer->start(1000);
 
     CreateLayout();
 
@@ -218,16 +220,49 @@ void MainWindow::startUsbScan()
     //m_usbScanTimer->start(1000);
 }
 
-void MainWindow::onlineStateChange(bool bState)
+void MainWindow::onlineStateChange()
 {
+    static bool netUp = false;
+    bool bState = false;
+    QNetworkInterface netInterface = QNetworkInterface::interfaceFromName(NET_NAME);
+    qDebug()<<netInterface;
+    if (netInterface.isValid())
+    {
+        if (netInterface.flags().testFlag(QNetworkInterface::IsUp))
+        {
+            if (!netUp) 
+            {
+                repaint();
+                netUp = true;
+            }
+            QHostInfo host = QHostInfo::fromName(WEB_SITE);
+            if (!host.addresses().isEmpty()) 
+            {
+                Global::s_netState = true;
+                bState = true;
+            }
+            else
+            {
+                Global::s_netState = false;
+                bState = false;
+            }
+        }
+        else
+        {
+            Global::s_netState = false;
+            bState = false;
+            netUp = false;
+        }
+    }
+
     if(bState)
     {
-        QImage NetImage(":/NetConn24.ico");
+        QImage NetImage(":/images/NetConn24.ico");
         this->network->setPixmap(QPixmap::fromImage(NetImage));
     }
     else
     {
-        QImage NetImage(":/NetDisConn24.ico");
+        QImage NetImage(":/images/NetDisConn24.ico");
         this->network->setPixmap(QPixmap::fromImage(NetImage));
     }
 }

@@ -33,7 +33,7 @@ public slots:
     void OnHelp();
     void ScanUsbDev();
     void TimeNow();
-    void onlineStateChange(bool bState);
+    void onlineStateChange();
     void setMvState(bool bState);   //change Mv State
     void SetUnUpCount();
 
