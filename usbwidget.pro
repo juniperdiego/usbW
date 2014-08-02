@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 CONFIG += qt debug 
-#CONFIG += touch 
+CONFIG += touch 
 
 QT       += core gui \
 	network
@@ -40,6 +40,9 @@ SOURCES += db/sqlDB.cpp\
             db/mblStatDB.cpp\
             db/logDB.cpp
 
+SOURCES +=  usb/adb_utils.c\
+            usb/usb_enum.c
+
 SOURCES += json/json.cpp
 
 
@@ -58,6 +61,7 @@ HEADERS  += gengxin.h \
     usb_enum.h \
     tongxin.h \
     upstate.h 
+
 
 HEADERS  += db/sqlDB.h\
             db/pkgDB.h\
@@ -88,8 +92,9 @@ FORMS    += widget.ui \
 RESOURCES += \
     usbwidget.qrc
 
-LIBS += -lsqlite3 \
-            ./usb/pc/libusb_enum.a
+LIBS += -lsqlite3 
+#LIBS += -lsqlite3 \
+#            ./usb/pc/libusb_enum.a
 #            ./usb/arm/libusb_enum.a
 
 #LIBS += -lqjson

@@ -14,6 +14,14 @@
 
 using namespace std;
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+struct saved_serial_t {
+    char serial[64];
+    bool isValid;
+};
+
+saved_serial_t save_serial_num[12];
+
 void add_callback(int num,  const char *serial){
 #if 0
     printf("add callback %d %s.\n", num, serial);
@@ -191,7 +199,7 @@ void remove_callback( int num){
     printf("remove callback %d.\n", num);
 	if( Global::usb_state[num].install_state == 1)
 		Global::usb_state[num].install_state = 3;
-	else
+	else if(Global::usb_state[num].install_state = 2)
 		Global::usb_state[num].install_state = 0;
     tongXin::getTongXin()->updateGui(num);
 #endif
@@ -212,16 +220,22 @@ void remove_callback(int num)
 }
 */
 
-vector<string> getSerialNums()
+void getSerialNums()
 {
     vector<string> strings;
     for(int i = 0; i< 12; i++)
     {
         char serial[64];
         if(getSerialNumInPort(i, serial))
-            strings.push_back(serial);
+        {
+            strcpy(save_serial_num[i].serial, serial);
+            save_serial_num[i].isValid = true;
+        }
+        else
+        {
+            save_serial_num[i].isValid = false;
+        }
     }
-    return strings;
 }
 
 #define ADB_CMD1 "adb -s "
@@ -260,14 +274,21 @@ static void* adb_killer(void *args)
             string pidStr = p_pid;
 
             // check whether the serial num is in use
+            bool isFound = false;
             string serStr = p;
-            vector<string> serialStrs = getSerialNums();
-            for(size_t i = 0; i < serialStrs.size(); i++)
+            // update the serial nums
+            getSerialNums();
+            for(int i = 0; i < 12; i++)
             {
-                cout << "serial num :\t" <<  serialStrs[i] <<endl;
+                if(save_serial_num[i].isValid)
+                {
+                    if(0 == strcmp(save_serial_num[i].serial, p))
+                        isFound = true;
+                }
             }
 
-            if(find(serialStrs.begin(), serialStrs.end(), serStr) != serialStrs.end())
+            //if(find(serialStrs.begin(), serialStrs.end(), serStr) != serialStrs.end())
+            if(isFound)
             {
                 cout << "pid("<< pidStr <<") is running" << endl;
                 continue;
@@ -277,6 +298,20 @@ static void* adb_killer(void *args)
                 cout << "pid("<< pidStr <<") is not running" << endl;
             }
 
+            // check which port the phone is inserted in
+            for(int i = 0; i < 12; i++)
+            {
+                if(save_serial_num[i].isValid == false)
+                {
+                    if(0 == strcmp(save_serial_num[i].serial, p))
+                    {
+                        // thes indicates INTERRUPT state
+                        cout << "find the number\t:" << i << endl;
+                        Global::usb_state[i].install_state = 3;
+                        break;
+                    }
+                }
+            }
             int pid = atoi(p_pid);
             printf("kill pid:  [%d]\n", pid);
             kill(pid,SIGKILL );
@@ -298,6 +333,10 @@ void call()
         return;
     register_usb_device_callback(add_callback, remove_callback);
     start_usb_device_monitor();
+
+    // initilize the save_serial_num
+    for(int i = 0; i< 12; i++)
+        save_serial_num[i].isValid = false;
 
     pthread_t adb_killer_ptid;
 

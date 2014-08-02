@@ -26,7 +26,6 @@ const char *usb_device_list[] = {
     "/sys/devices/platform/sw-ehci.2/usb3/3-1/3-1.2/3-1.2.3/"
 };
 
-
 #define USB_DEVICE_NUM (sizeof(usb_device_list) / sizeof(usb_device_list[0]))
 
 typedef void (* remove_usb_device_callback)(int num);

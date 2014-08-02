@@ -225,7 +225,7 @@ void MainWindow::onlineStateChange()
     static bool netUp = false;
     bool bState = false;
     QNetworkInterface netInterface = QNetworkInterface::interfaceFromName(NET_NAME);
-    qDebug()<<netInterface;
+    //qDebug()<<netInterface;
     if (netInterface.isValid())
     {
         if (netInterface.flags().testFlag(QNetworkInterface::IsUp))
@@ -279,7 +279,7 @@ void MainWindow::OnGengxin(bool all)
 
     m_updateState = up->getUpdateState();
 
-    if (m_updateState)
+//    if (m_updateState)
         startUsbScan();
 }
 

@@ -19,7 +19,7 @@ using namespace std;
 
 #define COMMON_PKG_NAME "COMMON_PACKAGE"
 
-//#define ARM
+#define ARM
 
 #define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
@@ -32,12 +32,12 @@ using namespace std;
 
 //download
 #ifdef ARM
-//#define URL_DEVVER "http://192.168.1.108:8080/nzyw/api/getDeviceVersion.do"
-//#define URL_APKLIBVER "http://192.168.1.108:8080/nzyw/api/getApkLibVersion.do"
-//#define URL_PKGLIBVER "http://192.168.1.108:8080/nzyw/api/getPkgLibVersion.do"
-#define URL_DEVVER "http://api.dfstock4g.com/nzyw/api/getDeviceVersion.do"
-#define URL_APKLIBVER "http://api.dfstock4g.com/nzyw/api/getApkLibVersion.do"
-#define URL_PKGLIBVER "http://api.dfstock4g.com/nzyw/api/getPkgLibVersion.do"
+#define URL_DEVVER "http://192.168.1.102:8080/nzyw/api/getDeviceVersion.do"
+#define URL_APKLIBVER "http://192.168.1.102:8080/nzyw/api/getApkLibVersion.do"
+#define URL_PKGLIBVER "http://192.168.1.102:8080/nzyw/api/getPkgLibVersion.do"
+//#define URL_DEVVER "http://api.dfstock4g.com/nzyw/api/getDeviceVersion.do"
+//#define URL_APKLIBVER "http://api.dfstock4g.com/nzyw/api/getApkLibVersion.do"
+//#define URL_PKGLIBVER "http://api.dfstock4g.com/nzyw/api/getPkgLibVersion.do"
 #else
 #define URL_DEVVER "http://www.tymng.com:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://www.tymng.com:8080/nzyw/api/getApkLibVersion.do"
