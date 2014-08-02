@@ -26,6 +26,7 @@ public:
     void StartPercLab();
     void StopPercLab();
     void DevWdgPrecess(USB_State* usbState);
+    void setPaletteWithStatus();
 
 private:
     Ui::DevWdg *ui;

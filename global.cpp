@@ -15,6 +15,8 @@ void Global::reboot()
 
 void Global::setSysTime(const QString& t)
 {
+    if (t.isEmpty()) return;
+
     uint time = t.toUInt();
     QDateTime dateTime = QDateTime::fromTime_t(time);
     QString timeStr = dateTime.toString("yyyy.MM.dd-hh:mm:ss");

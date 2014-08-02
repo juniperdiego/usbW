@@ -79,11 +79,12 @@ void MainWindow::CreateLayout()
 {
     layout = new QHBoxLayout;
 
+    QHBoxLayout* leftLayout = new QHBoxLayout;
+    leftLayout->setContentsMargins(10, 0, 10, 0);
+    leftLayout->setSpacing(20);
+
     gxin = new ClickedLabel;
     gxin->setText("<u>更新</u>");
-    // gxin->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    //gxin->setAlignment(Qt::AlignCenter | Qt::AlignCenter);
-    //gxin->setGeometry(QRect(1, 1, 20, 20));
     connect(gxin,SIGNAL(clicked()),this,SLOT(OnGengxin()));
 
     wluo = new ClickedLabel;
@@ -146,11 +147,12 @@ void MainWindow::CreateLayout()
 
     QSpacerItem* horizonSpacer1 = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
     QSpacerItem* horizonSpacer2 = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    layout->addWidget(gxin);
-    layout->addWidget(wluo);
-    layout->addWidget(wjian);
-    layout->addWidget(bbiao);
-    layout->addWidget(fwuqi);
+    leftLayout->addWidget(gxin);
+    leftLayout->addWidget(wluo);
+    leftLayout->addWidget(wjian);
+    leftLayout->addWidget(bbiao);
+    layout->addLayout(leftLayout);
+
     layout->addSpacerItem(horizonSpacer1);
     layout->addWidget(cangkuid);
     layout->addWidget(id);

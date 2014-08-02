@@ -13,7 +13,7 @@ DevWdg::DevWdg(QWidget *parent) :
     ui->setupUi(this);
     this->setAutoFillBackground(true);
     QPalette Palette;
-    Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/bluebg.png")));
+    Palette.setBrush(QPalette::Background, QBrush(QPixmap(":/images/blue.png")));
     this->setPalette(Palette);
     this->setFixedSize(120,190);
     Palette.setColor(QPalette::WindowText, Qt::white);
@@ -21,6 +21,7 @@ DevWdg::DevWdg(QWidget *parent) :
     ui->labStatus->setText(tr(""));
     ui->labNum->setPalette(Palette);
     ui->labStatus->setPalette(Palette);
+    ui->labUa->setPalette(Palette);
     ui->labPerc->setPalette(Palette);
     ui->progBar_Install->setRange(0,99);
     ui->progBar_Install->setTextVisible(false);
@@ -115,25 +116,25 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
         this->StartPercLab();
         this->StartProcBar();
     }
-    if (usbState->install_state == 1)
+    else if (usbState->install_state == 1)
     {
         this->percRun();
         this->progRun();
     }
-    if(usbState->install_state == 2)
+    else if(usbState->install_state == 2)
     {
         this->SetStatus(tr("完成"));
         this->StopProcBar();
         this->StopPercLab();
     }
-    if(usbState->install_state == 0)
+    else if(usbState->install_state == 0)
     {
         this->SetStatus(tr("空闲"));
         ui->progBar_Install->setVisible(false);
         ui->labPerc->setVisible(false);
         ui->labUa->setVisible(false);
     }
-    if(usbState->install_state == 3)
+    else if(usbState->install_state == 3)
     {
         this->SetStatus(tr("中断"));
         this->StopProcBar();
@@ -141,7 +142,7 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
         ui->progBar_Install->setVisible(false);
         ui->labPerc->setVisible(false);
     }
-    if(usbState->install_state == 4)
+    else if(usbState->install_state == 4)
     {
         this->SetStatus(tr("失败"));
         this->StopProcBar();
@@ -149,6 +150,21 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
         ui->progBar_Install->setVisible(false);
         ui->labPerc->setVisible(false);
     }
+    setPaletteWithStatus();
+}
+
+void
+DevWdg::setPaletteWithStatus()
+{
+    QString bgImgStr = ":/images/blue.png";
+    if(usbState->install_state == 2)
+        bgImgStr = ":/images/green.png";
+    else if (usbState->install_state == 3 || usbState->install_state == 4)
+        bgImgStr = ":/images/red.png";
+
+    QPalette palette;
+    palette.setBrush(QPalette::Background, QBrush(QPixmap(bgImgStr)));
+    setPalette(palette);
 }
 
 DevWdg::~DevWdg()

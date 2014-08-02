@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>images/bluebg.png</file>
+        <file>images/blue.png</file>
+        <file>images/green.png</file>
+        <file>images/red.png</file>
         <file>images/NetConn24.ico</file>
         <file>images/NetDisConn24.ico</file>
         <file>images/updating.gif</file>

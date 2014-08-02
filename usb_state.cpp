@@ -199,7 +199,7 @@ void remove_callback( int num){
     printf("remove callback %d.\n", num);
 	if( Global::usb_state[num].install_state == 1)
 		Global::usb_state[num].install_state = 3;
-	else if(Global::usb_state[num].install_state = 2)
+	else if (Global::usb_state[num].install_state == 2)
 		Global::usb_state[num].install_state = 0;
     tongXin::getTongXin()->updateGui(num);
 #endif
