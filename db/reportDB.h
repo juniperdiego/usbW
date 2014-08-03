@@ -65,6 +65,7 @@ class reportDB :public sqlDB
        bool getModel(const string& date1, const string& date2, vector<reportInfo> & reportVector);
        bool getUsb(const string& date1, const string& date2, vector<reportInfo> & reportVector);
        bool getID( reportInfo& report);
+       bool setUpload(int id);
 
 };
 

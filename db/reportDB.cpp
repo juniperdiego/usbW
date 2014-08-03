@@ -312,14 +312,48 @@ bool reportDB::getUsb(const string& date1, const string& date2, vector<reportInf
 }
 
 
-        string          imei;  
-        string          installDate;
-        string          model;
-        string          chanID;
-        string          macAdd;
-        int             portIdx; 
-        string          batchCode;
-        bool            isUpload;
+bool reportDB::setUpload(int id)
+{
+    char sql[1024] = {0};
+    sqlite3_stmt *stmt;
+    int rc;
+
+
+    sprintf(sql, "update table %s set isUpload = 1 where id = %d ;",
+        getTableName().c_str());
+#if 0
+    {
+        int nrow = 0, ncolumn = 0;
+        char **azResult; 
+        char * zErrMsg;
+
+        char s[] = "SELECT * FROM mobileStatisticTable";
+        sqlite3_get_table(s_db , s , &azResult , &nrow , &ncolumn , &zErrMsg );
+
+        int i = 0 ;
+        printf( "row:%d column=%d \n" , nrow , ncolumn );
+        printf( "\nThe result of querying is : \n" );
+
+        for( i=0 ; i<( nrow + 1 ) * ncolumn ; i++ )
+            printf( "azResult[%d] = %s\n", i , azResult[i] );
+
+    }
+#endif
+
+    rc= sqlite3_prepare(s_db,sql, strlen(sql), &stmt,0);     
+    if( rc ){   
+        fprintf(stderr, "Can't open statement: %s\n", sqlite3_errmsg(s_db));   
+        sqlite3_close(s_db);   
+        return false;   
+    }   
+
+    while(sqlite3_step(stmt)==SQLITE_ROW ) {   
+    }   
+
+    sqlite3_finalize(stmt);
+    return true;
+}
+
 #if 1
 void print(const vector<reportInfo>& vector)
 {
