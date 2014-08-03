@@ -66,7 +66,7 @@ void Shangchuan::Search()
                 }
              case 2:
                 {
-                    QString strDone = QString("%1").arg(res[nRow].isUploaded);
+                    QString strDone = QString("%1").arg(res[nRow].isUploaded ? "已上传" : "未上传");
                     newItem = new QTableWidgetItem(strDone);
                     break;
                 }
