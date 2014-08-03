@@ -41,7 +41,9 @@ void Shangchuan::updateContents()
     QString text1 = tr("上传文件(%1)").arg(files.count());
     ui->UpdateBtn->setText(text1);
 
-    QString text2 = tr("上传数据(%1)").arg(files.count());
+    vector<reportInfo> rpts;
+    m_rptDB.getUnuploadedData(rpts); 
+    QString text2 = tr("上传数据(%1)").arg(rpts.size());
     ui->UpdateDataBtn->setText(text2);
 }
 
@@ -101,6 +103,35 @@ void Shangchuan::Upload()
 
 void Shangchuan::UploadData()
 {
+    vector<reportInfo> rpts;
+    m_rptDB.getUnuploadedData(rpts); 
 
+    QList<QPair<QString, QString> > pairList;
+    unsigned int cnt = 0;
+    for (size_t i = 0; i < rpts.size(); ++i)
+    {
+        string content = rpts[i].imei + "|"\
+                + rpts[i].model + "|"\
+                + rpts[i].chanID + "|"\
+                + rpts[i].macAdd + "|"\
+                + rpts[i].batchCode + "|"\
+                + rpts[i].installDate; 
+        int id = rpts[i].id;
+        if( cnt < 100 )
+        {
+            pairList.append(qMakePair(QString(content.c_str()), QString().setNum(id)));
+            cnt ++;
+        }
+        else
+        {
+            FileUpload::getFileUpload()->Up100Block(pairList);
+            pairList.clear();
+            cnt = 0;
+        }
+    }
+    if (pairList.count() > 0)
+    {
+        FileUpload::getFileUpload()->Up100Block(pairList);
+    }
 }
 

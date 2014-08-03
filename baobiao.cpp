@@ -12,8 +12,8 @@ baobiao::baobiao(QWidget *parent) :
 #endif
 
     ui->setupUi(this);
-    ui->tabWidget->setTabText(0,"机型");
-    ui->tabWidget->setTabText(1,"usb口");
+    //ui->tabWidget->setTabText(0,"机型");
+    //ui->tabWidget->setTabText(1,"usb口");
     ui->JixingTab->setColumnWidth(0,150);
     ui->JixingTab->setColumnWidth(1,350);
     ui->JixingTab->setColumnWidth(2,210);
@@ -60,6 +60,7 @@ void baobiao::OnSearchData()
 
     if( nMod == 0)
     {
+        int total = 0;
         vector<reportInfo> res;
         res.clear();
         reportDB rDB;
@@ -80,15 +81,19 @@ void baobiao::OnSearchData()
                         break;
                     case 2:
                         QString ss = QString("%1").arg(res[nRow].count);
+                        total += res[nRow].count;
                         newItem = new QTableWidgetItem(ss);
                         break;
                 }
                 ui->JixingTab->setItem(nRow,nCol,newItem);
             }
         }
+
+        ui->totalLabel->setText(QString().setNum(total));
     }
     else if( nMod == 1)
     {
+        int total = 0;
         vector<reportInfo> res;
         res.clear();
         reportDB rDB;
@@ -113,6 +118,7 @@ void baobiao::OnSearchData()
                     case 2:
                         {
                             QString ss = QString("%1").arg(res[nRow].count);
+                            total += res[nRow].count;
                             newItem = new QTableWidgetItem(ss);
                             break;
                         }
@@ -120,5 +126,7 @@ void baobiao::OnSearchData()
                 ui->UsbTab->setItem(nRow,nCol,newItem);
             }
         }
+
+        ui->totalLabel->setText(QString().setNum(total));
     }
 }

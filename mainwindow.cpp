@@ -30,12 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     Global::g_DevID = m_strDevID.toStdString();
 
-    //m_netConf = new QNetworkConfigurationManager;
-    //connect(m_netConf, SIGNAL(onlineStateChanged(bool)), this, SLOT(onlineStateChange(bool)));
-
     QTimer* netTimer = new QTimer;
     connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
-    netTimer->start(1000);
+    netTimer->start(5000);
 
     CreateLayout();
 
@@ -49,23 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     CreateStatusbar();
 
-    //   UsbState = new USB_State;
-    /*DevProcess* DevPro = new DevProcess;
-      DevPro->start();
-      this->connect(DevPro,SIGNAL(DevStatus(int)),this,SLOT(ScanUsbDev(int))); 线程间信号和槽*/
-    //上传
-
-    //QTimer* UnUpCount = new QTimer;
-    //this->connect(UnUpCount, SIGNAL(timeout()), this, SLOT(SetUnUpCount()));
-    //UnUpCount->start(PERIOD_SET_UNUPLOAD);
     SetUnUpCount();
 
-#if 0
-    m_fileUpLoad = new FileUpload;
-    this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
-    //QTimer::singleShot(10*60*1000,m_fileUpLoad,SLOT(start()));
-    m_fileUpLoad->start();
-#endif
+    m_fileUpLoad = FileUpload::getFileUpload();
 
     if (!Global::s_netState)
         startUsbScan();
@@ -265,6 +248,8 @@ void MainWindow::onlineStateChange()
         QImage NetImage(":/images/NetDisConn24.ico");
         this->network->setPixmap(QPixmap::fromImage(NetImage));
     }
+
+    SetUnUpCount();
 }
 void MainWindow::OnGengxin(bool all)
 {
@@ -279,7 +264,13 @@ void MainWindow::OnGengxin(bool all)
 
     m_updateState = up->getUpdateState();
 
-    //if (m_updateState)
+    devDB devDB;
+    string cid;
+    devDB.get(CHAN_ID, cid);
+    if (id) 
+        id->setText(QString::fromStdString(cid));
+
+    if (m_updateState)
         startUsbScan();
 }
 
@@ -301,6 +292,7 @@ void MainWindow::OnFuwuqi()
 void MainWindow::OnShangchuan()
 {
     static Shangchuan *sh = new Shangchuan;
+    sh->updateContents();
     sh->exec();
 }
 void MainWindow::OnJiaoZhun()
@@ -364,6 +356,8 @@ void MainWindow::setMvState(bool bState)
 
 void MainWindow::SetUnUpCount()
 {
-    //int nCount = FileUpload::GetAllFiles().count();
-    //this->wscnum->setText(QString::number(nCount, 10));
+    reportDB rptDB;
+    vector<reportInfo> rpts;
+    rptDB.getUnuploadedData(rpts); 
+    this->wscnum->setText(QString().setNum(rpts.size()));
 }

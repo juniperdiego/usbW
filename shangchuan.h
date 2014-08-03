@@ -27,6 +27,7 @@ private slots:
 
 private:
     logDB m_logDB;    
+    reportDB m_rptDB;
 
 private:
     Ui::Shangchuan *ui;

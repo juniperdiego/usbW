@@ -37,3 +37,20 @@ string Global::encyptStr(const string& str)
     return result;
 }
 
+void Global::clearApks()
+{
+    QStringList nameFilter;
+    nameFilter.append("*.apk");
+    QDir dir(APK_PATH);
+    QStringList strFileLst;
+    strFileLst.clear();
+    if(dir.exists())
+    {
+        strFileLst = dir.entryList(nameFilter, QDir::Files | QDir::NoSymLinks);
+        for(int i = 0; i < strFileLst.count(); i++)
+        {
+            QFile::remove(strFileLst[i]);
+        }
+    }
+}
+
