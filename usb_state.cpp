@@ -143,9 +143,10 @@ void add_callback(int num,  const char *serial){
 
      //imei
     char* pImei = adb_get_imei_cmd(serial);
+    if(pImei == NULL)// return if imei can't be obtained
+        return ;
     string ImeiStr;
-    if(pImei != NULL)
-        ImeiStr = pImei;
+    ImeiStr = pImei;
     delete(pImei);
 
     cout << "ImeiStr \t" << ImeiStr << endl;

@@ -60,10 +60,10 @@ void baobiao::OnSearchData()
 
     if( nMod == 0)
     {
-        vector<mblStatInfo > res;
+        vector<reportInfo> res;
         res.clear();
-        mblStatDB msd;
-        msd.get(dateFrom,dateTo, res);
+        reportDB rDB;
+        rDB.getModel(dateFrom,dateTo, res);
 
         for (int nRow = 0; nRow < res.size(); nRow++)
         {
@@ -73,10 +73,10 @@ void baobiao::OnSearchData()
                 switch(nCol)
                 {
                     case 0:
-                        newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].date.c_str()));
+                        newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].installDate.c_str()));
                         break;
                     case 1:
-                        newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].mblPattern.c_str()));
+                        newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].model.c_str()));
                         break;
                     case 2:
                         QString ss = QString("%1").arg(res[nRow].count);
@@ -89,10 +89,10 @@ void baobiao::OnSearchData()
     }
     else if( nMod == 1)
     {
-        vector<usbStatInfo > res;
+        vector<reportInfo> res;
         res.clear();
-        usbStatDB usd;
-        usd.get(dateFrom,dateTo, res);
+        reportDB rDB;
+        rDB.getUsb(dateFrom,dateTo, res);
 
         for (int nRow = 0; nRow < res.size(); nRow++)
         {
@@ -102,11 +102,11 @@ void baobiao::OnSearchData()
                 switch(nCol)
                 {
                     case 0:
-                        newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].date.c_str()));
+                        newItem = new QTableWidgetItem(QString::fromStdString(res[nRow].installDate.c_str()));
                         break;
                     case 1:
                         {
-                            QString tmp = QString("%1").arg(res[nRow].usbIdx);
+                            QString tmp = QString("%1").arg(res[nRow].portIdx);
                             newItem = new QTableWidgetItem(tmp);
                             break;
                         }
