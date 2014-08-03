@@ -21,7 +21,7 @@ bool adb_uninstall_cmd(const char *pkgName, const char *serial)
 
     // Obtain and display each line of output from the executed command
     while (fgets(str, sizeof(str), fp) != NULL) {
-        printf("------%s",str );
+        printf("------%s\n",str );
         if ((strlen(str) > 1) && (str[strlen(str) - 1] == '\n')) {
             str[strlen(str) - 1] = '\0';
         }

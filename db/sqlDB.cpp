@@ -1,5 +1,6 @@
 #include "sqlDB.h"
-#include "../global.h"
+//#include "../global.h"
+#define DB_PATH ""
 
 sqlite3 * sqlDB::s_db = NULL;
 unsigned int sqlDB::s_refCnt = 0;

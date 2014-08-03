@@ -67,14 +67,6 @@ reportDB::reportDB()
 reportDB::~reportDB()
 {
 }
-        string          imei;  
-        string          installDate;
-        string          model;
-        string          chanID;
-        string          macAdd;
-        int             portIdx; 
-        string          batchCode;
-        bool            isUpload;
 
 bool reportDB::set( const reportInfo& report)
 {
@@ -89,7 +81,7 @@ bool reportDB::set( const reportInfo& report)
         isUpload = 2; // not upload
 
 
-    sprintf(sql, "SELECT count(*) FROM '%s' where imei = '%s' and installDate = '%s';",
+    sprintf(sql, "SELECT imei,installDate FROM '%s' where imei = '%s' and installDate = '%s';",
         getTableName().c_str(), report.imei.c_str(), report.installDate.c_str());
 
 
@@ -102,14 +94,17 @@ bool reportDB::set( const reportInfo& report)
 
     //if exist, return directly
     while(sqlite3_step(stmt)==SQLITE_ROW ) {   
+        //cout << "exist" << endl;
         sqlite3_finalize(stmt);
         return true;
     }   
+
+    //cout << " not exist" << endl;
     sqlite3_finalize(stmt);
 
     sprintf(sql, "insert or replace into %s \
-            (imei, installDate, model, chanID, macAdd, portIdx, batchCode, isUpload, id) \
-       values(\"%s\" ,\"%s\",   \"%s\",\"%s\",`\"%s\",  %d,     \"%s\",     %d,     %d);",
+            (imei, installDate, model, chanID, macAdd, portIdx, batchCode, isUpload ) \
+       values(\"%s\" ,\"%s\",   \"%s\",\"%s\", \"%s\",  %d,     \"%s\",     %d    );",
        getTableName().c_str(),
        report.imei.c_str(), 
        report.installDate.c_str(), 
@@ -118,8 +113,7 @@ bool reportDB::set( const reportInfo& report)
        report.macAdd.c_str(), 
        report.portIdx, 
        report.batchCode.c_str(), 
-       isUpload,
-       report.id 
+       isUpload
        );
 
     if(SQLITE_OK == sqlite3_exec(s_db, sql, NULL, NULL, &errMsg))
@@ -173,7 +167,7 @@ bool reportDB::getUnuploadedData(vector<reportInfo>& reportVector)
        report.macAdd = string( (const char*)sqlite3_column_text(stmt,4));
        report.portIdx = sqlite3_column_int(stmt,5 );
        report.batchCode = string( (const char*)sqlite3_column_text(stmt,6));
-       isUpload = false;
+       report.isUpload = false;
        reportVector.push_back(report);
     }   
 
@@ -189,7 +183,7 @@ bool reportDB::getModel(const string& date1, const string& date2, vector<reportI
 
     reportVector.clear();
 
-    sprintf(sql, "select installDate, model, count(*) from %s where date >= '%s' and date <= '%s' GROUP BY installDate, model order by installDate, model ;",
+    sprintf(sql, "select installDate, model, count(*) from %s where installDate >= '%s' and installDate <= '%s' GROUP BY installDate, model order by installDate, model ;",
         getTableName().c_str(), date1.c_str(), date2.c_str());
 #if 0
     {
@@ -240,7 +234,7 @@ bool reportDB::getUsb(const string& date1, const string& date2, vector<reportInf
 
     reportVector.clear();
 
-    sprintf(sql, "select installDate, portIdx, count(*) from %s where date >= '%s' and date <= '%s' GROUP BY installDate, portIdx order by installDate, portIdx;",
+    sprintf(sql, "select installDate, portIdx, count(*) from %s where installDate >= '%s' and installDate <= '%s' GROUP BY installDate, portIdx order by installDate, portIdx;",
         getTableName().c_str(), date1.c_str(), date2.c_str());
 #if 0
     {
@@ -273,6 +267,7 @@ bool reportDB::getUsb(const string& date1, const string& date2, vector<reportInf
 
         report.installDate = string( (const char*)sqlite3_column_text(stmt,0));   
         report.portIdx = sqlite3_column_int(stmt,1);
+        //cout << "coutn ::\t" <<sqlite3_column_int(stmt,2) <<endl;
         report.count   = sqlite3_column_int(stmt,2);   
 
         reportVector.push_back(report);
@@ -283,14 +278,35 @@ bool reportDB::getUsb(const string& date1, const string& date2, vector<reportInf
 }
 
 
-#if 0
-void print(const reportInfo& msi)
+        string          imei;  
+        string          installDate;
+        string          model;
+        string          chanID;
+        string          macAdd;
+        int             portIdx; 
+        string          batchCode;
+        bool            isUpload;
+#if 1
+void print(const vector<reportInfo>& vector)
 {
 
-    printf("%20s,%20s,%20s\n", 
-            "mblIdex", "date", "counter");
-    printf("%20s,%20s,%20d\n", 
-            msi.mblPattern.c_str(), msi.date.c_str(), msi.count
-            );
+    printf("%10s,%10s,%10s,%10s,%10s,%10s,%10s,%10s,%10s,%10s\n", 
+            "mblIdex", "installdate", "model", "chanID","macAdd", "portIdx", "batchCode","isUpload", "id","count");
+    for(size_t i = 0; i< vector.size(); i++)
+    {
+        reportInfo rIn = vector[i];
+        printf("%10s,%10s,%10s,%10s,%10s,%10d,%10s,%10d,%10d %10d\n", 
+                rIn.imei.c_str(),
+                rIn.installDate.c_str(),
+                rIn.model.c_str(),
+                rIn.chanID.c_str(),
+                rIn.macAdd.c_str(),
+                rIn.portIdx,
+                rIn.batchCode.c_str(),
+                rIn.isUpload,
+                rIn.id,
+                rIn.count
+              );
+    }
 }
 #endif

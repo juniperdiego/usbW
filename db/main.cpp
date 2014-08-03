@@ -4,14 +4,17 @@
 #include "usbStatDB.h"
 #include "mblStatDB.h"
 #include "logDB.h"
+#include "reportDB.h"
 
 using namespace std;
 
+extern void print(const vector<reportInfo>& vector);
 
 
 
 int main()
 {
+#if 0
 #if 0
     // 1  test devDB
     devDB  dev_db;
@@ -433,6 +436,42 @@ class apkInfo {
         print(logArray[i]);
     }
     cout << endl;
+#endif
+#endif
+
+    // test reporatDB
+
+    reportDB rDB;
+    reportInfo rIn("imei333", "model333", "chanID123", "macAdd123", "20140701", 3, "batchCode", false);
+    reportInfo rIn1("imei1234", "model345", "chanID123", "macAdd123", "20140701", 4, "batchCode", false);
+    reportInfo rIn2("imei2345", "model345", "chanID123", "macAdd123", "20140702", 3, "batchCode", false);
+    reportInfo rIn3("imei3444", "model345", "chanID123", "macAdd123", "20140702", 3, "batchCode", false);
+    reportInfo rIn4("imei2345", "model345", "chanID123", "macAdd123", "20140702", 4, "batchCode", false);
+    reportInfo rIn5("imeixxxx", "model345", "chanID123", "macAdd123", "20140702", 4, "batchCode", false);
+    rDB.set(rIn);
+    rDB.set(rIn1);
+    rDB.set(rIn2);
+    rDB.set(rIn3);
+    rDB.set(rIn4);
+    rDB.set(rIn5);
+
+    vector<reportInfo> reportVector;
+    rDB.getUnuploadedData( reportVector);
+
+    print(reportVector);
+
+    cout << "====================================="<<endl;
+    rDB.getModel("20140701", "20140703", reportVector);
+    print(reportVector);
+
+    cout << "====================================="<<endl;
+    rDB.getUsb("20140701", "20140703", reportVector);
+    print(reportVector);
+#if 0
+   reportInfo(const string& imeiIn, const string& modelIn,
+           const string& chanIDIn, const string& macAddIn,
+           const string& installDateIn, int portIdxIn,
+           const string& batchCodeIn, bool isUploadIn = false)
 #endif
 
     return 0;

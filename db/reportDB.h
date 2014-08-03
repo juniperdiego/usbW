@@ -28,7 +28,11 @@ class reportInfo
         int             count;
 
    reportInfo()
-       :isUpload(false)
+       :
+       portIdx(0),
+       isUpload(false),
+       id(0),
+       count(0)
    {
    };
 
