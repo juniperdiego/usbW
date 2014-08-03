@@ -31,6 +31,7 @@ public:
 signals:
     void CloseUp();
     void devFinish();
+    void progress(int, int);
 
 public slots:
    void DevFinish();

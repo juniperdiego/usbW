@@ -14,14 +14,21 @@ public:
 
     void  UpSingleFile(const QString& strFile);
     QStringList GetAllFiles(QString strPath);
-    int startUpload();
+    int startUploadFile();
+
+    void UpRealBlock(const string& str, const string& fileBName);
+
+    static FileUpload* getFileUpload();
 
 private:
-    QNetworkAccessManager* m_netManager;
+    QNetworkAccessManager* m_netFileManager;
+    QNetworkAccessManager* m_netRealManager;
     QFileInfo m_curFileInfo;
     int m_nUpFaildRetryNum;
     int m_nUpFaildNum;
     logDB m_logDB;
+
+    static FileUpload* s_self;
 
 private:
     void UpOneBlock(const QByteArray& BlockData, const QString& FileBName, const QString& md5);
@@ -30,7 +37,8 @@ signals:
     void SetUpState(bool bState);
 
 public slots:
-    void UpFinishSingleFile(QNetworkReply* Reply);
+    void UpFinishFile(QNetworkReply* Reply);
+    void UpFinishData(QNetworkReply* Reply);
 };
 
 #endif // FILEUPLOAD_H

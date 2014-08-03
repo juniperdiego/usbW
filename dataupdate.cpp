@@ -190,6 +190,7 @@ void DataUpdate::ApkFinish()
         //QVariantList apklist = apk_rsp_res["apkList"].toList();
         JsonArray apklist = apk_rsp_res["apkList"].toList();
         int apkNum = apklist.size();
+        emit progress(0, apkNum);
         foreach( QVariant atom, apklist){
             //QVariantMap  apk_map = atom.toMap();
             JsonObject apk_map = atom.toMap();
@@ -220,6 +221,7 @@ void DataUpdate::ApkFinish()
             if ((apkOkNum+1) == Apk_Update_finish)
             {
                 m_apkDB.set(apkIn);
+                emit progress(Apk_Update_finish, apkNum);
             }
             else
             {

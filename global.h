@@ -14,6 +14,7 @@
 #include "db/usbStatDB.h"
 #include "db/mblStatDB.h"
 #include "db/logDB.h"
+#include "db/reportDB.h"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ using namespace std;
 #define WEB_SITE "www.baidu.com"
 #define APP_NAME "Zig"
 #define NET_NAME "eth0"
+#define ENCYPT_BIT 0x12
 
 //download
 #ifdef ARM
@@ -46,22 +48,22 @@ using namespace std;
 #define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
 #define APK_PATH  "/mnt/repos/.kuaijl/apks/"
 #define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
-//#define DB_PATH "/mnt/repos/.kuaijl/"
-#define DB_PATH ""
+#define DB_PATH "/mnt/repos/.kuaijl/"
+#define LOG_FILE_NAME "/mnt/repos/.kuaijl/zig.log"
 
 //update
 #define URL_UPLOAD "http://api.dfstock4g.com/nzyw/api/processLog.do"
 #define BLOCKSIZE 100
 #define MAXLINELEN 512
 #define LOG_PATH "/mnt/repos/.kuaijl/log/"
+#define ENCYPT_LOG_PATH "/mnt/repos/.kuaijl/encypt_log/"
 #define PERIOD (60*60*2)
 #define PERIOD_SET_UNUPLOAD 30*60
 
 
 typedef struct USB_STATE{
     int num;						 //usb ser
-    int install_state;                 //usb state 0?????? 1????װ??2????װ???? 3????װ?ж?4????װ????ȫ
-                                     //0:free  1:installing  2:install_complete  3:break off 4:install uncomplete
+    int install_state;               //0:free  1:installing  2:install_complete  3:break off 4:install uncomplete
     char   model[64];                  //device mod
     char   ser[SER_LENGTH];          //device ser
     int apk_num;                  //apk install now
@@ -76,6 +78,7 @@ class Global
 public:
     static void reboot();
     static void setSysTime(const QString& t);
+    static string encyptStr(const string& str);
 
 public:
     static QString g_IP;                     //服务器IP

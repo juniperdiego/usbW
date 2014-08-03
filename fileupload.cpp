@@ -7,15 +7,27 @@
 using QtJson::JsonObject;
 using QtJson::JsonArray;
 
+FileUpload* FileUpload::s_self = NULL;
+
 FileUpload::FileUpload(QObject *parent) :
     QObject(parent)
 {
     this->m_nUpFaildRetryNum = 2;
     this->m_nUpFaildNum = 0;
-    this->m_netManager = new QNetworkAccessManager(this);
+    this->m_netFileManager = new QNetworkAccessManager(this);
+    this->m_netRealManager = new QNetworkAccessManager(this);
 }
+
 FileUpload::~FileUpload()
 {
+}
+
+FileUpload* FileUpload::getFileUpload()
+{
+    if (s_self == NULL)
+        s_self = new FileUpload;
+
+    return s_self;
 }
 
 void FileUpload::UpSingleFile(const QString& strFile)
@@ -30,7 +42,7 @@ void FileUpload::UpSingleFile(const QString& strFile)
         QByteArray OneLine = Fd.readLine(MAXLINELEN);
         for (int i = 0; i < OneLine.length(); ++i)
         {
-            OneLine[i] = OneLine[i] ^ 0x12;
+            OneLine[i] = OneLine[i] ^ ENCYPT_BIT;
         }
 
         BlockData.append(OneLine);
@@ -45,29 +57,31 @@ void FileUpload::UpOneBlock(const QByteArray& BlockData, const QString& fileBNam
     string urlStr = URL_UPLOAD;
     urlStr += "?file=";
     urlStr += qPrintable(fileBName);
+    urlStr += "&deviceCode=";
+    urlStr += Global::g_DevID.c_str();
 
     QNetworkRequest request(QUrl(urlStr.c_str()));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
 
-    m_netManager->post(request, BlockData);
+    m_netFileManager->post(request, BlockData);
 
     QEventLoop loop;
-    QObject::connect(m_netManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishSingleFile(QNetworkReply*)));
-    QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QObject::connect(m_netFileManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishFile(QNetworkReply*)));
+    QObject::connect(m_netFileManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
     loop.exec();
 }
-void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
+void FileUpload::UpFinishFile(QNetworkReply* Reply_Up)
 {
     QByteArray replyByte = Reply_Up->readAll();
     QString replyStr = QString(replyByte);
     Reply_Up->deleteLater();
-    qDebug()<<replyStr;
+    qDebug()<<"file reply"<<replyStr;
     bool ok;
     if (replyStr.isEmpty()){
         return;
     }
     JsonObject up_rsp_res = QtJson::parse(replyStr, ok).toMap();
-    int status=up_rsp_res["version"].toInt();
+    int status=up_rsp_res["status"].toInt();
    
     if (status == 0)
     {
@@ -84,10 +98,31 @@ void FileUpload::UpFinishSingleFile(QNetworkReply* Reply_Up)
     }
 }
 
-int FileUpload::startUpload()
+void FileUpload::UpFinishData(QNetworkReply* Reply_Up)
+{
+    QByteArray replyByte = Reply_Up->readAll();
+    QString replyStr = QString(replyByte);
+    Reply_Up->deleteLater();
+    qDebug()<<"real replay"<<replyStr;
+    bool ok;
+    if (replyStr.isEmpty()){
+        return;
+    }
+    JsonObject up_rsp_res = QtJson::parse(replyStr, ok).toMap();
+    int status=up_rsp_res["status"].toInt();
+   
+    if (status == 0)
+    {
+    }
+    else if (status == 1)
+    {
+    }
+}
+
+int FileUpload::startUploadFile()
 {
     m_nUpFaildNum = 0;
-    QStringList LogLst = GetAllFiles(LOG_PATH);
+    QStringList LogLst = GetAllFiles(ENCYPT_LOG_PATH);
     if (LogLst.count() == 0) return -1;
     QString strLog;
     foreach(strLog, LogLst)
@@ -127,6 +162,27 @@ QStringList FileUpload::GetAllFiles(QString strPath)
             strFileLst.append(FileInfoLst.at(i).absoluteFilePath());
     }
     return strFileLst;
+}
+
+void FileUpload::UpRealBlock(const string& str, const string& fileBName)
+{
+    QByteArray BlockData(str.c_str());
+    qDebug()<<"real time upload"<<BlockData;
+    string urlStr = URL_UPLOAD;
+    urlStr += "?file=";
+    urlStr += fileBName.c_str();
+    urlStr += "&deviceCode=";
+    urlStr += Global::g_DevID.c_str();
+
+    QNetworkRequest request(QUrl(urlStr.c_str()));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+
+    m_netRealManager->post(request, BlockData);
+
+    //QEventLoop loop;
+    QObject::connect(m_netRealManager,SIGNAL(finished(QNetworkReply*)), this, SLOT(UpFinishData(QNetworkReply*)));
+    //QObject::connect(m_netRealManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    //loop.exec();
 }
 
 #if 0

@@ -30,11 +30,10 @@ private:
     bool m_updateState;
 
 public slots:
-    void OnOk();
-    void OnCancle();
     void OnTerm();
     void upSoftDone();
     void upDataDone();
+    void onProgress(int, int);
 
 private:
     Ui::Gengxin *ui;

@@ -78,12 +78,22 @@ void add_callback(int num,  const char *serial){
         apkPath += pkgIn.apkList[i] + ".apk";
 
         if(!serialNumExistInPort(num, serial))
-            continue;
+        {
+            Global::usb_state[num].install_state=3;
+            return;
+        }
 
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
         {
             Global::usb_state[num].fail_total++;
-            continue;
+
+            if(!serialNumExistInPort(num, serial))
+            {
+                Global::usb_state[num].install_state=3;
+                return;
+            }
+            else
+                continue;
         }
         Global::usb_state[num].apk_num = i+1;
         //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
@@ -111,8 +121,6 @@ void add_callback(int num,  const char *serial){
     usbStatDB usbStatDateBase;
     usbStatDateBase.increase(num);
 
-
-#if 1
 
     // 5 write log
     // format: 手机imei|手机ua|渠道id|加工设备编码|批次号|手机加工时间戳
@@ -150,7 +158,9 @@ void add_callback(int num,  const char *serial){
     getDate(time, 0);
     string timeStr(time);
     
+    //reportInfo info(ImeiStr, model, chanID, Global::g_DevID, timeStr, num, pkgIn.batchCode);
 
+    //log
     string msg = ImeiStr + "|"\
                 + model + "|"\
                 + chanID + "|"\
@@ -159,13 +169,10 @@ void add_callback(int num,  const char *serial){
                 + timeStr 
                 + "\n";
 
-    stringstream strStream;
-    strStream << num ;
-    string numStr = strStream.str();
-                
-    string fileName = LOG_PATH + timeStr /*+ "_" + numStr */ + ".csv";
 
-    //int fd=open(fileName.c_str(), O_WRONLY|O_NONBLOCK,0);
+    FileUpload::getFileUpload()->UpRealBlock(msg, timeStr);
+
+    string fileName = LOG_PATH + timeStr + ".csv";
     int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
     if(fd == -1)
     {
@@ -176,19 +183,36 @@ void add_callback(int num,  const char *serial){
     else
         cout << "opening file("<<fileName <<") suc." << endl;
 
-    logDB logDB;
-    logInfo log;
-    log.date = timeStr;
-    logDB.set(log);
-
     if(write(fd, msg.c_str(), msg.size()) == -1)
     {
         cout << "writing file("<<fileName <<") failed." << endl;
         return;
     }
-
     close(fd);
-#endif
+
+    string encyptMsg = msg;
+    string encyptFileName = ENCYPT_LOG_PATH + timeStr + ".csv";
+    int fdEncypt=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
+    if(fdEncypt == -1)
+    {
+        printf("errno.%02d is: %s/n", errno, strerror(errno));
+        cout << "opening encypt file("<<fileName <<") failed." << endl;
+        return;
+    }
+    else
+        cout << "opening encypt file("<<fileName <<") suc." << endl;
+
+    if(write(fdEncypt, msg.c_str(), msg.size()) == -1)
+    {
+        cout << "writing encypt file("<<fileName <<") failed." << endl;
+        return;
+    }
+    close(fdEncypt);
+
+    logDB logDB;
+    logInfo log;
+    log.date = timeStr;
+    logDB.set(log);
 #endif
 }
 

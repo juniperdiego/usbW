@@ -20,7 +20,6 @@ public:
     void CreateStatusbar();
     
 private:
-    int  GetAllFiles();
     void startUsbScan();
 
 public slots:

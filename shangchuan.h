@@ -23,7 +23,6 @@ private slots:
     void Search();
     void Upload();
 private:
-    FileUpload* m_fileUpLoad;
     logDB m_logDB;    
 
 private:

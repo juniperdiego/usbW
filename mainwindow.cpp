@@ -83,23 +83,23 @@ void MainWindow::CreateLayout()
     leftLayout->setContentsMargins(10, 0, 10, 0);
     leftLayout->setSpacing(20);
 
-    gxin = new ClickedLabel;
+    gxin = new ClickedLabel(20);
     gxin->setText("<u>更新</u>");
     connect(gxin,SIGNAL(clicked()),this,SLOT(OnGengxin()));
 
-    wluo = new ClickedLabel;
+    wluo = new ClickedLabel(20);
     wluo->setText("<u>网络</u>");
     wluo->setDisabled(true);
 
-    wjian = new ClickedLabel;
+    wjian = new ClickedLabel(20);
     wjian->setText("<u>文件</u>");
     connect(wjian, SIGNAL(clicked()),this, SLOT(OnWenjian()));
 
-    bbiao = new ClickedLabel;
+    bbiao = new ClickedLabel(20);
     bbiao->setText("<u>报表</u>");
     connect(bbiao,SIGNAL(clicked()),this,SLOT(OnBaobiao()));
 
-    fwuqi = new ClickedLabel;
+    fwuqi = new ClickedLabel(20);
     fwuqi->setVisible(false);
     fwuqi->setText("<u>服务器</u>");
     connect(fwuqi,SIGNAL(clicked()),this,SLOT(OnJiaoZhun()));
@@ -216,10 +216,6 @@ void MainWindow::CreateStatusbar()
 void MainWindow::startUsbScan()
 {
     call();
-
-    //m_usbScanTimer = new QTimer;
-    //connect(m_usbScanTimer,SIGNAL(timeout()),this,SLOT(ScanUsbDev()));
-    //m_usbScanTimer->start(1000);
 }
 
 void MainWindow::onlineStateChange()
@@ -230,7 +226,8 @@ void MainWindow::onlineStateChange()
     //qDebug()<<netInterface;
     if (netInterface.isValid())
     {
-        if (netInterface.flags().testFlag(QNetworkInterface::IsUp))
+        if (netInterface.flags().testFlag(QNetworkInterface::IsUp) && 
+            netInterface.flags().testFlag(QNetworkInterface::IsRunning))
         {
             if (!netUp) 
             {
@@ -240,6 +237,7 @@ void MainWindow::onlineStateChange()
             QHostInfo host = QHostInfo::fromName(WEB_SITE);
             if (!host.addresses().isEmpty()) 
             {
+                repaint();
                 Global::s_netState = true;
                 bState = true;
             }
@@ -281,7 +279,7 @@ void MainWindow::OnGengxin(bool all)
 
     m_updateState = up->getUpdateState();
 
-//    if (m_updateState)
+    if (m_updateState)
         startUsbScan();
 }
 
@@ -364,24 +362,8 @@ void MainWindow::setMvState(bool bState)
         this->MvUpdate->stop();
 }
 
-int MainWindow::GetAllFiles()
-{
-    QString strPath = LOG_PATH;
-    QDir dir(strPath);
-    QFileInfoList FileInfoLst;
-    QStringList strFileLst;
-    strFileLst.clear();
-    if( !dir.exists() )
-    {
-        return 0;
-    }
-    dir.setFilter(QDir::Files | QDir::NoSymLinks);
-    dir.setSorting(QDir::Time);
-    FileInfoLst = dir.entryInfoList();
-    return FileInfoLst.count();
-}
 void MainWindow::SetUnUpCount()
 {
-    int nCount = GetAllFiles();
-    this->wscnum->setText(QString::number(nCount, 10));
+    //int nCount = FileUpload::GetAllFiles().count();
+    //this->wscnum->setText(QString::number(nCount, 10));
 }

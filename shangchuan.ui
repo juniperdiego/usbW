@@ -103,9 +103,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="UpdateDataBtn">
+       <property name="text">
+        <string>上传数据</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="UpdateBtn">
        <property name="text">
-        <string>上传</string>
+        <string>上传文件</string>
        </property>
       </widget>
      </item>

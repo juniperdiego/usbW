@@ -28,9 +28,6 @@ Shangchuan::Shangchuan(QWidget *parent) :
     ui->ResTabWid->setRowCount(12);
     this->setWindowTitle(tr("上传"));
     this->setFixedSize(800,480);
-
-    m_fileUpLoad = new FileUpload;
-    //this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
 }
 
 Shangchuan::~Shangchuan()
@@ -78,11 +75,7 @@ void Shangchuan::Search()
 }
 void Shangchuan::Upload()
 {
-    //MvUpdate->start();
-    //LabUpdateState->setVisible(true);
-    int num = m_fileUpLoad->startUpload();
-    //MvUpdate->stop();
-    //LabUpdateState->setVisible(false);
+    int num = FileUpload::getFileUpload()->startUploadFile();
 
     QString strState;
     if (num == -1)

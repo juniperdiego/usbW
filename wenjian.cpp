@@ -20,9 +20,11 @@ wenjian::wenjian(QWidget *parent) :
     m_process = new QProcess(this);
     connect(m_process, SIGNAL(finished(int)), this, SLOT(setFreeSpace1(int)));
 
-    connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onPkgChanged(int)));
+    //connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(onPkgChanged(int)));
 
     UpdateContent();
+
+    setFixedSize(800,480);
 }
 
 wenjian::~wenjian()
@@ -42,19 +44,20 @@ void wenjian::UpdateContent()
     pe.setColor(QPalette::WindowText,Qt::blue);
     ui->cardspaceLabel->setPalette(pe);
     ui->ldateLabel->setPalette(pe);
-    ui->updatenumLabel->setPalette(pe);
-    ui->apkLabel->setPalette(pe);
+    //ui->updatenumLabel->setPalette(pe);
+    ui->pkgLabel->setPalette(pe);
 
     ui->comboBox->clear();
     m_pkgDB.getAll(m_pkgInfos);
-    for (int i = 0; i < m_pkgInfos.size(); ++i)
+    for (size_t i = 0; i < m_pkgInfos.size(); ++i)
     {
         ui->comboBox->addItem(QString::fromStdString(m_pkgInfos[i].pkgName));
     }
 
+    ui->pkgLabel->setText(QString().setNum(m_pkgInfos.size()));
     setFreeSpace();
     setUpdatetime();
-    setUpdatenum();
+    //setUpdatenum();
 }
 
 void wenjian::setFreeSpace()
@@ -71,7 +74,7 @@ void wenjian::setUpdatenum()
 {
     int num = 0;
     m_apkDB.getRecordCount(num);
-    ui->updatenumLabel->setText(QString().setNum(num));
+    //ui->updatenumLabel->setText(QString().setNum(num));
 }
 
 void wenjian::setFreeSpace1(int)
@@ -103,7 +106,7 @@ void wenjian::setFreeSpace1(int)
 
 void wenjian::onPkgChanged(int index)
 {    
-    int apkNum = m_pkgInfos[index].apkList.size();
-    ui->apkLabel->setText(QString().setNum(apkNum));
+    //int apkNum = m_pkgInfos[index].apkList.size();
+    //ui->apkLabel->setText(QString().setNum(apkNum));
 }
 

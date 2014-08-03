@@ -69,45 +69,6 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>150</y>
-     <width>281</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QPushButton" name="ConfirmBtn">
-      <property name="text">
-       <string>确认</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>68</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QPushButton" name="CancleBtn">
-      <property name="text">
-       <string>取消</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QPushButton" name="pushBtnTerm">
    <property name="geometry">
     <rect>
@@ -121,41 +82,59 @@
     <string>强制终止更新</string>
    </property>
   </widget>
+  <widget class="QProgressBar" name="progBar">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>140</y>
+     <width>161</width>
+     <height>10</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>90</width>
+     <height>10</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>200</width>
+     <height>10</height>
+    </size>
+   </property>
+   <property name="value">
+    <number>24</number>
+   </property>
+   <property name="textVisible">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labPerc">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>160</y>
+     <width>90</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+     <italic>false</italic>
+    </font>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>ConfirmBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>Gengxin</receiver>
-   <slot>OnOk()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>145</x>
-     <y>168</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>214</x>
-     <y>206</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>CancleBtn</sender>
-   <signal>clicked()</signal>
-   <receiver>Gengxin</receiver>
-   <slot>OnCancle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>302</x>
-     <y>169</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>305</x>
-     <y>212</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>pushBtnTerm</sender>
    <signal>clicked()</signal>

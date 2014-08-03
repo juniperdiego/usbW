@@ -23,13 +23,25 @@ Gengxin::Gengxin(bool start, QWidget *parent) :
     MvLoading = new QMovie(":/images/loading.gif");
     ui->labMv->setMovie(MvLoading);
     this->ui->pushBtnTerm->setVisible(false);
-
-    SetBtnInvis();
+    this->ui->progBar->setVisible(false);
+    this->ui->progBar->setVisible(false);
+    this->ui->labPerc->setVisible(false);
 }
 
 Gengxin::~Gengxin()
 {
     delete ui;
+}
+
+void Gengxin::onProgress(int cur, int max)
+{
+    ui->progBar->setVisible(true);
+    ui->progBar->setRange(0, max);
+    ui->progBar->setValue(cur);
+
+    ui->labPerc->setVisible(true);
+    QString strLab = tr("%1/%2").arg(cur).arg(max);
+    ui->labPerc->setText(strLab);
 }
 
 void Gengxin::closeEvent(QCloseEvent* e)
@@ -39,17 +51,7 @@ void Gengxin::closeEvent(QCloseEvent* e)
 
 void Gengxin::SetBtnInvis()
 {
-    ui->ConfirmBtn->setVisible(false);
-    ui->CancleBtn->setVisible(false);
     ui->pushBtnTerm->setVisible(false);
-}
-
-void Gengxin::OnOk()
-{
-    ui->ConfirmBtn->setVisible(false);
-    ui->CancleBtn->setVisible(false);
-    ui->pushBtnTerm->setVisible(true);
-    StartUpAll();
 }
 
 void Gengxin::OnTerm()
@@ -60,11 +62,6 @@ void Gengxin::OnTerm()
     }
 
     reject();
-}
-
-void Gengxin::OnCancle()
-{
-    this->close();
 }
 
 bool Gengxin::getUpdateState()
@@ -160,7 +157,11 @@ void Gengxin::StartUpSoft()
 {
     MvLoading->start();
     if (m_dataUp == NULL)
+    {
         m_dataUp = new DataUpdate;
+        connect(m_dataUp, SIGNAL(progress(int, int)), this, SLOT(onProgress(int, int)));
+    }
+
     m_dataUp->GetDeviceVer();
     upSoftDone();
 }
@@ -169,7 +170,11 @@ void Gengxin::StartUpData()
 {
     MvLoading->start();
     if (m_dataUp == NULL)
+    {
         m_dataUp = new DataUpdate;
+        connect(m_dataUp, SIGNAL(progress(int, int)), this, SLOT(onProgress(int, int)));
+    }
+
     m_dataUp->GetApkLibVer();
     upDataDone();
 }

@@ -32,6 +32,20 @@ class reportInfo
    {
    };
 
+   reportInfo(const string& imeiIn, const string& modelIn,
+           const string& chanIDIn, const string& macAddIn,
+           const string& installDateIn, int portIdxIn,
+           const string& batchCodeIn, bool isUploadIn = false)
+   {
+       imei = imeiIn;
+       model = modelIn;
+       chanID = chanIDIn;
+       macAdd = macAddIn;
+       installDate = installDateIn;
+       portIdx = portIdxIn;
+       batchCode = batchCodeIn;
+       isUpload = isUploadIn;
+   }
 };
 
 

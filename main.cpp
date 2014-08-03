@@ -2,10 +2,40 @@
 #include "global.h"
 #include <QApplication>
 #include <QtGui>
+#include <QtDebug>
+#include <QFile>
+#include <QTextStream>
 
+void customMessageHandler(QtMsgType type, const char *msg)
+{
+	QString txt;
+	switch (type) {
+	case QtDebugMsg:
+		txt = QString("Debug: %1").arg(msg);
+		break;
+ 
+	case QtWarningMsg:
+		txt = QString("Warning: %1").arg(msg);
+	break;
+	case QtCriticalMsg:
+		txt = QString("Critical: %1").arg(msg);
+	break;
+	case QtFatalMsg:
+		txt = QString("Fatal: %1").arg(msg);
+		abort();
+	}
+ 
+	QFile outFile(LOG_FILE_NAME);
+	outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+	QTextStream ts(&outFile);
+	ts << txt << endl;
+}
+ 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+	//qInstallMsgHandler(customMessageHandler);	
 
 #ifdef ARM
     //font
@@ -25,12 +55,7 @@ int main(int argc, char *argv[])
     appDir.mkpath(TMP_PATH);
     appDir.mkpath(APK_PATH);
     appDir.mkpath(LOG_PATH);
-
-    //QEventLoop loop;
-    //QMessageBox msgBox(QMessageBox::Information, APP_NAME, "系统正在检测网络，请稍后！");
-    //QObject::connect(&msgBox, SIGNAL(rejected()), &loop, SLOT(quit()));
-    //msgBox.exec();
-    //loop.exec();
+    appDir.mkpath(ENCYPT_LOG_PATH);
 
     //test network
     int time = 2;
