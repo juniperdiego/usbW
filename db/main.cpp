@@ -467,6 +467,15 @@ class apkInfo {
     cout << "====================================="<<endl;
     rDB.getUsb("20140701", "20140703", reportVector);
     print(reportVector);
+    cout << "====================================="<<endl;
+    rDB.getID(rIn5);
+    reportVector.clear();
+    reportVector.push_back(rIn5);
+    print(reportVector);
+    rDB.getID(rIn4);
+    reportVector.clear();
+    reportVector.push_back(rIn4);
+    print(reportVector);
 #if 0
    reportInfo(const string& imeiIn, const string& modelIn,
            const string& chanIDIn, const string& macAddIn,

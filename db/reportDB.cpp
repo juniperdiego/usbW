@@ -68,6 +68,40 @@ reportDB::~reportDB()
 {
 }
 
+bool reportDB::getID( reportInfo& report)
+{
+    char sql[1024] ="";
+    char* errMsg;
+    int isUpload ;
+    sqlite3_stmt *stmt;
+
+    if(report.isUpload)
+        isUpload = 1;
+    else
+        isUpload = 2; // not upload
+
+
+    sprintf(sql, "SELECT id FROM '%s' where imei = '%s' and installDate = '%s';",
+        getTableName().c_str(), report.imei.c_str(), report.installDate.c_str());
+
+
+    int rc= sqlite3_prepare(s_db,sql, strlen(sql), &stmt,0);     
+    if( rc ){   
+        fprintf(stderr, "Can't open statement: %s\n", sqlite3_errmsg(s_db));   
+        sqlite3_close(s_db);   
+        return false;   
+    }   
+
+    while(sqlite3_step(stmt)==SQLITE_ROW ) {   
+        report.id = sqlite3_column_int(stmt,0 );
+    }   
+
+    sqlite3_finalize(stmt);
+
+
+    return false;
+
+}
 bool reportDB::set( const reportInfo& report)
 {
     char sql[1024] ="";
