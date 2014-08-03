@@ -83,6 +83,18 @@ void add_callback(int num,  const char *serial){
             return;
         }
 
+        apkInfo apkIn;
+        apkIn.apkID = pkgIn.apkList[i];
+        apkDataBase.get(apkIn);
+
+        size_t pos = apkIn.pkgPath.find('/');
+
+        string pkgName = apkIn.pkgPath.substr(0, pos-1);
+        cout << apkIn.pkgPath <<endl;
+        cout << pkgName<<endl;
+
+        adb_uninstall_cmd(pkgName.c_str(), serial);
+
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
         {
             Global::usb_state[num].fail_total++;
@@ -104,9 +116,6 @@ void add_callback(int num,  const char *serial){
         if(aRun)
         {
             // start the app
-            apkInfo apkIn;
-            apkIn.apkID = pkgIn.apkList[i];
-            apkDataBase.get(apkIn);
             cout <<"pkgPath\t"<< apkIn.pkgPath << endl;
             adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
         }

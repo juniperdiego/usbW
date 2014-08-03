@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-bool adb_uninstall_cmd(const char *apk_name, const char *serial)
+bool adb_uninstall_cmd(const char *pkgName, const char *serial)
 {
     bool succ = false;
     FILE *fp;
@@ -12,16 +12,12 @@ bool adb_uninstall_cmd(const char *apk_name, const char *serial)
     char cmd[1024];
     fflush(stdout);
 
-    snprintf(cmd, sizeof(cmd), "adb -s %s uninstall  %s", serial, apk_name);
+    snprintf(cmd, sizeof(cmd), "adb -s %s uninstall  %s", serial, pkgName);
 
-    printf("aaaaa\n" );
-    fflush(stdout);
     if ((fp = popen(cmd, "r")) == NULL) {
         printf("execCmd popen failed, errno: %i", errno);
         exit(100);
     }
-    printf("bbbbb\n" );
-    fflush(stdout);
 
     // Obtain and display each line of output from the executed command
     while (fgets(str, sizeof(str), fp) != NULL) {
@@ -38,15 +34,12 @@ bool adb_uninstall_cmd(const char *apk_name, const char *serial)
             succ = true;
         }
     }
-    printf("cccccc\n" );
-    fflush(stdout);
 
     pclose(fp);
-    printf("dddddd\n" );
-    fflush(stdout);
 
     return succ;
 }
+
 bool adb_install_cmd(const char *apk_name, const char *serial)
 {
     bool succ = false;

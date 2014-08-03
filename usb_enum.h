@@ -44,6 +44,9 @@ extern void start_usb_device_monitor(void);
 /* 安装apk，返回0表示失败，1表示成功。*/
 extern bool adb_install_cmd(const char *apk_name, const char *serial);
 
+
+extern bool adb_uninstall_cmd(const char *pkgName, const char *serial);
+
 /*
 *向目标设备push 一个文件
 *返回0表示失败，1表示成功
