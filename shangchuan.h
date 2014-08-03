@@ -19,7 +19,7 @@ public:
     void SetUpThread(FileUpload* File_Up);
     void updateContents();
 
-private slots:
+public slots:
     void Return();
     void Search();
     void Upload();
@@ -27,6 +27,7 @@ private slots:
 
 private:
     logDB m_logDB;    
+    reportDB m_rptDB;
 
 private:
     Ui::Shangchuan *ui;

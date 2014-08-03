@@ -23,11 +23,13 @@ public:
     void StartUpSoft();
     void StartUpData();
     bool getUpdateState();
+    bool getUpdateDevState();
 
 private:
     DataUpdate* m_dataUp;
     QMovie* MvLoading;
     bool m_updateState;
+    bool m_updateDevState;
 
 public slots:
     void OnTerm();

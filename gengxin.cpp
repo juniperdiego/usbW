@@ -9,6 +9,7 @@ Gengxin::Gengxin(bool start, QWidget *parent) :
 {
     m_dataUp = NULL;
     m_updateState = false;
+    m_updateDevState = false;
 
 #ifdef ARM
     setWindowFlags(Qt::FramelessWindowHint);
@@ -64,6 +65,11 @@ void Gengxin::OnTerm()
     reject();
 }
 
+bool Gengxin::getUpdateDevState()
+{
+    return m_updateDevState;
+}
+
 bool Gengxin::getUpdateState()
 {
     return m_updateState;
@@ -115,6 +121,7 @@ void Gengxin::upDataDone()
 void Gengxin::upSoftDone()
 {
     int devState = m_dataUp->GetDevState();
+    m_updateDevState = (devState == 0 || devState == 2);
 
     QString strState;
     if (devState == 0 && Global::s_needRestart)
@@ -150,7 +157,8 @@ void Gengxin::upSoftDone()
 void Gengxin::StartUpAll()
 {
     StartUpSoft();
-    StartUpData();
+    if (m_updateDevState)
+        StartUpData();
 }
 
 void Gengxin::StartUpSoft()

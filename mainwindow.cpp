@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
 #endif
 
+    m_shangChun = new Shangchuan;
+
     //network Information
     QList<QNetworkInterface> NetInterfaceList;
     NetInterfaceList = QNetworkInterface::allInterfaces();
@@ -30,13 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     Global::g_DevID = m_strDevID.toStdString();
 
-    //m_netConf = new QNetworkConfigurationManager;
-    //connect(m_netConf, SIGNAL(onlineStateChanged(bool)), this, SLOT(onlineStateChange(bool)));
-
-    QTimer* netTimer = new QTimer;
-    connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
-    netTimer->start(1000);
-
     CreateLayout();
 
     QWidget* centralWidget = new QWidget;
@@ -49,23 +44,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     CreateStatusbar();
 
-    //   UsbState = new USB_State;
-    /*DevProcess* DevPro = new DevProcess;
-      DevPro->start();
-      this->connect(DevPro,SIGNAL(DevStatus(int)),this,SLOT(ScanUsbDev(int))); 线程间信号和槽*/
-    //上传
-
-    //QTimer* UnUpCount = new QTimer;
-    //this->connect(UnUpCount, SIGNAL(timeout()), this, SLOT(SetUnUpCount()));
-    //UnUpCount->start(PERIOD_SET_UNUPLOAD);
     SetUnUpCount();
 
-#if 0
-    m_fileUpLoad = new FileUpload;
-    this->connect(m_fileUpLoad, SIGNAL(SetUpState(bool)), this, SLOT(setMvState(bool)));
-    //QTimer::singleShot(10*60*1000,m_fileUpLoad,SLOT(start()));
-    m_fileUpLoad->start();
-#endif
+    m_fileUpLoad = FileUpload::getFileUpload();
+
+    QTimer* netTimer = new QTimer;
+    connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
+    netTimer->start(10000);
 
     if (!Global::s_netState)
         startUsbScan();
@@ -240,15 +225,18 @@ void MainWindow::onlineStateChange()
                 repaint();
                 Global::s_netState = true;
                 bState = true;
+                m_shangChun->UploadData();
             }
             else
             {
+                repaint();
                 Global::s_netState = false;
                 bState = false;
             }
         }
         else
         {
+            repaint();
             Global::s_netState = false;
             bState = false;
             netUp = false;
@@ -265,6 +253,8 @@ void MainWindow::onlineStateChange()
         QImage NetImage(":/images/NetDisConn24.ico");
         this->network->setPixmap(QPixmap::fromImage(NetImage));
     }
+
+    SetUnUpCount();
 }
 void MainWindow::OnGengxin(bool all)
 {
@@ -279,7 +269,13 @@ void MainWindow::OnGengxin(bool all)
 
     m_updateState = up->getUpdateState();
 
-    //if (m_updateState)
+    devDB devDB;
+    string cid;
+    devDB.get(CHAN_ID, cid);
+    if (id) 
+        id->setText(QString::fromStdString(cid));
+
+    if (m_updateState)
         startUsbScan();
 }
 
@@ -300,8 +296,8 @@ void MainWindow::OnFuwuqi()
 }
 void MainWindow::OnShangchuan()
 {
-    static Shangchuan *sh = new Shangchuan;
-    sh->exec();
+    m_shangChun->updateContents();
+    m_shangChun->exec();
 }
 void MainWindow::OnJiaoZhun()
 {
@@ -364,6 +360,8 @@ void MainWindow::setMvState(bool bState)
 
 void MainWindow::SetUnUpCount()
 {
-    //int nCount = FileUpload::GetAllFiles().count();
-    //this->wscnum->setText(QString::number(nCount, 10));
+    reportDB rptDB;
+    vector<reportInfo> rpts;
+    rptDB.getUnuploadedData(rpts); 
+    this->wscnum->setText(QString().setNum(rpts.size()));
 }

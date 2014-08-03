@@ -54,12 +54,22 @@ int main(int argc, char **argv) {
 
     printResult(result);
 
+#if 0
     // Add extra object to result which contains an array of keywords and a ratio.
     JsonArray keywords = JsonArray() << "json" << "qt" << "parser";
     JsonObject extra;
     extra["ratio"] = 3.35;
     extra["keywords"] = keywords;
     result["extra"] = extra;
+#endif
+    JsonArray infos;
+    JsonObject info;
+    info["content"] = "aaaaaaaaaaaaaaaaaa";
+    info["id"] = "1111111";
+
+    info["content"] = "bbbbbbbbbbbbbbb";
+    info["id"] = "2222222";
+    infos.append(info);
 
     printJson(result);
 

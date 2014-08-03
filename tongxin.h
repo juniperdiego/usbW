@@ -19,8 +19,14 @@ public:
         emit updateState(num);
     }
 
+    void uploadRealData(const QString& data, const QString& id)
+    {
+        emit uploadData(data, id);
+    }
+
 signals:
     void updateState(int);
+    void uploadData(const QString&, const QString& id);
 
 private:
     static tongXin* _self;

@@ -13,10 +13,12 @@ public:
     ~FileUpload();
 
     void  UpSingleFile(const QString& strFile);
-    static QStringList GetAllFiles(QString strPath);
     int startUploadFile();
+    void uploadBlock(const QString& data, bool isLoop);
+    void Up100Block(const QList<QPair<QString, QString> > pairList);
 
-    void UpRealBlock(const string& str, const string& fileBName);
+    static QStringList GetAllFiles(QString strPath);
+    static QString mkUploadData(const QList<QPair<QString, QString> > pairList);
 
     static FileUpload* getFileUpload();
 
@@ -27,6 +29,7 @@ private:
     int m_nUpFaildRetryNum;
     int m_nUpFaildNum;
     logDB m_logDB;
+    reportDB m_rptDB;
 
     static FileUpload* s_self;
 
@@ -38,6 +41,8 @@ signals:
 
 public slots:
     void UpFinishFile(QNetworkReply* Reply);
+
+    void UpRealBlock(const QString& str, const QString& id);
     void UpFinishData(QNetworkReply* Reply);
 };
 

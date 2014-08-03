@@ -132,6 +132,7 @@ void DataUpdate::DevFinish()
         m_mblDB.clearTableItems();
         m_devDB.set(CHAN_ID, cid);
         // todo, rm all apk
+        Global::clearApks();
     }
     int  nDevVerState=dev_rsp_res["status"].toInt();
     if( nDevVerState == 2){
