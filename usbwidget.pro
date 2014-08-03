@@ -38,6 +38,7 @@ SOURCES += db/sqlDB.cpp\
             db/mblDB.cpp\
             db/usbStatDB.cpp\
             db/mblStatDB.cpp\
+            db/reportDB.cpp\
             db/logDB.cpp
 
 SOURCES +=  usb/adb_utils.c\
@@ -67,6 +68,7 @@ HEADERS  += db/sqlDB.h\
             db/pkgDB.h\
             db/apkDB.h\
             db/mblDB.h\
+            db/reportDB.h\
             db/usbStatDB.h\
             db/mblStatDB.h\
             db/logDB.h\
