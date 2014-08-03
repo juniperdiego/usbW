@@ -202,6 +202,7 @@ bool reportDB::getUnuploadedData(vector<reportInfo>& reportVector)
        report.portIdx = sqlite3_column_int(stmt,5 );
        report.batchCode = string( (const char*)sqlite3_column_text(stmt,6));
        report.isUpload = false;
+       report.id= sqlite3_column_int(stmt,8 );
        reportVector.push_back(report);
     }   
 
