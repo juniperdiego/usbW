@@ -166,8 +166,8 @@
    <slot>Return()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>45</y>
+     <x>75</x>
+     <y>35</y>
     </hint>
     <hint type="destinationlabel">
      <x>65</x>
@@ -182,8 +182,8 @@
    <slot>Search()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>432</x>
-     <y>48</y>
+     <x>528</x>
+     <y>35</y>
     </hint>
     <hint type="destinationlabel">
      <x>529</x>
@@ -207,10 +207,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>UpdateDataBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>Shangchuan</receiver>
+   <slot>UploadData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>662</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>Return()</slot>
   <slot>Search()</slot>
   <slot>Upload()</slot>
+  <slot>UploadData()</slot>
  </slots>
 </ui>

@@ -51,7 +51,7 @@ reportDB::reportDB()
 
         sprintf(sql, "CREATE TABLE %s (imei varchar(32), installDate varchar(32), model varchar(64),\
                         chanID varchar(64), macAdd varchar(32), portIdx integer, batchCode varchar(128),\
-                        isUpload integer, ID INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT, \
+                        isUpload integer, ID INTEGER PRIMARY KEY AUTOINCREMENT, \
                         UNIQUE (imei, installDate));", getTableName().c_str());
         int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
         if( rc ){   
@@ -89,7 +89,7 @@ bool reportDB::set( const reportInfo& report)
         isUpload = 2; // not upload
 
 
-    sprintf(sql, "SELECT count(imei, installDate) FROM '%s' where imei = '%s' and installDate = '%s';",
+    sprintf(sql, "SELECT count(*) FROM '%s' where imei = '%s' and installDate = '%s';",
         getTableName().c_str(), report.imei.c_str(), report.installDate.c_str());
 
 

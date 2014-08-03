@@ -17,11 +17,14 @@ public:
     explicit Shangchuan(QWidget *parent = 0);
     ~Shangchuan();
     void SetUpThread(FileUpload* File_Up);
+    void updateContents();
 
 private slots:
     void Return();
     void Search();
     void Upload();
+    void UploadData();
+
 private:
     logDB m_logDB;    
 

@@ -89,12 +89,11 @@ void add_callback(int num,  const char *serial){
 
         size_t pos = apkIn.pkgPath.find('/');
 
-        string pkgName = apkIn.pkgPath.substr(0, pos-1);
+        string pkgName = apkIn.pkgPath.substr(0, pos);
         cout << apkIn.pkgPath <<endl;
         cout << pkgName<<endl;
 
         adb_uninstall_cmd(pkgName.c_str(), serial);
-
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
         {
             Global::usb_state[num].fail_total++;
@@ -167,7 +166,9 @@ void add_callback(int num,  const char *serial){
     getDate(time, 0);
     string timeStr(time);
     
-    //reportInfo info(ImeiStr, model, chanID, Global::g_DevID, timeStr, num, pkgIn.batchCode);
+    reportDB rptDB;
+    reportInfo rptIn(ImeiStr, model, chanID, Global::g_DevID, timeStr, num, pkgIn.batchCode);
+    rptDB.set(rptIn);
 
     //log
     string msg = ImeiStr + "|"\
@@ -199,21 +200,21 @@ void add_callback(int num,  const char *serial){
     }
     close(fd);
 
-    string encyptMsg = msg;
+    string encyptMsg = Global::encyptStr(msg);
     string encyptFileName = ENCYPT_LOG_PATH + timeStr + ".csv";
-    int fdEncypt=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
+    int fdEncypt=open(encyptFileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
     if(fdEncypt == -1)
     {
         printf("errno.%02d is: %s/n", errno, strerror(errno));
-        cout << "opening encypt file("<<fileName <<") failed." << endl;
+        cout << "opening encypt file("<<encyptFileName <<") failed." << endl;
         return;
     }
     else
-        cout << "opening encypt file("<<fileName <<") suc." << endl;
+        cout << "opening encypt file("<<encyptFileName <<") suc." << endl;
 
-    if(write(fdEncypt, msg.c_str(), msg.size()) == -1)
+    if(write(fdEncypt, encyptMsg.c_str(), encyptMsg.size()) == -1)
     {
-        cout << "writing encypt file("<<fileName <<") failed." << endl;
+        cout << "writing encypt file("<<encyptFileName <<") failed." << endl;
         return;
     }
     close(fdEncypt);

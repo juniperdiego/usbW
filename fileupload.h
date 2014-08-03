@@ -13,7 +13,7 @@ public:
     ~FileUpload();
 
     void  UpSingleFile(const QString& strFile);
-    QStringList GetAllFiles(QString strPath);
+    static QStringList GetAllFiles(QString strPath);
     int startUploadFile();
 
     void UpRealBlock(const string& str, const string& fileBName);

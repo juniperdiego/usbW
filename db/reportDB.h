@@ -1,5 +1,5 @@
-#ifndef _MBL_STAT_DB_H__
-#define _MBL_STAT_DB_H__
+#ifndef _REPORT_DB_H__
+#define _REPORT_DB_H__
 #include"sqlDB.h"
 
 
@@ -28,7 +28,7 @@ class reportInfo
         int             count;
 
    reportInfo()
-       :isUpload(2)
+       :isUpload(false)
    {
    };
 
@@ -45,7 +45,7 @@ class reportInfo
        portIdx = portIdxIn;
        batchCode = batchCodeIn;
        isUpload = isUploadIn;
-   }
+   };
 };
 
 

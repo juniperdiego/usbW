@@ -34,6 +34,17 @@ Shangchuan::~Shangchuan()
 {
     delete ui;
 }
+
+void Shangchuan::updateContents()
+{
+    QStringList files = FileUpload::GetAllFiles(ENCYPT_LOG_PATH); 
+    QString text1 = tr("上传文件(%1)").arg(files.count());
+    ui->UpdateBtn->setText(text1);
+
+    QString text2 = tr("上传数据(%1)").arg(files.count());
+    ui->UpdateDataBtn->setText(text2);
+}
+
 void Shangchuan::Return()
 {
     this->close();
@@ -86,5 +97,10 @@ void Shangchuan::Upload()
         strState = "文件上传成功!\n";
 
     QMessageBox::information(this, windowTitle(), strState);
+}
+
+void Shangchuan::UploadData()
+{
+
 }
 

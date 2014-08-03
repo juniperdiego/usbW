@@ -279,7 +279,7 @@ void MainWindow::OnGengxin(bool all)
 
     m_updateState = up->getUpdateState();
 
-    if (m_updateState)
+    //if (m_updateState)
         startUsbScan();
 }
 
