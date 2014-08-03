@@ -319,8 +319,8 @@ bool reportDB::setUpload(int id)
     int rc;
 
 
-    sprintf(sql, "update table %s set isUpload = 1 where id = %d ;",
-        getTableName().c_str());
+    sprintf(sql, "update %s set isUpload = 1 where id = %d ;",
+        getTableName().c_str(), id);
 #if 0
     {
         int nrow = 0, ncolumn = 0;

@@ -476,6 +476,13 @@ class apkInfo {
     reportVector.clear();
     reportVector.push_back(rIn4);
     print(reportVector);
+
+    rDB.setUpload(rIn4.id);
+    rDB.setUpload(rIn5.id);
+    rDB.getID(rIn4);
+    reportVector.clear();
+    reportVector.push_back(rIn4);
+    print(reportVector);
 #if 0
    reportInfo(const string& imeiIn, const string& modelIn,
            const string& chanIDIn, const string& macAddIn,
