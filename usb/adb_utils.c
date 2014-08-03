@@ -27,10 +27,10 @@ bool adb_uninstall_cmd(const char *pkgName, const char *serial)
         }
 
         if (! strncmp(str, "Failure", 7)) {
-            printf("install app error\n");
+            printf("uninstall app error\n");
             succ = false;
         }else if (!strncmp(str, "Success", 7)){
-            printf("install app success\n");
+            printf("uninstall app success\n");
             succ = true;
         }
     }

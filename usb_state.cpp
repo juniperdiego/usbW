@@ -275,6 +275,7 @@ void getSerialNums()
 
 #define ADB_CMD1 "adb -s "
 #define ADB_CMD2 "install"
+#define ADB_CMD3 "uninstall"
 #define SPACE " " 
 
 static void* adb_killer(void *args)
@@ -292,11 +293,16 @@ static void* adb_killer(void *args)
             printf("PID:  %s", buffer);
             char* p_adb = strstr(buffer, ADB_CMD1);
             char* p_install = strstr(buffer, ADB_CMD2);
+            char* p_uninstall = strstr(buffer, ADB_CMD3);
             if(!p_adb || !p_install)
                 continue;
 
             // the character after the end of serial number
-            *(p_install-1) = '\0';
+            if(p_uninstall == NULL) // this line is installed
+                *(p_install-1) = '\0';
+            else // this line is uninstalled
+                *(p_uninstall-1) = '\0';
+
             char *p = p_adb + strlen(ADB_CMD1);
             printf("serial:  [%s]\n", p); 
 
