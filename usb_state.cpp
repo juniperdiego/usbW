@@ -181,8 +181,7 @@ void add_callback(int num,  const char *serial){
                 + timeStr 
                 + "\n";
 
-    //FileUpload::getFileUpload()->UpRealBlock(msg, timeStr);
-    tongXin::getTongXin()->uploadRealData(QLatin1String(msg.c_str()), QString().setNum(rptIn.id));
+    //tongXin::getTongXin()->uploadRealData(QLatin1String(msg.c_str()), QString().setNum(rptIn.id));
 
     string fileName = LOG_PATH + timeStr + ".csv";
     int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);

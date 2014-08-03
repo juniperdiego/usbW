@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
         }
 #endif
         gengXin.hide();
-        if (gengXin.getUpdateDevState())
+        //if (gengXin.getUpdateDevState())
             w.OnGengxin(false);
     }
 

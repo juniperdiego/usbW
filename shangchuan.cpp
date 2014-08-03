@@ -37,14 +37,14 @@ Shangchuan::~Shangchuan()
 
 void Shangchuan::updateContents()
 {
-    QStringList files = FileUpload::GetAllFiles(ENCYPT_LOG_PATH); 
-    QString text1 = tr("上传文件(%1)").arg(files.count());
-    ui->UpdateBtn->setText(text1);
+    //QStringList files = FileUpload::GetAllFiles(ENCYPT_LOG_PATH); 
+    //QString text1 = tr("上传文件(%1)").arg(files.count());
+    //ui->UpdateBtn->setText(text1);
 
-    vector<reportInfo> rpts;
-    m_rptDB.getUnuploadedData(rpts); 
-    QString text2 = tr("上传数据(%1)").arg(rpts.size());
-    ui->UpdateDataBtn->setText(text2);
+    //vector<reportInfo> rpts;
+    //m_rptDB.getUnuploadedData(rpts); 
+    //QString text2 = tr("上传数据(%1)").arg(rpts.size());
+    //ui->UpdateDataBtn->setText(text2);
 }
 
 void Shangchuan::Return()

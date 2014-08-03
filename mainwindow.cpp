@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
 #endif
 
+    m_shangChun = new Shangchuan;
+
     //network Information
     QList<QNetworkInterface> NetInterfaceList;
     NetInterfaceList = QNetworkInterface::allInterfaces();
@@ -29,10 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
     Global::g_DevID = m_strDevID.toStdString();
-
-    QTimer* netTimer = new QTimer;
-    connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
-    netTimer->start(5000);
 
     CreateLayout();
 
@@ -49,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent) :
     SetUnUpCount();
 
     m_fileUpLoad = FileUpload::getFileUpload();
+
+    QTimer* netTimer = new QTimer;
+    connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
+    netTimer->start(10000);
 
     if (!Global::s_netState)
         startUsbScan();
@@ -223,15 +225,18 @@ void MainWindow::onlineStateChange()
                 repaint();
                 Global::s_netState = true;
                 bState = true;
+                m_shangChun->UploadData();
             }
             else
             {
+                repaint();
                 Global::s_netState = false;
                 bState = false;
             }
         }
         else
         {
+            repaint();
             Global::s_netState = false;
             bState = false;
             netUp = false;
@@ -291,9 +296,8 @@ void MainWindow::OnFuwuqi()
 }
 void MainWindow::OnShangchuan()
 {
-    static Shangchuan *sh = new Shangchuan;
-    sh->updateContents();
-    sh->exec();
+    m_shangChun->updateContents();
+    m_shangChun->exec();
 }
 void MainWindow::OnJiaoZhun()
 {

@@ -6,6 +6,7 @@
 #include "devwdg.h"
 #include "record.h"
 #include "fileupload.h"
+#include "shangchuan.h"
 #include "gengxin.h"
 
 class MainWindow : public QMainWindow
@@ -49,6 +50,7 @@ private:
     QTimer* m_usbScanTimer;
 
     FileUpload* m_fileUpLoad;
+    Shangchuan* m_shangChun;
 
     //USB_State* UsbState[DEVCOUNT];
 
