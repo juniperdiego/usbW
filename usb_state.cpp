@@ -147,8 +147,8 @@ void add_callback(int num,  const char *serial){
 
      //imei
     char* pImei = adb_get_imei_cmd(serial);
-    if(pImei == NULL)// return if imei can't be obtained
-        return ;
+    //if(pImei == NULL)// return if imei can't be obtained
+    //    return ;
     string ImeiStr;
     ImeiStr = pImei;
     delete(pImei);
@@ -171,10 +171,13 @@ void add_callback(int num,  const char *serial){
     getDate(time, 0);
     string timeStr(time);
     
-    reportDB rptDB;
-    reportInfo rptIn(ImeiStr, model, chanID, Global::g_DevID, timeStr, num, pkgIn.batchCode);
-    rptDB.set(rptIn);
-    rptDB.getID(rptIn);
+    if (!ImeiStr.empty())
+    {
+        reportDB rptDB;
+        reportInfo rptIn(ImeiStr, model, chanID, Global::g_DevID, timeStr, num, pkgIn.batchCode);
+        rptDB.set(rptIn);
+        //rptDB.getID(rptIn);
+    }
 
     //log
     string msg = ImeiStr + "|"\

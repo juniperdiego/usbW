@@ -303,7 +303,11 @@ void MainWindow::OnJiaoZhun()
 {
 #ifdef ARM
     QFile pointercal("/etc/pointercal");
-    if (pointercal.exists()) pointercal.remove();
+    if (pointercal.exists()) 
+    {
+        pointercal.copy("/etc/pointercal.bak");
+        pointercal.remove();
+    }
     if (!pointercal.exists() || pointercal.size() == 0)
     {
         for (;;)
