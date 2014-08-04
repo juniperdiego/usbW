@@ -52,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(netTimer, SIGNAL(timeout()), this, SLOT(onlineStateChange()));
     netTimer->start(10000);
 
-    if (!Global::s_netState)
-        startUsbScan();
+    //if (!Global::s_netState)
+    //    startUsbScan();
 }
 
 MainWindow::~MainWindow()
@@ -275,7 +275,7 @@ void MainWindow::OnGengxin(bool all)
     if (id) 
         id->setText(QString::fromStdString(cid));
 
-    if (m_updateState)
+    //if (m_updateState)
         startUsbScan();
 }
 

@@ -27,6 +27,10 @@ void add_callback(int num,  const char *serial){
     printf("add callback %d %s.\n", num, serial);
 #else
     printf("add callback %d %s.\n", num, serial);
+
+	Global::usb_state[num].install_state=5;
+    tongXin::getTongXin()->updateGui(num);
+
     sleep(3);
     Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;

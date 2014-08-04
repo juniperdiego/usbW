@@ -66,7 +66,7 @@ void baobiao::OnSearchData()
         reportDB rDB;
         rDB.getModel(dateFrom,dateTo, res);
 
-        for (int nRow = 0; nRow < res.size(); nRow++)
+        for (size_t nRow = 0; nRow < res.size(); nRow++)
         {
             for( int nCol = 0; nCol < 3; nCol++)
             {
@@ -99,7 +99,7 @@ void baobiao::OnSearchData()
         reportDB rDB;
         rDB.getUsb(dateFrom,dateTo, res);
 
-        for (int nRow = 0; nRow < res.size(); nRow++)
+        for (size_t nRow = 0; nRow < res.size(); nRow++)
         {
             for( int nCol = 0; nCol < 3; nCol++)
             {

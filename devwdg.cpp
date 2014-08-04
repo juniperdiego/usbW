@@ -150,6 +150,10 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
         ui->progBar_Install->setVisible(false);
         ui->labPerc->setVisible(false);
     }
+    else if(usbState->install_state == 5)
+    {
+        this->SetStatus(tr("准备中"));
+    }
     setPaletteWithStatus();
 }
 

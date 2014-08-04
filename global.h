@@ -68,7 +68,7 @@ using namespace std;
 
 typedef struct USB_STATE{
     int num;						 //usb ser
-    int install_state;               //0:free  1:installing  2:install_complete  3:break off 4:install uncomplete
+    int install_state;               //0:free  1:installing  2:install_complete  3:break off 4:install uncomplete 5:readying
     char   model[64];                  //device mod
     char   ser[SER_LENGTH];          //device ser
     int apk_num;                  //apk install now

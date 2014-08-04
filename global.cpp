@@ -29,7 +29,7 @@ void Global::setSysTime(const QString& t)
 string Global::encyptStr(const string& str)
 {
     string result = str;
-    for (int i = 0; i < str.length(); ++i)
+    for (size_t i = 0; i < str.length(); ++i)
     {
         result[i] = str[i] ^ ENCYPT_BIT;
     }
