@@ -111,7 +111,9 @@ void DevWdg::DevWdgPrecess(USB_State* usbState)
     if((this->strStatus == tr("空闲") && usbState->install_state ==1) || (this->strStatus == tr("中断") && usbState->install_state ==1))
     {
         this->SetStatus(tr("安装中"));
-        ui->labUa->setText(QString(usbState->model));
+        QString model = usbState->model;
+        if (model.length() > 9) model = model.right(9);
+        ui->labUa->setText(model);
         ui->labUa->setVisible(true);
         this->StartPercLab();
         this->StartProcBar();

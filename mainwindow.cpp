@@ -207,6 +207,7 @@ void MainWindow::onlineStateChange()
 {
     static bool netUp = false;
     bool bState = false;
+    bool prevNetState = Global::s_netState;
     QNetworkInterface netInterface = QNetworkInterface::interfaceFromName(NET_NAME);
     //qDebug()<<netInterface;
     if (netInterface.isValid())
@@ -255,6 +256,12 @@ void MainWindow::onlineStateChange()
     }
 
     SetUnUpCount();
+
+    if (prevNetState && !Global::s_netState)
+    {
+        QMessageBox::information(this, APP_NAME, 
+                "网络连接断开，系统将离线运行！");
+    }
 }
 void MainWindow::OnGengxin(bool all)
 {

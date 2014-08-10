@@ -15,6 +15,7 @@ FileUpload::FileUpload(QObject *parent) :
 {
     this->m_nUpFaildRetryNum = 2;
     this->m_nUpFaildNum = 0;
+    this->m_nUpSuccessedNum = 0;
     this->m_netFileManager = new QNetworkAccessManager(this);
     this->m_netRealManager = new QNetworkAccessManager(this);
 
@@ -44,10 +45,12 @@ void FileUpload::UpSingleFile(const QString& strFile)
     while(!Fd.atEnd())
     {
         QByteArray OneLine = Fd.readLine(MAXLINELEN);
+#if 0
         for (int i = 0; i < OneLine.length(); ++i)
         {
             OneLine[i] = OneLine[i] ^ ENCYPT_BIT;
         }
+#endif
 
         BlockData.append(OneLine);
     }
@@ -95,6 +98,7 @@ void FileUpload::UpFinishFile(QNetworkReply* Reply_Up)
         log.isUploaded = true;
         m_logDB.set(log);
         QFile::remove(m_curFileInfo.absoluteFilePath());
+        m_nUpSuccessedNum++;
     }
     else if (status == 1)
     {
@@ -137,9 +141,11 @@ void FileUpload::UpFinishData(QNetworkReply* Reply_Up)
     }
 }
 
-int FileUpload::startUploadFile()
+int FileUpload::startUploadFile(int& failNum, int& okNum)
 {
     m_nUpFaildNum = 0;
+    m_nUpSuccessedNum = 0;
+    if (!Global::s_netState) return -2;
     QStringList LogLst = GetAllFiles(ENCYPT_LOG_PATH);
     if (LogLst.count() == 0) return -1;
     QString strLog;
@@ -148,7 +154,10 @@ int FileUpload::startUploadFile()
         UpSingleFile(strLog);
     }
 
-    return m_nUpFaildNum;
+    failNum = m_nUpFaildNum;
+    okNum = m_nUpSuccessedNum;
+
+    return 0;
 }
 
 QStringList FileUpload::GetAllFiles(QString strPath)

@@ -13,7 +13,7 @@ public:
     ~FileUpload();
 
     void  UpSingleFile(const QString& strFile);
-    int startUploadFile();
+    int startUploadFile(int& failNum, int& okNum);
     void uploadBlock(const QString& data, bool isLoop);
     void Up100Block(const QList<QPair<QString, QString> > pairList);
 
@@ -28,6 +28,7 @@ private:
     QFileInfo m_curFileInfo;
     int m_nUpFaildRetryNum;
     int m_nUpFaildNum;
+    int m_nUpSuccessedNum;
     logDB m_logDB;
     reportDB m_rptDB;
 

@@ -88,17 +88,21 @@ void Shangchuan::Search()
 }
 void Shangchuan::Upload()
 {
-    int num = FileUpload::getFileUpload()->startUploadFile();
-
+    int failNum = 0, okNum = 0;
     QString strState;
-    if (num == -1)
+    int state = FileUpload::getFileUpload()->startUploadFile(failNum, okNum);
+
+    if (state == -1)
         strState = "没有文件需要上传!\n";
-    else if (num > 0)
-        strState = tr("%1个文件上传失败!\n").arg(num);
-    else
+    else if (state == -2)
+        strState = "没有发现网络链接，无法上传文件!\n";
+    else if (state == 0 && failNum > 0)
+        strState = "文件上传失败!\n";
+    else if (state == 0 && okNum > 0)
         strState = "文件上传成功!\n";
 
-    QMessageBox::information(this, windowTitle(), strState);
+    if (!strState.isEmpty())
+        QMessageBox::information(this, windowTitle(), strState);
 }
 
 void Shangchuan::UploadData()
