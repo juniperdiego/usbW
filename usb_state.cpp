@@ -41,6 +41,7 @@ void add_callback(int num,  const char *serial){
 	sprintf(Global::usb_state[num].ser, "%s", serial);
 	
 	Global::usb_state[num].install_state=1;
+    tongXin::getTongXin()->updateGui(num);
 	
 	string apk_path;
 
@@ -84,6 +85,7 @@ void add_callback(int num,  const char *serial){
         if(!serialNumExistInPort(num, serial))
         {
             Global::usb_state[num].install_state=3;
+            tongXin::getTongXin()->updateGui(num);
             return;
         }
 
@@ -105,6 +107,7 @@ void add_callback(int num,  const char *serial){
             if(!serialNumExistInPort(num, serial))
             {
                 Global::usb_state[num].install_state=3;
+                tongXin::getTongXin()->updateGui(num);
                 return;
             }
             else
