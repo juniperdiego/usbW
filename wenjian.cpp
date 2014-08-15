@@ -17,6 +17,13 @@ wenjian::wenjian(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle(tr("文件"));
 
+    QPalette pe;
+    pe.setColor(QPalette::WindowText,Qt::blue);
+    ui->cardspaceLabel->setPalette(pe);
+    ui->ldateLabel->setPalette(pe);
+    //ui->updatenumLabel->setPalette(pe);
+    ui->pkgLabel->setPalette(pe);
+
     m_process = new QProcess(this);
     connect(m_process, SIGNAL(finished(int)), this, SLOT(setFreeSpace1(int)));
 
@@ -40,13 +47,6 @@ void wenjian::onreturn()
 
 void wenjian::UpdateContent()
 {
-    QPalette pe;
-    pe.setColor(QPalette::WindowText,Qt::blue);
-    ui->cardspaceLabel->setPalette(pe);
-    ui->ldateLabel->setPalette(pe);
-    //ui->updatenumLabel->setPalette(pe);
-    ui->pkgLabel->setPalette(pe);
-
     ui->comboBox->clear();
     m_pkgDB.getAll(m_pkgInfos);
     for (size_t i = 0; i < m_pkgInfos.size(); ++i)

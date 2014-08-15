@@ -289,6 +289,7 @@ void MainWindow::OnGengxin(bool all)
 void MainWindow::OnWenjian()
 {
     static wenjian *wj = new wenjian;
+    wj->UpdateContent();
     wj->exec();
 }
 void MainWindow::OnBaobiao()

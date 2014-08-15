@@ -16,13 +16,14 @@ public:
     explicit wenjian(QWidget *parent = 0);
     ~wenjian();
 
+    void UpdateContent();
+
 private slots:
     void onreturn();
     void onPkgChanged(int);
     void setFreeSpace1(int);
 
 private:
-    void UpdateContent();
     void setFreeSpace();
     void setUpdatetime();
     void setUpdatenum();
