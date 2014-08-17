@@ -22,6 +22,21 @@ struct saved_serial_t {
 
 saved_serial_t save_serial_num[12];
 
+bool checkModel(const QString& devModel)
+{
+    if (devModel.isEmpty()) return false;
+    else if (devModel[0] == '*') return false;
+    else
+    {
+        for (int i = 0; i < devModel.length(); ++i)
+        {
+            if (!devModel[i].isPrint())
+                return false;
+        }
+    }
+    return true;
+}
+
 void add_callback(int num,  const char *serial){
 #if 0
     printf("add callback %d %s.\n", num, serial);
@@ -36,12 +51,28 @@ void add_callback(int num,  const char *serial){
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
     QString devModel = QString(device_model).simplified();
-    devModel.replace(' ', '_');
+    if (!checkModel(devModel))
+    {
+        int time = 2;
+        while (time)
+        {
+            sleep(3);
+            device_model = adb_getprop_cmd("ro.product.model", serial);
+            devModel = QString(device_model).simplified();
+            if (checkModel(devModel))
+                break;
+            time--;
+        }
+    }
+    //devModel = QString(device_model).simplified();
+    if (!checkModel(devModel))
+        devModel = "";
+    else
+        devModel.replace(' ', '_');
 	sprintf(Global::usb_state[num].model, "%s", devModel.toStdString().c_str());
 	sprintf(Global::usb_state[num].ser, "%s", serial);
 	
 	Global::usb_state[num].install_state=1;
-    tongXin::getTongXin()->updateGui(num);
 	
 	string apk_path;
 
@@ -72,6 +103,7 @@ void add_callback(int num,  const char *serial){
     // 3 install all apks
     apkDB apkDataBase;
     int apkNum = pkgIn.apkList.size();
+
     Global::usb_state[num].apk_total = apkNum;
     Global::usb_state[num].apk_num = 0;
     tongXin::getTongXin()->updateGui(num);
@@ -129,6 +161,16 @@ void add_callback(int num,  const char *serial){
 	Global::usb_state[num].install_state=2;
     //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
     tongXin::getTongXin()->updateGui(num);
+
+    //if model is empty, get it again, for csv data
+    if (model.empty())
+    {
+	    device_model = adb_getprop_cmd("ro.product.model", serial);
+        QString devModel = QString(device_model).simplified();
+        devModel.replace(' ', '_');
+	    sprintf(Global::usb_state[num].model, "%s", devModel.toStdString().c_str());
+        model = devModel.toStdString();
+    }
 
     // 4 update statistic database
     mblStatDB mblStatDateBase;
@@ -192,6 +234,7 @@ void add_callback(int num,  const char *serial){
                 + "\n";
 
     //tongXin::getTongXin()->uploadRealData(QLatin1String(msg.c_str()), QString().setNum(rptIn.id));
+    cerr<<"log msg = "<<msg<<endl;
 
     string fileName = LOG_PATH + timeStr + ".csv";
     int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
@@ -358,7 +401,7 @@ static void* adb_killer(void *args)
                     {
                         // thes indicates INTERRUPT state
                         cout << "find the number\t:" << i << endl;
-                        Global::usb_state[i].install_state = 3;
+                        //Global::usb_state[i].install_state = 3;
                         break;
                     }
                 }

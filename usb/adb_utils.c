@@ -125,6 +125,7 @@ char * adb_getprop_cmd(const char *prop, const char *serial) {
 char * adb_get_imei_cmd( const char *serial) {
     FILE *fp;
     char *result = malloc(sizeof(char) * 1024);
+    memset(result, 1024, 0);
     char str[1024];
     char cmd[1024];
     bool findImei = false;
@@ -137,8 +138,12 @@ char * adb_get_imei_cmd( const char *serial) {
         exit(100);
     }
 
+    printf("aaaaaa\n");
+    fflush(stdout);
+
     while (fgets(str, sizeof(str), fp) != NULL) {
-        if ((strlen(str) > 1) && (str[strlen(str) - 1] == '\n')) {
+        if ((strlen(str) > 1) && (str[strlen(str) - 1] == '\n')) 
+        {
             if(strlen(str) > 2 && str[strlen(str) - 2] == 13)
                 str[strlen(str) - 2] = '\0';
             else
@@ -155,10 +160,12 @@ char * adb_get_imei_cmd( const char *serial) {
     }
     pclose(fp);
 
+    printf("bbbbbb %d\n", findImei);
+    fflush(stdout);
 
     if(findImei == false) // not found
     {
-        result = '\0';
+        result[0] = '\0';
         return (char *)result;
     }
 
@@ -166,6 +173,9 @@ char * adb_get_imei_cmd( const char *serial) {
     //"Device ID = 352956061737216"
     char* p = str;
     char* start = NULL;
+
+    printf("ccccccc %s\n", str);
+    fflush(stdout);
 
     while(p != '\0')
     {
@@ -177,7 +187,13 @@ char * adb_get_imei_cmd( const char *serial) {
         p++;
     }
 
+    printf("ddddddd %d\n", start);
+    fflush(stdout);
+
     strcpy(result, start);
+
+    printf("eeeeee %s\n", result);
+    fflush(stdout);
 
     return (char *)result;
 }

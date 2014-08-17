@@ -12,6 +12,8 @@ export TSLIB_TSDEVICE=/dev/input/event1
 export QWS_MOUSE_PROTO=tslib:/dev/input/event1
 export LANG=zh_CN.UTF8
 
+adb start-server
+
 case "$1" in
   start)
 	echo -n "Starting zig: "

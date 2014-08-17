@@ -186,7 +186,6 @@ bool getSerialNumInPort(int idx, char* serial)
         printf("serialInPort\t:%s\n",serialInPort);
         return true;
     }
-    printf("false 2\n");
     return false;
 }
 
@@ -202,6 +201,5 @@ bool serialNumExistInPort(int idx, const char* serial)
         else
             return false;
     }
-    printf("false 2\n");
     return false;
 }

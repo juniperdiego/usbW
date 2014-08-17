@@ -94,25 +94,25 @@ void DevWdg::progRun()
 
 void DevWdg::percRun()
 {
-    this->setApkNum((int)this->usbState->apk_num ,(int)usbState->apk_total);
+    this->setApkNum((int)usbState->apk_num ,(int)usbState->apk_total);
     QString strLab = tr("%1/%2").arg(nInsApk).arg(nTotalApk);
     ui->labPerc->setText(strLab);
 }
 
 void DevWdg::onUpdateState(int num) 
 {
-    qDebug()<<"onUpdateState"<<num;
+    //qDebug()<<"onUpdateState"<<num;
     MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
 }
 
-void DevWdg::DevWdgPrecess(USB_State* usbState)
+void DevWdg::DevWdgPrecess(USB_State* usbStateIn)
 {
-    this->usbState = usbState;
-    if((this->strStatus == tr("空闲") && usbState->install_state ==1) || (this->strStatus == tr("中断") && usbState->install_state ==1))
+    usbState = usbStateIn;
+    if (usbState->install_state ==1)
     {
         this->SetStatus(tr("安装中"));
         QString model = usbState->model;
-        if (model.length() > 9) model = model.right(9);
+        if (model.length() > 8) model = model.right(8);
         ui->labUa->setText(model);
         ui->labUa->setVisible(true);
         this->StartPercLab();
