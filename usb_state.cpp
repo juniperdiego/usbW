@@ -53,7 +53,7 @@ void add_callback(int num,  const char *serial){
     QString devModel = QString(device_model).simplified();
     if (!checkModel(devModel))
     {
-        int time = 2;
+        int time = 39;
         while (time)
         {
             sleep(3);
