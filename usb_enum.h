@@ -63,7 +63,9 @@ extern char * adb_get_imei_cmd( const char *serial);
 
 extern bool getSerialNumInPort(int idx, char* serial);
 
-bool serialNumExistInPort(int idx, const char* serial);
+extern bool serialNumExistInPort(int idx, const char* serial);
+
+extern bool initUsbDevices();
 
 #ifdef __cplusplus
 }

@@ -18,8 +18,8 @@ Shangchuan::Shangchuan(QWidget *parent) :
     ui->horizontalLayout->addWidget(LabUpdateState);
 
     //set the date display policy
-    ui->FromDataEdt->setDate(QDate::currentDate());
-    ui->ToDataEdt->setDate(QDate::currentDate());
+    ui->FromdateEdit->setDate(QDate::currentDate());
+    ui->TodateEdit->setDate(QDate::currentDate());
 
     ui->ResTabWid->setHorizontalHeaderLabels(QStringList()<< tr("日期")<<tr("上传文件")<<tr("上传结果"));
     ui->ResTabWid->setColumnWidth(0,150);
@@ -53,9 +53,10 @@ void Shangchuan::Return()
 }
 void Shangchuan::Search()
 {
+    ui->ResTabWid->clearContents();
     vector<logInfo> res;
-    string dateFrom = ui->FromDataEdt->text().remove('-').toStdString();
-    string dateTo = ui->ToDataEdt->text().remove('-').toStdString();
+    string dateFrom = ui->FromdateEdit->text().remove('-').toStdString();
+    string dateTo = ui->TodateEdit->text().remove('-').toStdString();
     m_logDB.get(dateFrom, dateTo, res);
     //cout<<dateFrom<<"\t"<<dateTo<<"\t"<<res.size()<<endl;
     for (int nRow = 0; nRow < res.size(); nRow++)
@@ -99,7 +100,10 @@ void Shangchuan::Upload()
     else if (state == 0 && failNum > 0)
         strState = "文件上传失败!\n";
     else if (state == 0 && okNum > 0)
+    {
         strState = "文件上传成功!\n";
+        Search();
+    }
 
     if (!strState.isEmpty())
         QMessageBox::information(this, windowTitle(), strState);

@@ -53,7 +53,7 @@ void add_callback(int num,  const char *serial){
     QString devModel = QString(device_model).simplified();
     if (!checkModel(devModel))
     {
-        int time = 39;
+        int time = 99;
         while (time)
         {
             sleep(3);
@@ -237,10 +237,10 @@ void add_callback(int num,  const char *serial){
     cerr<<"log msg = "<<msg<<endl;
 
     string fileName = LOG_PATH + timeStr + ".csv";
-    int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT,0);
+    int fd=open(fileName.c_str(), O_WRONLY|O_APPEND|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if(fd == -1)
     {
-        printf("errno.%02d is: %s/n", errno, strerror(errno));
+        printf("errno.%02d is: %s\n", errno, strerror(errno));
         cout << "opening file("<<fileName <<") failed." << endl;
         return;
     }

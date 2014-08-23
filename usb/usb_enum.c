@@ -8,9 +8,14 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include<signal.h>
+#include <signal.h>
 
-const char *usb_device_list[] = {
+#define USB_DEVICE_FILE "/etc/flashbot-port.conf"
+#define BUFFER_SIZE 512
+
+#define USB_DEVICE_NUM 12
+
+const char *usb_device_list[USB_DEVICE_NUM] = {
     "/sys/devices/platform/sw-ehci.1/usb1/1-1/1-1.2/1-1.2.1/",
     "/sys/devices/platform/sw-ehci.1/usb1/1-1/1-1.3/",
     "/sys/devices/platform/sw-ehci.1/usb1/1-1/1-1.4/",
@@ -26,7 +31,7 @@ const char *usb_device_list[] = {
     "/sys/devices/platform/sw-ehci.2/usb3/3-1/3-1.2/3-1.2.3/"
 };
 
-#define USB_DEVICE_NUM (sizeof(usb_device_list) / sizeof(usb_device_list[0]))
+//#define USB_DEVICE_NUM (sizeof(usb_device_list) / sizeof(usb_device_list[0]))
 
 typedef void (* remove_usb_device_callback)(int num);
 typedef void (* add_usb_device_callback)(int num, const char *serial);
@@ -79,7 +84,7 @@ static void read_usb_device_serial(int idx, const char *path, char *serial, int 
     snprintf(buf, sizeof(buf), "%sserial", path);
 
     fd = open(buf, O_RDONLY);
-    if (fd == 0) {
+    if (fd == -1) {
         serial[0] = 0;
         printf("Usb Num: %d read %s failed.\n", idx, buf);
         return;
@@ -202,4 +207,60 @@ bool serialNumExistInPort(int idx, const char* serial)
             return false;
     }
     return false;
+}
+
+static bool trimStr(char* buf)
+{
+    const char* chSet = " \t\n\r";
+    int i = 0;
+
+    //trim start
+    while (buf[i] && strchr(chSet, buf[i])) i++;
+    memmove(buf, &buf[i], strlen(buf)-i+1);
+
+    if (buf[0] == 0x0) return false;
+
+    //trim end
+    int len = strlen(buf);
+    while (len >= 0 && strchr(chSet, buf[len])) len--;
+    buf[len+1] = '\0';
+
+    if (buf[len] != '/')
+    {
+        buf[len+1] = '/';
+        buf[len+2] = '\0';
+    }
+
+    return true;
+}
+
+bool initUsbDevices()
+{
+    FILE* fp = fopen(USB_DEVICE_FILE, "r");
+    if(fp == NULL)
+    {
+        printf("open usb device file failed, errno.%02d is: %s\n", errno, strerror(errno));
+        return false;
+    }
+
+    char read_buff[BUFFER_SIZE];
+    int num = 0;
+
+    do
+    {
+        memset(read_buff, 0, BUFFER_SIZE);
+        if (fgets(read_buff, BUFFER_SIZE, fp) == NULL)
+            break;
+        if (!trimStr(read_buff)) continue;
+        printf("usb devices file:%s\n", read_buff);
+        usb_device_list[num] = read_buff;
+        ++num;
+
+        if (num == USB_DEVICE_NUM)
+            break;
+    } while (1);
+
+    fclose(fp);
+
+    return (num == USB_DEVICE_NUM);
 }

@@ -1,5 +1,6 @@
 #include"mainwindow.h"
 #include "global.h"
+#include "usb_enum.h"
 #include <QApplication>
 #include <QtGui>
 #include <QtDebug>
@@ -56,6 +57,14 @@ int main(int argc, char *argv[])
     appDir.mkpath(APK_PATH);
     appDir.mkpath(LOG_PATH);
     appDir.mkpath(ENCYPT_LOG_PATH);
+
+#if 0
+    //init usb device
+    if (!initUsbDevices())
+    {
+        QMessageBox::critical(NULL, APP_NAME, "USB端口初始化失败，系统无法正常工作！");
+    }
+#endif
 
     //test network
     int time = 2;

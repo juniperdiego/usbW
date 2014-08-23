@@ -61,6 +61,8 @@ int main(int argc, char *argv[])
     //printf("start app %d \n", adb_start_app_cmd("com.android.browser/com.android.browser.BrowserActivitya", "0123456789ABCDEF"));
     
 #endif
+
+#if 0
     int j;
     for(j = 1; j < 2; j++)
     {
@@ -77,6 +79,9 @@ int main(int argc, char *argv[])
         else
             printf("not exist\n");
     }
+#endif
+
+    initUsbDevices();
 
     printf("xxxxxxxxa\nx");
     fflush(stdout);

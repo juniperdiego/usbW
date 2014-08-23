@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
 #endif
 
-    m_shangChun = new Shangchuan;
+    m_shangChun == NULL;
 
     //network Information
     QList<QNetworkInterface> NetInterfaceList;
@@ -304,6 +304,9 @@ void MainWindow::OnFuwuqi()
 }
 void MainWindow::OnShangchuan()
 {
+    if (m_shangChun == NULL)
+        m_shangChun = new Shangchuan;
+
     m_shangChun->updateContents();
     m_shangChun->exec();
 }
