@@ -175,7 +175,6 @@ void DataUpdate::ApkFinish()
     //QVariantMap apk_rsp_res = parser.parse(apk_rsp_str.toUtf8(), &ok).toMap();
     JsonObject apk_rsp_res = QtJson::parse(apk_rsp_str, ok).toMap();
     QString apkVersion=apk_rsp_res["version"].toString();
-    m_devDB.set(APK_VER, apkVersion.toStdString());
     int  nApkVerState=apk_rsp_res["status"].toInt();
 
     if( nApkVerState == 2){
@@ -234,6 +233,7 @@ void DataUpdate::ApkFinish()
         QObject::disconnect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
         if(apkNum == Apk_Update_finish){
             m_apkState = 0;
+            m_devDB.set(APK_VER, apkVersion.toStdString());
             GetPkgLibVer();
         }else{
             m_apkState = 3;
@@ -267,7 +267,6 @@ void DataUpdate::PkgFinish()
     JsonObject pkg_rsp_res = QtJson::parse(pkg_rsp_str, ok).toMap();
     QString pkgVersion=pkg_rsp_res["version"].toString();
     cout << "set PKG_VER\t[" << pkgVersion.toStdString() <<"]" << endl;
-    m_devDB.set(PKG_VER, pkgVersion.toStdString());
     int  status=pkg_rsp_res["status"].toInt();
     if(  status == 2 ){
         m_pkgState = 2;
@@ -424,6 +423,7 @@ void DataUpdate::PkgFinish()
             }
         }
     }
+    m_devDB.set(PKG_VER, pkgVersion.toStdString());
     m_pkgState = 0;
 #endif
 }

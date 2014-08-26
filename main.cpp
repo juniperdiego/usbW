@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     appDir.mkpath(LOG_PATH);
     appDir.mkpath(ENCYPT_LOG_PATH);
 
-#if 0
+#if 1
     //init usb device
     if (!initUsbDevices())
     {
