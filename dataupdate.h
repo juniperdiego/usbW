@@ -3,7 +3,8 @@
 
 #include "global.h"
 
-//0 成功有更新 1 失败  2成功无更新 3下载不完全 4服务器出错
+//apk : 0 成功有更新 1 失败  2成功无更新 3下载不完全 4服务器出错
+//dev : 0 成功有更新 1 失败  2成功无更新 3设备未注册 4服务器出错
 
 class DataUpdate : public QObject
 {

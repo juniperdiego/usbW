@@ -62,12 +62,15 @@ void DataUpdate::GetDeviceVer()
 
 void DataUpdate::GetApkLibVer()
 {
-    string apkVer;
+    string apkVer, cid;
     m_devDB.get(APK_VER, apkVer);
+    m_devDB.get(CHAN_ID, cid);
     cout<<"GetApkLibVer "<<apkVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_APKLIBVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
+    appArry.append("&cid=");
+    appArry.append(QString::fromStdString(cid));
     appArry.append("&apkVersion=");
     appArry.append(QString::fromStdString(apkVer));
     Apk_Update_finish = 0;
@@ -82,13 +85,16 @@ void DataUpdate::GetApkLibVer()
 
 void DataUpdate::GetPkgLibVer()
 {
-    string apkVer, pkgVer;
+    string apkVer, pkgVer, cid;
     m_devDB.get(APK_VER, apkVer);
     m_devDB.get(PKG_VER, pkgVer);
+    m_devDB.get(CHAN_ID, cid);
     cout<<"GetPkgLibVer ["<<pkgVer<<"] "<<apkVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_PKGLIBVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
+    appArry.append("&cid=");
+    appArry.append(QString::fromStdString(cid));
     appArry.append("&apkVersion=");
     appArry.append(QString::fromStdString(apkVer));
     appArry.append("&pkgVersion=");
@@ -123,7 +129,12 @@ void DataUpdate::DevFinish()
     string version=dev_rsp_res["version"].toString().toStdString();
     string cid=dev_rsp_res["cid"].toString().toStdString();
 
-    if ( cid != org_cid){
+    if (cid.empty())
+    {
+        m_devState = 3;
+        return;
+    }
+    else if ( cid != org_cid){
         m_devDB.set(APK_VER, "0");
         m_devDB.set(PKG_VER, "0");
         //clear items of pkg and apk table

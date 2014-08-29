@@ -11,7 +11,7 @@
 #include <signal.h>
 
 #define USB_DEVICE_FILE "/etc/flashbot-port.conf"
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 120
 
 #define USB_DEVICE_NUM 12
 
@@ -112,7 +112,9 @@ static void * do_usb_device_enum_thread(void *args)
 
     idx = (int) (args);
 
+    //printf("do_usb_device_enum_thread %d %s\n", idx, usb_device_list[idx]);
     while(! usb_device_montor.monitor_exit) {
+
         if (usb_device_path_exist(usb_device_list[idx])) {
 
             char serial[64];
@@ -165,7 +167,7 @@ void start_usb_device_monitor(void)
         return;
     }
 
-    for (i = 0; i < USB_DEVICE_NUM; i ++) {
+    for (i = 0; i < USB_DEVICE_NUM; i++) {
         ret = pthread_create(&usb_device_montor.ptid[i], NULL, do_usb_device_enum_thread, (void *)i);
         if (ret != 0) {
             printf("thread id: %d create failed.\n", i);
@@ -243,17 +245,18 @@ bool initUsbDevices()
         return false;
     }
 
-    char read_buff[BUFFER_SIZE];
     int num = 0;
 
     do
     {
+        char *read_buff = malloc(sizeof(char) * BUFFER_SIZE);
         memset(read_buff, 0, BUFFER_SIZE);
         if (fgets(read_buff, BUFFER_SIZE, fp) == NULL)
             break;
         if (!trimStr(read_buff)) continue;
-        printf("usb devices file:%s\n", read_buff);
+        //printf("usb devices file:%s\n", read_buff);
         usb_device_list[num] = read_buff;
+        //printf("usb devices data:%s\n", usb_device_list[num]);
         ++num;
 
         if (num == USB_DEVICE_NUM)

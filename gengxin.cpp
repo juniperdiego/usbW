@@ -132,6 +132,8 @@ void Gengxin::upSoftDone()
         strState = "软件版本更新失败!\n";
     else if (devState == 4)
         strState = "服务器链接错误!\n";
+    else if (devState == 3)
+        strState = "设备未注册，请联系管理员注册设备！\n";
 
     if (!strState.isEmpty())
         QMessageBox::information(this, windowTitle(), strState);

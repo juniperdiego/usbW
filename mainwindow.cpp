@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
 #endif
 
-    m_shangChun == NULL;
+    m_shangChun = NULL;
 
     //network Information
     QList<QNetworkInterface> NetInterfaceList;
@@ -226,6 +226,8 @@ void MainWindow::onlineStateChange()
                 repaint();
                 Global::s_netState = true;
                 bState = true;
+                if (m_shangChun == NULL)
+                    m_shangChun = new Shangchuan;
                 m_shangChun->UploadData();
             }
             else

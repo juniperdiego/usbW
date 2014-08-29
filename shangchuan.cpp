@@ -111,8 +111,9 @@ void Shangchuan::Upload()
 
 void Shangchuan::UploadData()
 {
+    reportDB rptDB;
     vector<reportInfo> rpts;
-    m_rptDB.getUnuploadedData(rpts); 
+    rptDB.getUnuploadedData(rpts); 
     if (rpts.empty()) return;
 
     QList<QPair<QString, QString> > pairList;

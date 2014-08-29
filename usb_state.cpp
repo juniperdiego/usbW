@@ -130,8 +130,10 @@ void add_callback(int num,  const char *serial){
         string pkgName = apkIn.pkgPath.substr(0, pos);
         cout << apkIn.pkgPath <<endl;
         cout << pkgName<<endl;
+        
+        if (!pkgName.empty())
+            adb_uninstall_cmd(pkgName.c_str(), serial);
 
-        adb_uninstall_cmd(pkgName.c_str(), serial);
         if (!adb_install_cmd(apkPath.c_str(), serial)) 
         {
             Global::usb_state[num].fail_total++;
@@ -151,7 +153,7 @@ void add_callback(int num,  const char *serial){
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 
         bool aRun = pkgIn.autoRunList[i];
-        if(aRun)
+        if(aRun && !apkIn.pkgPath.empty())
         {
             // start the app
             cout <<"pkgPath\t"<< apkIn.pkgPath << endl;
