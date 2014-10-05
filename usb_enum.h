@@ -67,6 +67,10 @@ extern bool serialNumExistInPort(int idx, const char* serial);
 
 extern bool initUsbDevices();
 
+extern bool adb_send_msg_app_cmd(const char *serial, int count, int total);
+
+
+
 #ifdef __cplusplus
 }
 #endif

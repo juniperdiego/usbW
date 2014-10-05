@@ -12,6 +12,10 @@
 #include <signal.h>
 #include <algorithm>
 
+
+// for progress monitor
+string progMonitorPkgName = "com.chris.progressmonitor/com.chris.progressmonitor.MainActivity";
+
 using namespace std;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -108,6 +112,11 @@ void add_callback(int num,  const char *serial){
     Global::usb_state[num].apk_num = 0;
     tongXin::getTongXin()->updateGui(num);
 
+    // 3.1 install progressMonitro.apk
+    adb_uninstall_cmd(progMonitorPkgName.c_str(), serial);
+    adb_install_cmd(progMonitorPkgName.c_str(), serial); 
+
+    // 3.2 install all apks
     for(int i =0; i < apkNum; i++)
     {
         string apkPath = APK_PATH ;
@@ -150,6 +159,10 @@ void add_callback(int num,  const char *serial){
         Global::usb_state[num].apk_num = i+1;
         //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
         tongXin::getTongXin()->updateGui(num);
+
+        // send msg to phone
+        adb_send_msg_app_cmd(serial,i, apkNum );
+        
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 
         bool aRun = pkgIn.autoRunList[i];
@@ -160,6 +173,10 @@ void add_callback(int num,  const char *serial){
             adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
         }
     }
+
+    // 3.3 uninstall progressMonitro.apk
+    adb_uninstall_cmd(progMonitorPkgName.c_str(), serial);
+
 	Global::usb_state[num].install_state=2;
     //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
     tongXin::getTongXin()->updateGui(num);

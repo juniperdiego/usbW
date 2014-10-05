@@ -96,4 +96,6 @@ public:
     static QString s_updateTime;
 };
 
+
+
 #endif // GLOBAL_H
