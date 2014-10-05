@@ -114,7 +114,7 @@ void add_callback(int num,  const char *serial){
 
     // 3.1 install progressMonitro.apk
     adb_uninstall_cmd(progMonitorPkgName.c_str(), serial);
-    adb_install_cmd(progMonitorPkgName.c_str(), serial); 
+    adb_install_cmd(PROG_NAME, serial); 
 
     // 3.2 install all apks
     for(int i =0; i < apkNum; i++)
