@@ -14,7 +14,8 @@
 
 
 // for progress monitor
-string progMonitorPkgName = "com.chris.progressmonitor/com.chris.progressmonitor.MainActivity";
+string progMonitorPkgPath = "com.chris.progressmonitor/com.chris.progressmonitor.MainActivity";
+string progMonitorPkgName = "com.chris.progressmonitor";
 
 using namespace std;
 
@@ -113,8 +114,11 @@ void add_callback(int num,  const char *serial){
     tongXin::getTongXin()->updateGui(num);
 
     // 3.1 install progressMonitro.apk
+    string progPkgName = APK_PATH;
+    progPkgName += PROG_NAME;
     adb_uninstall_cmd(progMonitorPkgName.c_str(), serial);
-    adb_install_cmd(PROG_NAME, serial); 
+    adb_install_cmd(progPkgName.c_str(), serial); 
+    adb_start_app_cmd((char*)progMonitorPkgPath.c_str(), serial);
 
     // 3.2 install all apks
     for(int i =0; i < apkNum; i++)
@@ -161,7 +165,7 @@ void add_callback(int num,  const char *serial){
         tongXin::getTongXin()->updateGui(num);
 
         // send msg to phone
-        adb_send_msg_app_cmd(serial,i, apkNum );
+        adb_send_msg_app_cmd(serial,i+1, apkNum );
         
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 

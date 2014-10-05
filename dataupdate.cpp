@@ -214,6 +214,26 @@ void DataUpdate::ApkFinish()
             //QString packagePath = apk_map["packagePath"].toString();
             apkIn.pkgPath = apk_map["packagePath"].toString().toStdString();
             //sqlopt->apk_update_packagePath(m_apkIdStr.toStdString(), packagePath.toStdString());
+            int type = apk_map["type"].toInt();
+
+            QString progPkgName, progOldPkgName;
+            if (type == 2)
+            {
+                progPkgName = APK_PATH;
+                progOldPkgName = APK_PATH;
+                progPkgName += PROG_NAME;
+                progOldPkgName += m_apkIdStr;
+                progOldPkgName += ".apk";
+
+                if (QFile::exists(progPkgName) && 
+                    MD5_Check(progPkgName, m_preMd5))
+                {
+                    Apk_Update_finish++;
+                    emit progress(Apk_Update_finish, apkNum);
+                    continue;
+                }
+                QFile::remove(progPkgName);
+            }
 
             QString path = apk_map["path"].toString();
             string ApkPath = path.toStdString();
@@ -225,6 +245,12 @@ void DataUpdate::ApkFinish()
                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(ApkFileWrite(QNetworkReply*)));
                 QObject::connect(m_netManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
                 loop.exec();
+
+                //check type
+                if (type == 2)
+                {
+                    QFile::rename(progOldPkgName, progPkgName);
+                }
             }else{  // path == NULL
                 m_apkState = 4;
                 return;

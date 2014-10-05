@@ -31,25 +31,21 @@ using namespace std;
 #define APP_NAME "Zig"
 #define NET_NAME "eth0"
 #define ENCYPT_BIT 0x12
+#define PROG_NAME "progMonitor.apk"
 
 //download
-#ifdef ARM
-//#define URL_DEVVER "http://192.168.1.102:8080/nzyw/api/getDeviceVersion.do"
-//#define URL_APKLIBVER "http://192.168.1.102:8080/nzyw/api/getApkLibVersion.do"
-//#define URL_PKGLIBVER "http://192.168.1.102:8080/nzyw/api/getPkgLibVersion.do"
-//#define URL_UPLOAD "http://192.168.1.102:8080/nzyw/api/processLog.do"
-//#define URL_UPLOAD_DATA "http://192.168.1.102:8080/nzyw/api/processData.do"
+#if 1
+#define URL_DEVVER "http://192.168.1.104:8080/nzyw/api/getDeviceVersion.do"
+#define URL_APKLIBVER "http://192.168.1.104:8080/nzyw/api/getApkLibVersion.do"
+#define URL_PKGLIBVER "http://192.168.1.104:8080/nzyw/api/getPkgLibVersion.do"
+#define URL_UPLOAD "http://192.168.1.104:8080/nzyw/api/processLog.do"
+#define URL_UPLOAD_DATA "http://192.168.1.104:8080/nzyw/api/processData.do"
+#else
 #define URL_DEVVER "http://api.dfstock4g.com/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://api.dfstock4g.com/nzyw/api/getApkLibVersion.do"
 #define URL_PKGLIBVER "http://api.dfstock4g.com/nzyw/api/getPkgLibVersion.do"
 #define URL_UPLOAD "http://api.dfstock4g.com/nzyw/api/processLog.do"
 #define URL_UPLOAD_DATA "http://api.dfstock4g.com/nzyw/api/processData.do"
-#else
-#define URL_DEVVER "http://www.tymng.com:8080/nzyw/api/getDeviceVersion.do"
-#define URL_APKLIBVER "http://www.tymng.com:8080/nzyw/api/getApkLibVersion.do"
-#define URL_PKGLIBVER "http://www.tymng.com:8080/nzyw/api/getPkgLibVersion.do"
-#define URL_UPLOAD "http://www.tymng.com/nzyw/api/processLog.do"
-#define URL_UPLOAD_DATA "http://www.tymng.com/nzyw/api/processData.do"
 #endif
 #define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
 #define APK_PATH  "/mnt/repos/.kuaijl/apks/"

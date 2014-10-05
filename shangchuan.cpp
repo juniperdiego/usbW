@@ -28,6 +28,8 @@ Shangchuan::Shangchuan(QWidget *parent) :
     ui->ResTabWid->setRowCount(12);
     this->setWindowTitle(tr("上传"));
     this->setFixedSize(800,480);
+
+    ui->UpdateDataBtn->setVisible(false);
 }
 
 Shangchuan::~Shangchuan()
