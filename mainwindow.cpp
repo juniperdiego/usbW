@@ -264,6 +264,10 @@ void MainWindow::onlineStateChange()
         QMessageBox::information(this, APP_NAME, 
                 "网络连接断开，系统将离线运行！");
     }
+    else if (!prevNetState && Global::s_netState)
+    {
+        OnGengxin(true);
+    }
 }
 void MainWindow::OnGengxin(bool all)
 {

@@ -111,7 +111,7 @@ void baobiao::OnSearchData()
                         break;
                     case 1:
                         {
-                            QString tmp = QString("%1").arg(res[nRow].portIdx);
+                            QString tmp = QString("%1").arg(res[nRow].portIdx+1);
                             newItem = new QTableWidgetItem(tmp);
                             break;
                         }

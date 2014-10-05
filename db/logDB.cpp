@@ -55,6 +55,7 @@ bool logDB::get(const string& date1, const string& date2, vector<logInfo> & logA
     char sql[1024] = {0};
     sqlite3_stmt *stmt;
     int rc;
+    string curDate = getStrDate();
 
     logArray.clear();
 
@@ -92,6 +93,9 @@ bool logDB::get(const string& date1, const string& date2, vector<logInfo> & logA
 
         logI.date    = string( (const char*)sqlite3_column_text(stmt,0));   
         logI.isUploaded = sqlite3_column_int(stmt,1) == 1 ? true : false;   
+
+        if (logI.date == curDate) 
+            continue;
 
         logArray.push_back(logI);
     }   

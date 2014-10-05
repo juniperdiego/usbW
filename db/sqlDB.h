@@ -10,10 +10,11 @@
 #include <time.h>
 #include <vector>
 
-void getDate( char *date, long int diff);
-
-
 using namespace std;
+
+void getDate( char *date, long int diff);
+string getStrDate();
+
 const int INVALID_ID = -2;
 const int COMM_PKG_ID= -1;
 

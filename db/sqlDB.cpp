@@ -143,3 +143,11 @@ void getDate( char *date, long int diff)
     strftime( date, dateLength, "%Y%m%d", localtime(&timep));
 }
 
+string getStrDate()
+{
+    char time[32];
+    getDate(time, 0);
+
+    return string(time);
+}
+
