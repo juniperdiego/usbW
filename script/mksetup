@@ -1,0 +1,1 @@
+ zip -r setup.zip data setup.bash
