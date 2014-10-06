@@ -8,8 +8,8 @@ bool adb_uninstall_cmd(const char *pkgName, const char *serial)
 {
     bool succ = false;
     FILE *fp;
-    char str[1024];
-    char cmd[1024];
+    char str[1024] = {0};
+    char cmd[1024] = {0};
     fflush(stdout);
 
     snprintf(cmd, sizeof(cmd), "adb -s %s uninstall  %s", serial, pkgName);
@@ -44,8 +44,8 @@ bool adb_install_cmd(const char *apk_name, const char *serial)
 {
     bool succ = false;
     FILE *fp;
-    char str[1024];
-    char cmd[1024];
+    char str[1024] = {0};
+    char cmd[1024] ={0};
     fflush(stdout);
 
     snprintf(cmd, sizeof(cmd), "adb -s %s install -r %s", serial, apk_name);
@@ -94,9 +94,9 @@ bool adb_install_cmd(const char *apk_name, const char *serial)
 char * adb_getprop_cmd(const char *prop, const char *serial) {
     FILE *fp;
     char *result = malloc(sizeof(char) * 1024);
-    memset(result, 1024, 0);
-    char str[1024];
-    char cmd[1024];
+    memset(result, 0,1024 );
+    char str[1024] = {0};
+    char cmd[1024] = {0};
     snprintf(cmd, sizeof(cmd), "adb -s %s shell getprop %s", serial, prop);
     printf("getprop cmd = %s\n", cmd);
     fflush(stdout);
@@ -125,11 +125,12 @@ char * adb_getprop_cmd(const char *prop, const char *serial) {
 char * adb_get_imei_cmd( const char *serial) {
     FILE *fp;
     char *result = malloc(sizeof(char) * 1024);
-    memset(result, 1024, 0);
+    memset(result, 0 ,1024);
     char str[1024];
     char cmd[1024];
     bool findImei = false;
 
+    memset(cmd, 0, 1024);
     snprintf(cmd, sizeof(cmd), "adb -s %s shell dumpsys iphonesubinfo", serial);
     printf("getprop cmd = %s\n", cmd);
     fflush(stdout);
@@ -187,7 +188,7 @@ char * adb_get_imei_cmd( const char *serial) {
         p++;
     }
 
-    printf("ddddddd %d\n", start);
+    printf("ddddddd %s\n", start);
     fflush(stdout);
 
     strcpy(result, start);
@@ -201,6 +202,7 @@ char * adb_get_imei_cmd( const char *serial) {
 bool adb_push_cmd(char *src, const char *dest, const char *serial)
 {
     char cmd[1024];
+    memset(cmd, 0, 1024);
     snprintf(cmd, sizeof(cmd), "adb -s %s push %s %s", serial, src, dest);
     return system(cmd) == 0;
 }
@@ -211,6 +213,7 @@ bool adb_push_cmd(char *src, const char *dest, const char *serial)
 bool adb_start_app_cmd(char *pkgPath, const char *serial)
 {
     char cmd[1024];
+    memset(cmd, 0, 1024);
     snprintf(cmd, sizeof(cmd), "adb -s %s shell am start -n %s", serial, pkgPath);
     return system(cmd) == 0;
 }
@@ -219,8 +222,17 @@ bool adb_send_msg_app_cmd(const char *serial, int count, int total)
 {
 
     char cmd[1024];
+    memset(cmd, 0, 1024);
     snprintf(cmd, sizeof(cmd), "adb -s %s shell am broadcast -a com.chris.progressmonitor.PERCENT_MONITOR --ei count %d --ei total %d", serial, count, total);
     return system(cmd) == 0;
 }
 
+bool adb_send_msg_shortcut_app_cmd(const char *serial, const char* str)
+{
+
+    char cmd[1024];
+    memset(cmd, 0, 1024);
+    snprintf(cmd, sizeof(cmd), "adb -s %s shell am broadcast -a com.chris.progressmonitor.SHORT_CUT --es pkgList \"%s\"", serial, str);
+    return system(cmd) == 0;
+}
 

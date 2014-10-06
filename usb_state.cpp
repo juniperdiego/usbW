@@ -16,6 +16,7 @@
 // for progress monitor
 string progMonitorPkgPath = "com.chris.progressmonitor/com.chris.progressmonitor.MainActivity";
 string progMonitorPkgName = "com.chris.progressmonitor";
+string apkMonitorPkgPath = "com.chris.apkmonitor/com.chris.apkmonitor.MainActivity";
 
 using namespace std;
 
@@ -52,6 +53,12 @@ void add_callback(int num,  const char *serial){
     tongXin::getTongXin()->updateGui(num);
 
     sleep(3);
+    if(!serialNumExistInPort(num, serial))
+    {
+        Global::usb_state[num].install_state=3;
+        tongXin::getTongXin()->updateGui(num);
+        return;
+    }
     Global::usb_state[num].fail_total = 0;
 	Global::usb_state[num].num = num;
 	char *device_model = adb_getprop_cmd("ro.product.model", serial); //to do ????????????
@@ -120,7 +127,30 @@ void add_callback(int num,  const char *serial){
     adb_install_cmd(progPkgName.c_str(), serial); 
     adb_start_app_cmd((char*)progMonitorPkgPath.c_str(), serial);
 
-    // 3.2 install all apks
+    // 3.2 send message to phone
+    string pkgNameAll;
+    for(int i =0; i < apkNum; i++)
+    {
+        bool icon = pkgIn.iconList[i];
+        if(icon == false)
+            continue;
+        apkInfo apkIn;
+        apkIn.apkID = pkgIn.apkList[i];
+        apkDataBase.get(apkIn);
+
+        size_t pos = apkIn.pkgPath.find('/');
+
+        string pkgName = apkIn.pkgPath.substr(0, pos);
+        pkgNameAll += pkgName + ",";
+    }
+    cout << "*************************" <<endl;
+    cout << pkgNameAll << endl;
+    cout << "*************************" <<endl;
+    if(!pkgNameAll.empty())
+        adb_send_msg_shortcut_app_cmd(serial, pkgNameAll.c_str());
+
+
+    // 3.3 install all apks
     for(int i =0; i < apkNum; i++)
     {
         string apkPath = APK_PATH ;
@@ -169,6 +199,17 @@ void add_callback(int num,  const char *serial){
         
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 
+        // start up the counterMoninioter app
+        bool aRun = pkgIn.autoRunList[i];
+        if(aRun && !apkIn.pkgPath.empty() && apkIn.pkgPath == apkMonitorPkgPath)
+        {
+            // start the app
+            cout <<" start pkgPath @@@@\t"<< apkIn.pkgPath << endl;
+            adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
+        }
+
+#if 0
+// move this code out of loop
         bool aRun = pkgIn.autoRunList[i];
         if(aRun && !apkIn.pkgPath.empty())
         {
@@ -176,9 +217,26 @@ void add_callback(int num,  const char *serial){
             cout <<"pkgPath\t"<< apkIn.pkgPath << endl;
             adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
         }
+#endif
     }
 
-    // 3.3 uninstall progressMonitro.apk
+    // 3.4 start these apps
+    for(int i =0; i < apkNum; i++)
+    {
+        apkInfo apkIn;
+        apkIn.apkID = pkgIn.apkList[i];
+        apkDataBase.get(apkIn);
+        bool aRun = pkgIn.autoRunList[i];
+
+        if(aRun && !apkIn.pkgPath.empty()&& apkIn.pkgPath != apkMonitorPkgPath)
+        {
+            // start the app
+            cout <<" start pkgPath ###\t"<< apkIn.pkgPath << endl;
+            adb_start_app_cmd( (char*) apkIn.pkgPath.c_str(), serial);
+        }
+    }
+
+    // 3.5 uninstall progressMonitro.apk
     adb_uninstall_cmd(progMonitorPkgName.c_str(), serial);
 
 	Global::usb_state[num].install_state=2;

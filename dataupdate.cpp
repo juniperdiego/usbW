@@ -370,6 +370,11 @@ void DataUpdate::PkgFinish()
                 {
                     pkgIn.autoRunList.push_back(sortVector[i].first.aRun);
                 }
+                pkgIn.iconList.clear();
+                for(size_t i= 0; i < sortVector.size(); i++)
+                {
+                    pkgIn.iconList.push_back(sortVector[i].first.dIcon);
+                }
 
                 m_pkgDB.set(pkgIn);
             }
@@ -440,6 +445,11 @@ void DataUpdate::PkgFinish()
                 for(size_t i= 0; i < sortVector.size(); i++)
                 {
                     pkgIn.autoRunList.push_back(sortVector[i].first.aRun);
+                }
+                pkgIn.iconList.clear();
+                for(size_t i= 0; i < sortVector.size(); i++)
+                {
+                    pkgIn.iconList.push_back(sortVector[i].first.dIcon);
                 }
 
                 pkgIn.apkSum = sortVector.size();

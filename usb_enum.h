@@ -69,6 +69,9 @@ extern bool initUsbDevices();
 
 extern bool adb_send_msg_app_cmd(const char *serial, int count, int total);
 
+extern bool adb_send_msg_shortcut_app_cmd(const char *serial, const char* str);
+
+
 
 
 #ifdef __cplusplus

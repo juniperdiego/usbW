@@ -14,7 +14,7 @@ pkgDB::pkgDB()
     {
         char* errMsg;
         // creat the table
-        sprintf(sql, "CREATE TABLE %s ( key varchar(128) PRIMARY KEY, pkgName varchar(128), batchCode varchar(32), apkList TEXT, autoRunList TEXT,  apkSum int,  date varchar(16));", getTableName().c_str());
+        sprintf(sql, "CREATE TABLE %s ( key varchar(128) PRIMARY KEY, pkgName varchar(128), batchCode varchar(32), apkList TEXT, autoRunList TEXT,  iconList TEXT,apkSum int,  date varchar(16));", getTableName().c_str());
         int rc =    sqlite3_exec(s_db, sql, NULL, NULL, &errMsg);
         if( rc ){   
             fprintf(stderr, "Can't create table %s: %s\n", getTableName().c_str(), errMsg);   
@@ -38,6 +38,7 @@ bool pkgDB::set( const pkgInfo& pkg)
 
     string apkListStr;
     string autoRunListStr;
+    string iconListStr;
 
     size_t size = pkg.apkList.size();
     for(size_t i = 0; i < size; i++)
@@ -58,15 +59,27 @@ bool pkgDB::set( const pkgInfo& pkg)
         autoRunListStr += "|";
     }
 
+    size = pkg.iconList.size();
+    for(size_t i = 0; i < size; i++)
+    {
+        if(pkg.iconList[i])
+            iconListStr += "1"; // display icon 
+        else
+            iconListStr += "2";// not display icon 
+
+        iconListStr += "|";
+    }
+
     sprintf(sql, "insert or replace into %s\
-            (key, pkgName, batchCode, apkList, autoRunList, apkSum, date)\
-       values( \"%s\", \"%s\",   \"%s\",  \"%s\", \"%s\",   %d,    \"%s\");",
+            (key, pkgName, batchCode, apkList, autoRunList, iconList,apkSum, date)\
+       values( \"%s\", \"%s\",   \"%s\",  \"%s\", \"%s\",     \"%s\", %d,    \"%s\");",
        getTableName().c_str(),
        pkg.pkgID.c_str(), 
        pkg.pkgName.c_str(),
        pkg.batchCode.c_str(),
        apkListStr.c_str(),
        autoRunListStr.c_str(),
+       iconListStr.c_str(),
        pkg.apkSum,
        pkg.date.c_str()
        );
@@ -96,7 +109,7 @@ bool pkgDB::get(pkgInfo & pkg)
     sqlite3_stmt *stmt;
     int rc;
 
-    sprintf(sql, "select pkgName, batchCode, apkList, autoRunList, apkSum, date from %s where key = '%s';", getTableName().c_str(), pkg.pkgID.c_str());
+    sprintf(sql, "select pkgName, batchCode, apkList, autoRunList,iconList, apkSum, date from %s where key = '%s';", getTableName().c_str(), pkg.pkgID.c_str());
 #if 0
     {
         int nrow = 0, ncolumn = 0;
@@ -124,14 +137,16 @@ bool pkgDB::get(pkgInfo & pkg)
     }   
 
     string str;
-    string autoStr;
+    string autoRunStr;
+    string iconStr;
     while(sqlite3_step(stmt)==SQLITE_ROW ) {   
         pkg.pkgName = string( (const char*)sqlite3_column_text(stmt,0)); 
         pkg.batchCode = string( (const char*)sqlite3_column_text(stmt,1));
         str = string( (const char*)sqlite3_column_text(stmt,2));   
-        autoStr = string( (const char*)sqlite3_column_text(stmt,3));   
-        pkg.apkSum = sqlite3_column_int(stmt,4);   
-        pkg.date = string( (const char*)sqlite3_column_text(stmt,5));   
+        autoRunStr = string( (const char*)sqlite3_column_text(stmt,3));   
+        iconStr = string( (const char*)sqlite3_column_text(stmt,4));   
+        pkg.apkSum = sqlite3_column_int(stmt,5);   
+        pkg.date = string( (const char*)sqlite3_column_text(stmt,6));   
         //printf("%s\n",  (const char*)sqlite3_column_text(stmt,0));
     }   
 
@@ -155,16 +170,36 @@ bool pkgDB::get(pkgInfo & pkg)
 
     start = 0; 
     end = 0;
-    for(size_t i = 0; i< autoStr.size(); i++)
+    for(size_t i = 0; i< autoRunStr.size(); i++)
     {
-        if(autoStr[i] == '|')
+        if(autoRunStr[i] == '|')
         {
             end = i;
-            string tmp =  autoStr.substr(start, end-start);
+            string tmp =  autoRunStr.substr(start, end-start);
             if(tmp == "1")
                 pkg.autoRunList.push_back(true);
             else if(tmp == "2")
                 pkg.autoRunList.push_back(false);
+            else
+                cout << "error in pkg.get() funciton" << endl;
+            start = i+1;
+        }
+    }
+
+    pkg.iconList.clear();
+
+    start = 0; 
+    end = 0;
+    for(size_t i = 0; i< iconStr.size(); i++)
+    {
+        if(iconStr[i] == '|')
+        {
+            end = i;
+            string tmp =  iconStr.substr(start, end-start);
+            if(tmp == "1")
+                pkg.iconList.push_back(true);
+            else if(tmp == "2")
+                pkg.iconList.push_back(false);
             else
                 cout << "error in pkg.get() funciton" << endl;
             start = i+1;
