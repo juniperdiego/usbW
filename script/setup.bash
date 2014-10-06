@@ -19,6 +19,7 @@ fi
 if [ ! -f "/etc/$USB_FILE" ]; then
 #    cp ./data/$USB_FILE /etc
     echo "not found usb configure file:/etc/flashbot-port.conf"
+    exit 2;
 fi
 
 
