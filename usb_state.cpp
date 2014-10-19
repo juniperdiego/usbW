@@ -43,7 +43,8 @@ bool checkModel(const QString& devModel)
     return true;
 }
 
-void add_callback(int num,  const char *serial){
+void add_callback(int num,  const char *serial)
+{
 #if 0
     printf("add callback %d %s.\n", num, serial);
 #else
@@ -195,7 +196,7 @@ void add_callback(int num,  const char *serial){
         tongXin::getTongXin()->updateGui(num);
 
         // send msg to phone
-        adb_send_msg_app_cmd(serial,i+1, apkNum );
+        adb_send_msg_app_cmd(serial,i+1, apkNum,  num + 1);
         
         cout << "apk\t" << pkgIn.apkList[i]<< endl;
 

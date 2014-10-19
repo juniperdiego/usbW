@@ -218,12 +218,12 @@ bool adb_start_app_cmd(char *pkgPath, const char *serial)
     return system(cmd) == 0;
 }
 
-bool adb_send_msg_app_cmd(const char *serial, int count, int total)
+bool adb_send_msg_app_cmd(const char *serial, int count, int total, int portNum)
 {
 
     char cmd[1024];
     memset(cmd, 0, 1024);
-    snprintf(cmd, sizeof(cmd), "adb -s %s shell am broadcast -a com.chris.progressmonitor.PERCENT_MONITOR --ei count %d --ei total %d", serial, count, total);
+    snprintf(cmd, sizeof(cmd), "adb -s %s shell am broadcast -a com.chris.progressmonitor.PERCENT_MONITOR --ei count %d --ei total %d --ei portNum %d", serial, count, total, portNum);
     return system(cmd) == 0;
 }
 
