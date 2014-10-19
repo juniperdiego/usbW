@@ -27,7 +27,11 @@ void customMessageHandler(QtMsgType type, const char *msg)
 	}
  
 	QFile outFile(LOG_FILE_NAME);
-	outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    if (outFile.size() >= LOG_FILE_SIZE)
+	    outFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    else
+	    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+
 	QTextStream ts(&outFile);
 	ts << txt << endl;
 }
@@ -36,7 +40,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-	//qInstallMsgHandler(customMessageHandler);	
+	qInstallMsgHandler(customMessageHandler);	
 
 #ifdef ARM
     //font

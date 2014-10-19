@@ -6,8 +6,6 @@
 using QtJson::JsonObject;
 using QtJson::JsonArray;
 
-#define HAVE_QJSON
-
 class apkSortInfo {
     public:
         string      apkID;
@@ -46,13 +44,13 @@ void DataUpdate::GetDeviceVer()
 {
     string devVer;
     m_devDB.get(DEV_VER, devVer);
-    cout<<"GetDeviceVer "<<devVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_DEVVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
     appArry.append("&version=");
     appArry.append(QString::fromStdString(devVer));
     //appArry.append(QString::fromStdString("0.9"));
+    qDebug()<<"dev post"<<appArry;
     m_netReply = m_netManager->post(request, appArry);
     QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(DevFinish()));
@@ -65,7 +63,6 @@ void DataUpdate::GetApkLibVer()
     string apkVer, cid;
     m_devDB.get(APK_VER, apkVer);
     m_devDB.get(CHAN_ID, cid);
-    cout<<"GetApkLibVer "<<apkVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_APKLIBVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
@@ -74,13 +71,12 @@ void DataUpdate::GetApkLibVer()
     appArry.append("&apkVersion=");
     appArry.append(QString::fromStdString(apkVer));
     Apk_Update_finish = 0;
+    qDebug()<<"apk post"<<appArry;
     m_netReply = m_netManager->post(request, appArry);
     QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(ApkFinish()));
     QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
-
-    qDebug()<<"update apk ok";
 }
 
 void DataUpdate::GetPkgLibVer()
@@ -89,7 +85,6 @@ void DataUpdate::GetPkgLibVer()
     m_devDB.get(APK_VER, apkVer);
     m_devDB.get(PKG_VER, pkgVer);
     m_devDB.get(CHAN_ID, cid);
-    cout<<"GetPkgLibVer ["<<pkgVer<<"] "<<apkVer<<endl;
     QNetworkRequest request(QUrl(tr(URL_PKGLIBVER)));
     QByteArray appArry("code=");
     appArry.append(QString::fromStdString(Global::g_DevID));
@@ -99,24 +94,22 @@ void DataUpdate::GetPkgLibVer()
     appArry.append(QString::fromStdString(apkVer));
     appArry.append("&pkgVersion=");
     appArry.append(QString::fromStdString(pkgVer));
+    qDebug()<<"pkg post"<<appArry;
     m_netReply = m_netManager->post(request, appArry);
     QEventLoop loop;
     QObject::connect(m_netReply, SIGNAL(finished()), this, SLOT(PkgFinish()));
     QObject::connect(m_netReply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
-
-    qDebug()<<"update pkg ok";
 }
 
 void DataUpdate::DevFinish()
 {
-#ifdef HAVE_QJSON
     string org_cid;
     m_devDB.get(CHAN_ID, org_cid);
     QByteArray dev_rsp_byte = m_netReply->readAll();
     QString dev_rsp_str = QString(dev_rsp_byte);
     m_netReply->deleteLater();
-    qDebug()<<dev_rsp_str;
+    qDebug()<<"dev receive"<<dev_rsp_str;
     bool ok;
     //QJson::Parser parser;
     if (dev_rsp_str.isEmpty()){
@@ -166,17 +159,14 @@ void DataUpdate::DevFinish()
             m_devDB.set(DEV_VER, version);
         }
     }
-    //emit devFinish();
-#endif
 }
 
 void DataUpdate::ApkFinish()
 {
-#ifdef HAVE_QJSON
     QByteArray apk_rsp_byte = m_netReply->readAll();
     QString apk_rsp_str = QString(apk_rsp_byte);
     m_netReply->deleteLater();
-    qDebug()<<apk_rsp_str;
+    qDebug()<<"apk receive"<<apk_rsp_str;
     bool ok;
     //QJson::Parser parser;
     if (apk_rsp_str.isEmpty()){
@@ -207,8 +197,6 @@ void DataUpdate::ApkFinish()
             JsonObject apk_map = atom.toMap();
             m_apkIdStr = apk_map["apkId"].toString();
             apkIn.apkID = m_apkIdStr.toStdString();
-            QString apk_file_name ;
-            apk_file_name = TMP_PATH + m_apkIdStr;
             m_preMd5 = apk_map["md5value"].toString();
             apkIn.md5 = apk_map["md5value"].toString().toStdString();
             //QString packagePath = apk_map["packagePath"].toString();
@@ -271,13 +259,13 @@ void DataUpdate::ApkFinish()
         if(apkNum == Apk_Update_finish){
             m_apkState = 0;
             m_devDB.set(APK_VER, apkVersion.toStdString());
+            qDebug()<<"update apk ok";
             GetPkgLibVer();
         }else{
             m_apkState = 3;
             m_pkgState = 3;
         }
     }
-#endif
 }
 
 void DataUpdate::quit()
@@ -289,11 +277,10 @@ void DataUpdate::quit()
 
 void DataUpdate::PkgFinish()
 {
-#ifdef HAVE_QJSON
     QByteArray pkg_rsp_byte = m_netReply->readAll();
     QString pkg_rsp_str = QString(pkg_rsp_byte);
     m_netReply->deleteLater();
-    qDebug()<<"pkg reply = "<<pkg_rsp_str;
+    qDebug()<<"pkg receive"<<pkg_rsp_str;
     bool ok;
     //QJson::Parser parser;
     if (pkg_rsp_str.isEmpty()){
@@ -303,7 +290,6 @@ void DataUpdate::PkgFinish()
     //QVariantMap pkg_rsp_res = parser.parse(pkg_rsp_str.toUtf8(), &ok).toMap();
     JsonObject pkg_rsp_res = QtJson::parse(pkg_rsp_str, ok).toMap();
     QString pkgVersion=pkg_rsp_res["version"].toString();
-    cout << "set PKG_VER\t[" << pkgVersion.toStdString() <<"]" << endl;
     int  status=pkg_rsp_res["status"].toInt();
     if(  status == 2 ){
         m_pkgState = 2;
@@ -471,8 +457,8 @@ void DataUpdate::PkgFinish()
         }
     }
     m_devDB.set(PKG_VER, pkgVersion.toStdString());
+    qDebug()<<"update pkg ok";
     m_pkgState = 0;
-#endif
 }
 
 void DataUpdate::updateData()
@@ -535,7 +521,7 @@ bool DataUpdate::MD5_Check(QString strFilePath, QString md5){
 
 void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
     QString file_name = TMP_PATH;
-    file_name += "/" + m_apkIdStr;
+    file_name += m_apkIdStr + ".apk";
     QFile fd(file_name);
     if(fd.open(QIODevice::WriteOnly)){
         fd.write(Reply_apk->readAll());               //////////budge////////
@@ -545,13 +531,12 @@ void DataUpdate::ApkFileWrite(QNetworkReply* Reply_apk){
     Reply_apk->deleteLater();
     if (MD5_Check( file_name , m_preMd5) ){
         QString apk_final_path = APK_PATH;
-        apk_final_path +=  "/" + m_apkIdStr + ".apk";
+        apk_final_path +=  m_apkIdStr + ".apk";
         if (copyFile(file_name, apk_final_path, true)){
             Apk_Update_finish++;
         }
-    }else{
-        QFile::remove(file_name);
     }
+    QFile::remove(file_name);
 }
 
 bool DataUpdate::copyFile(const QString& sourceFile, const QString& toFile, bool isOverwrite)

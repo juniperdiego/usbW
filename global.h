@@ -34,7 +34,7 @@ using namespace std;
 #define PROG_NAME "progMonitor.apk"
 
 //download
-#if 1
+#if 0
 #define URL_DEVVER "http://192.168.1.104:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://192.168.1.104:8080/nzyw/api/getApkLibVersion.do"
 #define URL_PKGLIBVER "http://192.168.1.104:8080/nzyw/api/getPkgLibVersion.do"
@@ -47,11 +47,12 @@ using namespace std;
 #define URL_UPLOAD "http://api.dfstock4g.com/nzyw/api/processLog.do"
 #define URL_UPLOAD_DATA "http://api.dfstock4g.com/nzyw/api/processData.do"
 #endif
-#define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
+#define TMP_PATH  "/mnt/repos/.kuaijl/tmp/"
 #define APK_PATH  "/mnt/repos/.kuaijl/apks/"
 #define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
 #define DB_PATH "/mnt/repos/.kuaijl/"
 #define LOG_FILE_NAME "/mnt/repos/.kuaijl/zig.log"
+#define LOG_FILE_SIZE 1024*1024*10
 
 //update
 #define BLOCKSIZE 100

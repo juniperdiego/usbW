@@ -1,1 +1,2 @@
- zip -r setup.zip data setup.bash
+rm setup.zip 
+zip -r setup.zip data setup.bash

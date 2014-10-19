@@ -26,6 +26,7 @@ fi
 if [ ! -f "/etc/init.d/$START_FILE" ]; then
     dos2unix ./data/$START_FILE
     cp ./data/$START_FILE /etc/init.d
+    chmod 755 /etc/init.d/$START_FILE
 fi
 
 if [ ! -d "$ANDROID_DIR" ]; then
