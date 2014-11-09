@@ -54,3 +54,20 @@ void Global::clearApks()
     }
 }
 
+void Global::clearTmp()
+{
+    QStringList nameFilter;
+    nameFilter.append("*.apk");
+    QDir dir(TMP_PATH);
+    QStringList strFileLst;
+    strFileLst.clear();
+    if(dir.exists())
+    {
+        strFileLst = dir.entryList(nameFilter, QDir::Files | QDir::NoSymLinks);
+        for(int i = 0; i < strFileLst.count(); i++)
+        {
+            QFile::remove(strFileLst[i]);
+        }
+    }
+}
+

@@ -245,6 +245,7 @@ void DataUpdate::ApkFinish()
             }
             if ((apkOkNum+1) == Apk_Update_finish)
             {
+                qDebug()<<"down one apk ok and update apk db! id = "<<m_apkIdStr;
                 m_apkDB.set(apkIn);
                 emit progress(Apk_Update_finish, apkNum);
             }
