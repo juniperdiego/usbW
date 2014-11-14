@@ -24,7 +24,6 @@ SOURCES += main.cpp\
     shangchuan.cpp \
     global.cpp \
     devwdg.cpp \
-    devprocess.cpp \
     help.cpp \
     dataupdate.cpp \
     fileupload.cpp \
@@ -55,7 +54,6 @@ HEADERS  += gengxin.h \
     shangchuan.h \
     global.h \
     devwdg.h \
-    devprocess.h \
     help.h \
     dataupdate.h \
     fileupload.h \

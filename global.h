@@ -22,7 +22,6 @@ using namespace std;
 
 #define ARM
 
-#define MNT_PATH "/mnt/repos"
 #define SER_LENGTH 15
 #define FIFO "/tmp/usb_fifo"
 #define MAX_APK_NUM (64/8)
@@ -34,7 +33,7 @@ using namespace std;
 #define PROG_NAME "progMonitor.apk"
 
 //download
-#if 1
+#if 0
 #define URL_DEVVER "http://192.168.1.104:8080/nzyw/api/getDeviceVersion.do"
 #define URL_APKLIBVER "http://192.168.1.104:8080/nzyw/api/getApkLibVersion.do"
 #define URL_PKGLIBVER "http://192.168.1.104:8080/nzyw/api/getPkgLibVersion.do"
@@ -47,17 +46,21 @@ using namespace std;
 #define URL_UPLOAD "http://api.dfstock4g.com/nzyw/api/processLog.do"
 #define URL_UPLOAD_DATA "http://api.dfstock4g.com/nzyw/api/processData.do"
 #endif
-#define TMP_PATH  "/mnt/repos/.kuaijl/tmp"
-#define APK_PATH  "/mnt/repos/.kuaijl/apks/"
-#define UPDATE_FILE_NAME "/mnt/repos/.kuaijl/update.zip"
-#define DB_PATH "/mnt/repos/.kuaijl/"
-#define LOG_FILE_NAME "/mnt/repos/.kuaijl/zig.log"
+
+#define MNT_PATH "/data"
+#define EXE_PATH "/usr/local/bin"
+#define DB_PATH "/data/kuaijl/"
+#define TMP_PATH  "/data/kuaijl/tmp/"
+#define APK_PATH  "/data/kuaijl/apks/"
+#define UPDATE_FILE_NAME "/data/kuaijl/update.zip"
+#define LOG_FILE_NAME "/data/kuaijl/zig.log"
+#define LOG_FILE_SIZE 1024*1024*10
 
 //update
 #define BLOCKSIZE 100
 #define MAXLINELEN 512
-#define LOG_PATH "/mnt/repos/.kuaijl/log/"
-#define ENCYPT_LOG_PATH "/mnt/repos/.kuaijl/encypt_log/"
+#define LOG_PATH "/data/kuaijl/log/"
+#define ENCYPT_LOG_PATH "/data/kuaijl/encypt_log/"
 #define PERIOD (60*60*2)
 #define PERIOD_SET_UNUPLOAD 30*60
 
@@ -81,6 +84,7 @@ public:
     static void setSysTime(const QString& t);
     static string encyptStr(const string& str);
     static void clearApks();
+    static void clearTmp();
 
 public:
     static QString g_IP;                     //服务器IP

@@ -26,6 +26,7 @@ fi
 if [ ! -f "/etc/init.d/$START_FILE" ]; then
     dos2unix ./data/$START_FILE
     cp ./data/$START_FILE /etc/init.d
+    chmod 755 /etc/init.d/$START_FILE
 fi
 
 if [ ! -d "$ANDROID_DIR" ]; then
@@ -33,7 +34,7 @@ if [ ! -d "$ANDROID_DIR" ]; then
     chmod 755 $ANDROID_DIR
 fi
 
-cp data/$EXE_FILE /mnt/repos
-chmod 755 /mnt/repos/$EXE_FILE
+cp data/$EXE_FILE /usr/local/bin
+chmod 755 /usr/local/bin/$EXE_FILE
 
 exit 0

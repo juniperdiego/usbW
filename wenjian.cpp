@@ -87,7 +87,7 @@ void wenjian::setFreeSpace1(int)
     {
         QStringList strs = strLstLine[i].split(" ", QString::SkipEmptyParts);
         if (strs.count() < 6) continue;
-        if (!strs[5].contains("/mnt/repos")) continue;
+        if (!strs[5].contains(MNT_PATH)) continue;
 
         QString strNum = strs[3];
         QString strUnit = strs[3].right(1);

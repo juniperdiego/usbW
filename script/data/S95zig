@@ -4,7 +4,7 @@
 # Zig start/stop script
 #
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/mnt/repos
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 
 export TSLIB_CONSOLEDEVICE=none
 export TSLIB_FBDEVICE=/dev/fb0

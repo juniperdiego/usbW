@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QWidget* centralWidget = new QWidget;
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->setSpacing(2);
     mainLayout->addLayout(layout);
     mainLayout->addLayout(gridlayout);
     centralWidget->setLayout(mainLayout);
@@ -65,29 +67,29 @@ void MainWindow::CreateLayout()
     layout = new QHBoxLayout;
 
     QHBoxLayout* leftLayout = new QHBoxLayout;
-    leftLayout->setContentsMargins(10, 0, 10, 0);
-    leftLayout->setSpacing(20);
+    leftLayout->setContentsMargins(10, 10, 10, 0);
+    leftLayout->setSpacing(30);
 
-    gxin = new ClickedLabel(20);
+    gxin = new ClickedLabel(22);
     gxin->setText("<u>更新</u>");
     connect(gxin,SIGNAL(clicked()),this,SLOT(OnGengxin()));
 
-    wluo = new ClickedLabel(20);
+    wluo = new ClickedLabel(22);
     wluo->setText("<u>网络</u>");
     wluo->setDisabled(true);
 
-    wjian = new ClickedLabel(20);
+    wjian = new ClickedLabel(22);
     wjian->setText("<u>文件</u>");
     connect(wjian, SIGNAL(clicked()),this, SLOT(OnWenjian()));
 
-    bbiao = new ClickedLabel(20);
+    bbiao = new ClickedLabel(22);
     bbiao->setText("<u>报表</u>");
     connect(bbiao,SIGNAL(clicked()),this,SLOT(OnBaobiao()));
 
-    fwuqi = new ClickedLabel(20);
+    fwuqi = new ClickedLabel(22);
     fwuqi->setVisible(false);
     fwuqi->setText("<u>服务器</u>");
-    connect(fwuqi,SIGNAL(clicked()),this,SLOT(OnJiaoZhun()));
+    connect(fwuqi,SIGNAL(clicked()),this,SLOT(OnFuwuqi()));
 
     cangkuid = new QLabel;
     cangkuid->setText("仓库ID:");
@@ -182,6 +184,7 @@ void MainWindow::CreateStatusbar()
     jiaoshi->setText(tr("<u>校时</u>"));
     jiaoshi->setEnabled(false);
     m_jiaozhun = new ClickedLabel;
+    m_jiaozhun->setVisible(false);
     m_jiaozhun->setText(tr("<u>屏幕校准</u>"));
     connect(m_jiaozhun, SIGNAL(clicked()), this, SLOT(OnJiaoZhun()));
     help = new ClickedLabel;

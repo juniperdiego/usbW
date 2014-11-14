@@ -165,6 +165,13 @@ void add_callback(int num,  const char *serial)
             return;
         }
 
+        if (!QFile::exists(apkPath.c_str()))
+        {
+            Global::usb_state[num].install_state=4;
+            tongXin::getTongXin()->updateGui(num);
+            return;
+        }
+
         apkInfo apkIn;
         apkIn.apkID = pkgIn.apkList[i];
         apkDataBase.get(apkIn);
@@ -189,7 +196,11 @@ void add_callback(int num,  const char *serial)
                 return;
             }
             else
-                continue;
+            {
+                Global::usb_state[num].install_state=4;
+                tongXin::getTongXin()->updateGui(num);
+                return;
+            }
         }
         Global::usb_state[num].apk_num = i+1;
         //MainWindow::s_devArray[num]->DevWdgPrecess(&(Global::usb_state[num]));;
