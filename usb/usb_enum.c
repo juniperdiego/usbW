@@ -75,8 +75,39 @@ static bool usb_device_path_exist(const char *path)
     return true;
 }
 
+// in :/ssss/ddd/aaaa/eeee/fff
+// out:usb:fff
+void getLastpart(const char* in, char* out)
+{
+    char* end = NULL;
+    char* start = NULL;
+
+    size_t len = strlen(in);
+
+    end = (in + len-1);
+    if( (*end) == '/')
+        end--;
+
+    start = end;
+
+    while((*start) != '/')
+    {
+        start--;
+    }
+
+    start++;
+
+    strncpy(out,"usb:",4);
+    strncpy(out+4,start,end-start+1);
+    out[4+end-start+1] = '\0';
+    printf("in :%s\n", in);
+    printf("out:%s\n", out);
+}
+
 static void read_usb_device_serial(int idx, const char *path, char *serial, int size)
 {
+    getLastpart(path, serial);
+#if 0
     int fd;
     ssize_t rn;
     char buf[128];
@@ -101,6 +132,7 @@ static void read_usb_device_serial(int idx, const char *path, char *serial, int 
     serial[rn-1] = 0;
 
     close(fd);
+#endif
 }
 
 static void * do_usb_device_enum_thread(void *args)
