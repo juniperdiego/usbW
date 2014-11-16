@@ -85,6 +85,7 @@ public:
     static string encyptStr(const string& str);
     static void clearApks();
     static void clearTmp();
+    static void clearDataAndReboot();
 
 public:
     static QString g_IP;                     //服务器IP

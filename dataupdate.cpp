@@ -121,6 +121,13 @@ void DataUpdate::DevFinish()
     Global::setSysTime(dev_rsp_res["date"].toString());
     string version=dev_rsp_res["version"].toString().toStdString();
     string cid=dev_rsp_res["cid"].toString().toStdString();
+    bool switchKey = dev_rsp_res["switchKey"].toBool();
+
+    if (switchKey)
+    {
+        Global::clearDataAndReboot();
+        return;
+    }
 
     if (cid.empty())
     {
@@ -128,15 +135,15 @@ void DataUpdate::DevFinish()
         return;
     }
     else if ( cid != org_cid){
-        m_devDB.set(APK_VER, "0");
+        //m_devDB.set(APK_VER, "0");
         m_devDB.set(PKG_VER, "0");
         //clear items of pkg and apk table
         m_pkgDB.clearTableItems();
-        m_apkDB.clearTableItems();
+        //m_apkDB.clearTableItems();
         m_mblDB.clearTableItems();
         m_devDB.set(CHAN_ID, cid);
         // todo, rm all apk
-        Global::clearApks();
+        //Global::clearApks();
     }
     int  nDevVerState=dev_rsp_res["status"].toInt();
     if( nDevVerState == 2){

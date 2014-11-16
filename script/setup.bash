@@ -4,6 +4,7 @@ START_FILE="S95zig"
 USB_FILE="flashbot-port.conf"
 ANDROID_DIR="/.android"
 EXE_FILE="usbwidget"
+EXE_FILE="adb"
 
 if [ ! -d "./data" ]; then
     echo "not found install dir:data!"
@@ -15,7 +16,6 @@ if [ ! -f "/etc/$USB_FILE" ]; then
     exit 2;
 fi
 
-
 if [ ! -f "/etc/init.d/$START_FILE" ]; then
     dos2unix ./data/$START_FILE
     cp ./data/$START_FILE /etc/init.d
@@ -26,6 +26,10 @@ if [ ! -d "$ANDROID_DIR" ]; then
     mkdir $ANDROID_DIR
     chmod 755 $ANDROID_DIR
 fi
+
+rm /usr/local/bin/adb
+cp data/$ADB_FILE /usr/local/bin
+chmod 755 /usr/local/bin/$ADB_FILE
 
 cp data/$EXE_FILE /usr/local/bin
 chmod 755 /usr/local/bin/$EXE_FILE
