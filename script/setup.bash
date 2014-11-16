@@ -1,6 +1,5 @@
 #!/bin/sh
 
-POINTER_FILE="pointercal"
 START_FILE="S95zig"
 USB_FILE="flashbot-port.conf"
 ANDROID_DIR="/.android"
@@ -11,13 +10,7 @@ if [ ! -d "./data" ]; then
     exit 1;
 fi
 
-if [ ! -f "/etc/$POINTER_FILE" ]; then
-    cp ./data/$POINTER_FILE /etc
-fi
-
-
 if [ ! -f "/etc/$USB_FILE" ]; then
-#    cp ./data/$USB_FILE /etc
     echo "not found usb configure file:/etc/flashbot-port.conf"
     exit 2;
 fi

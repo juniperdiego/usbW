@@ -146,7 +146,7 @@ void DevWdg::DevWdgPrecess(USB_State* usbStateIn)
     }
     else if(usbState->install_state == 4)
     {
-        this->SetStatus(tr("失败"));
+        this->SetStatus(tr("不完全"));
         this->StopProcBar();
         this->StopPercLab();
         ui->progBar_Install->setVisible(false);
