@@ -87,7 +87,7 @@ void Global::setSysTime(const QString& t)
     QString timeStr = dateTime.toString("yyyy.MM.dd-hh:mm:ss");
     QString cmd = QString("date -s %1").arg(timeStr);
     QProcess::execute(cmd);
-    cmd = "hwclock -w";
+    cmd = "hwclock -w -u";
     QProcess::execute(cmd);
 }
 
