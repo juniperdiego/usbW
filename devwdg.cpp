@@ -152,6 +152,14 @@ void DevWdg::DevWdgPrecess(USB_State* usbStateIn)
         ui->progBar_Install->setVisible(false);
         ui->labPerc->setVisible(false);
     }
+    else if(usbState->install_state == 6)
+    {
+        this->SetStatus(tr("无包"));
+        this->StopProcBar();
+        this->StopPercLab();
+        ui->progBar_Install->setVisible(false);
+        ui->labPerc->setVisible(false);
+    }
     else if(usbState->install_state == 5)
     {
         this->SetStatus(tr("准备中"));
@@ -165,7 +173,7 @@ DevWdg::setPaletteWithStatus()
     QString bgImgStr = ":/images/blue.png";
     if(usbState->install_state == 2)
         bgImgStr = ":/images/green.png";
-    else if (usbState->install_state == 3 || usbState->install_state == 4)
+    else if (usbState->install_state == 3 || usbState->install_state == 4 || usbState->install_state == 6)
         bgImgStr = ":/images/red.png";
 
     QPalette palette;

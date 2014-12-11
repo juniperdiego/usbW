@@ -187,6 +187,7 @@ void DataUpdate::ApkFinish()
 
     if( nApkVerState == 2){
         m_apkState = 2;
+        m_devDB.set(APK_VER, apkVersion.toStdString());
         GetPkgLibVer();
         return;
     }else if(nApkVerState == 1 ){

@@ -111,7 +111,12 @@ void add_callback(int num,  const char *serial)
     pkgInfo pkgIn;
     pkgIn.pkgID = pkg_id;
 
-    pkgDataBase.get(pkgIn);
+    if (!pkgDataBase.get(pkgIn))
+    {
+        Global::usb_state[num].install_state=6;
+        tongXin::getTongXin()->updateGui(num);
+        return;
+    }
 
     // 3 install all apks
     apkDB apkDataBase;
