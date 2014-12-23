@@ -81,6 +81,9 @@ bool adb_install_cmd(const char *apk_name, const char *serial)
     printf("dddddd\n" );
     fflush(stdout);
 
+    // always return true, sicnc when the app is a system-level,
+    // we may can't install it sucessfully, which will lead to stop installing other apps.
+    succ = true;
     return succ;
 }
 /*
